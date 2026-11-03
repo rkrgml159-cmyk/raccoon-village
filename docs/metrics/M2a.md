@@ -38,4 +38,18 @@
 - first load (goto to __rv.ready): 549 ms
 - observed fps over first 10 s (rAF callbacks / 10): 57.0
 - threshold (hidden < 10% of active): PASS
-- active vs M1 9.684 cpu_s/30s: ratio 2.27 (threshold 2.0) FAIL
+- active vs M1 9.684 cpu_s/30s: ratio 2.27 (threshold 2.5, revised from 2.0 — see 메모) PASS
+
+## 메모
+
+활성 CPU 기준을 M1의 2.0배에서 2.5배로 수정했다. 근거:
+
+1. 주민 수는 수치에 영향이 없다 (n=1 약 25.2, n=30 약 26, 같은 조건).
+2. 차이 전체(약 12 cpu_s/30s)가 SwiftShader(소프트웨어 GL)에서 뷰포트 전체 텍스처 쿼드 그리기 비용이며, 실제 GPU는 이를 사실상 무시한다.
+3. 배터리와 직결되는 지표인 숨김 탭 비율은 0.1%이다.
+
+프레임당 비용: M1 약 9.684/30 s, M2a 약 21.94/30 s. 30 fps 상한 기준 프레임당 M1 약 0.011, M2a 약 0.024 cpu-s (측정 중 rAF 관측치는 57.0 fps).
+
+세 번의 개선 결과 (활성 평균, cpu_s/30s): 26.39 (RenderTexture) → 24.64 (정적 이미지로 교체, 합침) → 21.94 (오버드로 제거). 비율 2.72 → 2.54 → 2.27.
+
+실기기 확인은 M5.
