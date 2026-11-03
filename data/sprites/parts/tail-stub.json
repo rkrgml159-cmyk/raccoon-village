@@ -1,8 +1,8 @@
 {
   "id": "tail-stub",
-  "rigs": ["quad-l"],
+  "rigs": ["quad-l", "quad-deer"],
   "anchor": "tail",
   "layer": "below",
-  "offset": [-2, 0],
-  "rows": ["BBB", "BBB"]
+  "offset": [-3, 0],
+  "rows": ["BBBB", "BBBB", "bBBB"]
 }

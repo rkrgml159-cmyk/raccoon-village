@@ -559,11 +559,11 @@
         "H": "#6a5645"
       }
     },
-    "overlays": ["tusks", "mane-boar", "tail-stub"]
+    "overlays": ["snout-boar", "tusks", "mane-boar", "tail-stub"]
   },
   "water-deer": {
     "name": "고라니",
-    "rig": "quad-l",
+    "rig": "quad-deer",
     "scale": 1.3,
     "share": 2,
     "lanes": [0.5, 0.4, 0.1],
@@ -602,7 +602,7 @@
   },
   "roe-deer": {
     "name": "노루",
-    "rig": "quad-l",
+    "rig": "quad-deer",
     "scale": 1.35,
     "share": 2,
     "lanes": [0.5, 0.4, 0.1],
@@ -690,6 +690,6 @@
         "H": "#a8a295"
       }
     },
-    "overlays": ["horns-goral", "tail-stub"]
+    "overlays": ["horns-goral", "chin-tuft", "tail-stub"]
   }
 }

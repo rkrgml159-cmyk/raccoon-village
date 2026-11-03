@@ -1,0 +1,8 @@
+{
+  "id": "snout-boar",
+  "rigs": ["quad-l"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [8, 3],
+  "rows": ["BBBBN.", "WWWWWN", "WWWWWN", "bWWWWN", "bbWWW."]
+}

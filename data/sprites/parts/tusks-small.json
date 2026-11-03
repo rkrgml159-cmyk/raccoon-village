@@ -1,8 +1,9 @@
 {
   "id": "tusks-small",
-  "rigs": ["quad-l"],
+  "rigs": ["quad-deer"],
   "anchor": "head",
   "layer": "above",
-  "offset": [11, 8],
-  "rows": ["W", "W"]
+  "offset": [8, 6],
+  "rows": ["XX", "X.", "X."],
+  "fixed": "#f4ecd8"
 }

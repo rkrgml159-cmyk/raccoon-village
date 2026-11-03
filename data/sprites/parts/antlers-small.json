@@ -1,6 +1,6 @@
 {
   "id": "antlers-small",
-  "rigs": ["quad-l"],
+  "rigs": ["quad-deer"],
   "anchor": "ears",
   "layer": "above",
   "offset": [2, -2],
