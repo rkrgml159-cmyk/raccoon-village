@@ -35,6 +35,7 @@ export class ForestLayer {
   private backSrc: LayerBuf | null = null
   private midCanvas: HTMLCanvasElement | null = null
   private backAlpha = 1
+  private cropTop = 0
   private bakedHorizon: [number, number, number] | null = null
   private w = 0
   private h = 0
@@ -106,9 +107,11 @@ export class ForestLayer {
     const scale = layer.scale * (Math.min(this.w, this.h) / REFERENCE_SIZE)
     const widthPx = Math.ceil(vw / scale)
     const baseY = layer.y * this.h - vy // ground line of this layer, view-relative screen px
-    const defs = layer.tiles.map((e) => this.tiles[e.id])
-    let above = Math.max(...defs.map((t) => t.ground + 1))
-    const below = Math.max(...defs.map((t) => t.size[1] - t.ground - 1))
+    const placements = planLayer(layer, this.tiles, this.seed, widthPx, 1)
+    // Crop to the occupied rows: from the tallest placed tile down (no transparent padding).
+    const used = placements.map((p) => this.tiles[p.tile])
+    let above = Math.max(1, ...used.map((t) => t.ground + 1))
+    const below = Math.max(0, ...used.map((t) => t.size[1] - t.ground - 1))
     let groundRow: number | undefined
     let bottomRows = below
     if (layer.id === 'mid') {
@@ -119,7 +122,7 @@ export class ForestLayer {
     }
     const heightPx = above + bottomRows
     const buf = composeLayer({
-      placements: planLayer(layer, this.tiles, this.seed, widthPx, 1),
+      placements,
       tiles: this.tiles,
       palette,
       widthPx,
@@ -159,23 +162,35 @@ export class ForestLayer {
     this.destroy()
     const { x: vx, y: vy, width: vw, height: vh } = this.view
     const W = Math.ceil(vw)
-    const H = Math.ceil(vh)
     const byId = (id: SceneLayer['id']): SceneLayer => this.def.layers.find((l) => l.id === id)!
     const backLayer = byId('back')
     this.backAlpha = backLayer.alpha ?? 1
     this.backSrc = this.composeOf(backLayer, season)
     const mid = this.composeOf(byId('mid'), season)
+    // Merged image spans the highest occupied row of back/mid down to the view bottom.
+    const cropTop = Math.max(0, Math.min(this.backSrc.top, mid.top))
+    const H = Math.max(1, Math.ceil(vh) - cropTop)
+    this.cropTop = cropTop
     this.midCanvas = document.createElement('canvas')
     this.midCanvas.width = W
     this.midCanvas.height = H
     const mctx = this.midCanvas.getContext('2d')!
     mctx.imageSmoothingEnabled = false
-    mctx.drawImage(this.toCanvas(mid.buf), 0, mid.top, mid.buf.w * mid.scale, mid.buf.h * mid.scale)
+    mctx.drawImage(
+      this.toCanvas(mid.buf),
+      0,
+      mid.top - cropTop,
+      mid.buf.w * mid.scale,
+      mid.buf.h * mid.scale,
+    )
 
     const tex = this.canvasTexture(`forest:backmid:${season}:${W}x${H}`, W, H)
     tex.setFilter(Phaser.Textures.FilterMode.NEAREST)
     this.backMidTex = tex
-    this.backMid = this.scene.add.image(vx, vy, tex.key).setOrigin(0, 0).setDepth(DEPTH.mid)
+    this.backMid = this.scene.add
+      .image(vx, vy + cropTop, tex.key)
+      .setOrigin(0, 0)
+      .setDepth(DEPTH.mid)
 
     const front = this.composeOf(byId('front'), season)
     const ftex = this.canvasTexture(
@@ -209,7 +224,7 @@ export class ForestLayer {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     ctx.imageSmoothingEnabled = false
     ctx.globalAlpha = this.backAlpha
-    ctx.drawImage(this.toCanvas(fog), 0, top, buf.w * scale, buf.h * scale)
+    ctx.drawImage(this.toCanvas(fog), 0, top - this.cropTop, buf.w * scale, buf.h * scale)
     ctx.globalAlpha = 1
     ctx.drawImage(this.midCanvas, 0, 0)
     this.backMidTex.refresh()

@@ -298,7 +298,7 @@ export class VillageScene extends Phaser.Scene {
     const vw = w / cam.zoom
     const vh = h / cam.zoom
     const viewRect = { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh }
-    this.sky.resize(w, h, viewRect)
+    this.sky.resize(w, h, viewRect, FOREST.ground.y * h)
     this.forest.resize(w, h, viewRect)
   }
 

@@ -4,6 +4,7 @@ import { lerpHex, type SkyColors } from '@domain/sky/SkyPalette'
 
 const HORIZON_Y = 0.6
 const SKY_BANDS = 24
+const SKY_OVERLAP = 2
 const STAR_COUNT = 30
 const STAR_BAND = HORIZON_Y - 0.1
 const MOON_X = 0.78
@@ -28,6 +29,7 @@ export class SkyLayer {
   private w = 0
   private h = 0
   private view: View = { x: 0, y: 0, width: 0, height: 0 }
+  private groundY = Number.POSITIVE_INFINITY
   private lastColors: SkyColors | null = null
   private lastMoon = -1
   private lastStarAlpha = -1
@@ -42,7 +44,14 @@ export class SkyLayer {
     this.moon = scene.add.graphics().setDepth(-10)
   }
 
-  resize(w: number, h: number, view: View = { x: 0, y: 0, width: w, height: h }): void {
+  /** groundY: world y of the opaque ground band; the sky is only painted above it. */
+  resize(
+    w: number,
+    h: number,
+    view: View = { x: 0, y: 0, width: w, height: h },
+    groundY: number = Number.POSITIVE_INFINITY,
+  ): void {
+    this.groundY = groundY
     this.w = w
     this.h = h
     this.view = view
@@ -78,9 +87,13 @@ export class SkyLayer {
     // never shows the background.
     const top = y - 2
     const bandH = (vh + 4) / SKY_BANDS
+    // Below the ground line the opaque forest ground covers the view, so stop painting there.
+    const bottom = Math.min(this.groundY + SKY_OVERLAP, y + vh + 2)
     for (let i = 0; i < SKY_BANDS; i++) {
+      const bandTop = top + i * bandH
+      if (bandTop >= bottom) break
       g.fillStyle(toInt(lerpHex(c.top, c.bottom, i / (SKY_BANDS - 1))), 1)
-      g.fillRect(x - 2, top + i * bandH, vw + 4, bandH + 1)
+      g.fillRect(x - 2, bandTop, vw + 4, Math.min(bandH + 1, bottom - bandTop))
     }
   }
 
