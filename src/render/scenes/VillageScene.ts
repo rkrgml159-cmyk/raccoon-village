@@ -2,11 +2,13 @@ import Phaser from 'phaser'
 import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, type Resident } from '@domain/resident/Resident'
-import { tick, profileFor } from '@domain/resident/UtilityAI'
+import { tick, profileFor, type Profile } from '@domain/resident/UtilityAI'
+import { createVillage } from '@domain/village/Village'
 import { LANES, clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
+import { resolveVariant } from '@domain/sprites/Palette'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
-import { loadRegistry, animKey, defaultVariant } from '@domain/sprites/SpriteRegistry'
+import { loadRegistry, animKey, defaultVariant, allVariants } from '@domain/sprites/SpriteRegistry'
 import { PARTS, RIGS, SPECIES } from '@domain/sprites/catalog'
 import { STATES } from '@domain/sprites/validateRig'
 import { SpriteBank } from '../sprites/SpriteBank'
@@ -21,6 +23,8 @@ const PX = 1.5
 const SHEET_GAP_X = 1.2
 const SHEET_GAP_Y = 1.3
 const RESIDENT_SPECIES = 'raccoon'
+const X_FALLBACK = [0.05, 0.95] as const
+const SHOWCASE_MARGIN = 0.08
 const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
 
 /** Sprite scale: lane scale × the short viewport side (so portrait phones get a small raccoon). */
@@ -31,22 +35,19 @@ function spriteScale(laneScale: number, view: { width: number; height: number })
 export class VillageScene extends Phaser.Scene {
   readonly bus = new Emitter<GameEvents>()
 
-  private resident: Resident = createResident('raccoon-1', 0.5, {
-    species: 'raccoon',
-    variant: defaultVariant(SPECIES.raccoon),
-  })
+  private residents: Resident[] = []
+  private sprites: Phaser.GameObjects.Sprite[] = []
+  private animKeys: string[] = []
+  private walkRanges = new Map<string, readonly [number, number]>()
+  private profiles = new Map<string, Profile>()
   private ctx!: DateContext
   private sky!: SkyLayer
   private blender!: SkyBlender
-  private sprite!: Phaser.GameObjects.Sprite
   private bank!: SpriteBank
-  private variant = ''
   private sheetSprites: Phaser.GameObjects.Image[] = []
   private debugText?: Phaser.GameObjects.Text
-  private walkRange: readonly [number, number] = [0.05, 0.95]
   private resizeTimer: ReturnType<typeof setTimeout> | null = null
   private ready = false
-  private currentAnim = ''
   private stillShown = false
 
   constructor(private readonly deps: BootDeps) {
@@ -56,21 +57,27 @@ export class VillageScene extends Phaser.Scene {
   create(): void {
     const { deps } = this
     this.ready = false
-    this.currentAnim = ''
     this.stillShown = false
     this.bank = new SpriteBank(this, loadRegistry({ rigs: RIGS, parts: PARTS, species: SPECIES }))
-    this.variant = defaultVariant(SPECIES[RESIDENT_SPECIES])
-    this.bank.ensure(RESIDENT_SPECIES, this.variant)
     this.sheetSprites = []
+    this.walkRanges.clear()
+    this.profiles.clear()
 
     this.ctx = computeDateContext(deps.clock.now())
     this.sky = new SkyLayer(this, deps.opts.seed ?? 0)
     this.blender = new SkyBlender(getSky(this.ctx.skyKey), deps.blendMs)
-    this.sprite = this.add
-      .sprite(0, 0, this.bank.textureKey(RESIDENT_SPECIES, this.variant, 'idle', 0))
-      .setOrigin(0.5, 1)
+    this.residents = this.makeResidents()
+    for (const sp of new Set(this.residents.map((r) => r.species)))
+      this.profiles.set(sp, profileFor(SPECIES[sp]))
+    this.animKeys = this.residents.map(() => '')
+    this.sprites = this.residents.map((r) => {
+      this.bank.ensure(r.species, r.variant)
+      return this.add
+        .sprite(0, 0, this.bank.textureKey(r.species, r.variant, 'idle', 0))
+        .setOrigin(0.5, 1)
+    })
     if (deps.opts.sheet && SPECIES[deps.opts.sheet]) {
-      this.sprite.setVisible(false)
+      for (const sprite of this.sprites) sprite.setVisible(false)
       this.buildSheet(deps.opts.sheet)
     }
     if (deps.opts.debug) {
@@ -103,14 +110,15 @@ export class VillageScene extends Phaser.Scene {
     window.__rv = {
       ready: false,
       ctx: this.ctx,
-      resident: this.resident,
+      residents: this.residents,
+      resident: this.residents[0],
       audio: deps.wind.state,
     }
   }
 
   update(_t: number, dt: number): void {
     const { deps } = this
-    const still = deps.opts.still
+    const still = deps.opts.still || this.showcase
     const sheet = this.sheetSprites.length > 0
 
     if (sheet) {
@@ -119,43 +127,46 @@ export class VillageScene extends Phaser.Scene {
     } else if (still) {
       this.blender.snapTo(getSky(this.ctx.skyKey))
       if (!this.stillShown) {
-        this.sprite.anims.stop()
-        this.sprite.setTexture(this.bank.textureKey(RESIDENT_SPECIES, this.variant, 'idle', 0))
+        this.residents.forEach((r, i) => {
+          this.sprites[i].anims.stop()
+          this.sprites[i].setTexture(this.bank.textureKey(r.species, r.variant, 'idle', 0))
+        })
         this.stillShown = true
       }
     } else {
-      const prev = this.resident
-      this.resident = tick(
-        this.resident,
-        dt,
-        {
-          phase: this.ctx.phase,
-          walkRange: this.walkRange,
-          profile: profileFor(SPECIES.raccoon),
-        },
-        deps.rng,
-      )
-      if (this.resident.state !== prev.state) {
-        this.bus.emit('residentStateChanged', {
-          id: this.resident.id,
-          state: this.resident.state,
-        })
-      }
       this.blender.update(dt)
-      const anim = animKey(RESIDENT_SPECIES, this.variant, this.resident.state)
-      if (anim !== this.currentAnim) {
-        this.sprite.play(anim)
-        this.currentAnim = anim
+      for (let i = 0; i < this.residents.length; i++) {
+        const prev = this.residents[i]
+        const next = tick(
+          prev,
+          dt,
+          {
+            phase: this.ctx.phase,
+            walkRange: this.walkRanges.get(prev.id) ?? X_FALLBACK,
+            profile: this.profiles.get(prev.species) as Profile,
+          },
+          deps.rng,
+        )
+        this.residents[i] = next
+        if (next.state !== prev.state) {
+          this.bus.emit('residentStateChanged', { id: next.id, state: next.state })
+        }
+        const anim = animKey(next.species, next.variant, next.state)
+        if (anim !== this.animKeys[i]) {
+          this.sprites[i].play(anim)
+          this.animKeys[i] = anim
+        }
       }
     }
 
     this.sky.render(this.blender.current, this.ctx.moonPhase)
-    if (!sheet) this.placeResident()
+    if (!sheet) this.placeResidents()
     this.updateDebug()
 
     if (window.__rv) {
       window.__rv.ctx = this.ctx
-      window.__rv.resident = this.resident
+      window.__rv.residents = this.residents
+      window.__rv.resident = this.residents[0]
       window.__rv.audio = deps.wind.state
       if (!this.ready) {
         this.ready = true
@@ -198,15 +209,51 @@ export class VillageScene extends Phaser.Scene {
     }
   }
 
-  private placeResident(): void {
+  private placeResidents(): void {
     const view = { width: this.scale.width, height: this.scale.height }
-    const r = this.resident
-    const { px, py, scale } = toScreen(r.lane, r.x, view)
-    this.sprite
-      .setPosition(px, py)
-      .setScale(spriteScale(scale, view))
-      .setFlipX(r.facing === 'left')
-      .setDepth(LANES.length + r.lane)
+    for (let i = 0; i < this.residents.length; i++) {
+      const r = this.residents[i]
+      const { px, py, scale } = toScreen(r.lane, r.x, view)
+      this.sprites[i]
+        .setPosition(px, py)
+        .setScale(spriteScale(scale, view) * r.scale)
+        .setFlipX(r.facing === 'left')
+        .setDepth(r.lane * 1000 + py)
+    }
+  }
+
+  private get showcase(): boolean {
+    return this.deps.opts.species === 'all'
+  }
+
+  private makeResidents(): Resident[] {
+    const { opts } = this.deps
+    const bodyScaleOf = (id: string, v: string): number => resolveVariant(SPECIES[id], v).bodyScale
+    if (!this.showcase) {
+      return createVillage({
+        seed: opts.seed ?? 0,
+        n: opts.n,
+        species: SPECIES,
+        variantsOf: (_id, sp) => allVariants(sp),
+        bodyScaleOf,
+      })
+    }
+    const ids = Object.keys(SPECIES)
+    return ids.map((id, i) => {
+      const lane = (i % 3) as 0 | 1 | 2
+      const inLane = Math.ceil((ids.length - lane) / 3)
+      const idx = Math.floor(i / 3)
+      const x =
+        SHOWCASE_MARGIN +
+        (inLane > 1 ? idx * ((1 - 2 * SHOWCASE_MARGIN) / (inLane - 1)) : 0.5 - SHOWCASE_MARGIN)
+      const variant = defaultVariant(SPECIES[id])
+      return createResident(id, x, {
+        species: id,
+        variant,
+        lane,
+        scale: SPECIES[id].scale * bodyScaleOf(id, variant),
+      })
+    })
   }
 
   private refreshContext(snap: boolean): void {
@@ -229,16 +276,15 @@ export class VillageScene extends Phaser.Scene {
     const w = this.scale.width
     const h = this.scale.height
     const portrait = w / h < PORTRAIT_RATIO
-    const laneScale = LANES[this.resident.lane].scale
-    const halfSpriteFrac =
-      ((this.bank.frameSize(RESIDENT_SPECIES)[0] / 2) *
-        spriteScale(laneScale, { width: w, height: h })) /
-      w
-    this.walkRange = walkRangeFor(
-      portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape,
-      halfSpriteFrac,
-    )
-    this.resident = { ...this.resident, x: clampX(this.resident.x, this.walkRange) }
+    const view = { width: w, height: h }
+    const visible = portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape
+    this.residents = this.residents.map((r) => {
+      const displayScale = spriteScale(LANES[r.lane].scale, view) * r.scale
+      const halfSpriteFrac = ((this.bank.frameSize(r.species)[0] / 2) * displayScale) / w
+      const range = walkRangeFor(visible, halfSpriteFrac)
+      this.walkRanges.set(r.id, range)
+      return this.showcase ? r : { ...r, x: clampX(r.x, range) }
+    })
     const cam = this.cameras.main
     // Portrait: zoom 2 centred on x 0.5 so lane x 0.25..0.75 fills the width.
     cam.setZoom(portrait ? 2 : 1)
@@ -256,7 +302,7 @@ export class VillageScene extends Phaser.Scene {
     const hh = String(hour).padStart(2, '0')
     const mm = String(minute).padStart(2, '0')
     this.debugText
-      .setText(`${skyKey} ${hh}:${mm} ${this.resident.state}`)
+      .setText(`${skyKey} ${hh}:${mm} ${this.residents[0]?.state ?? ''}`)
       .setScale(1 / cam.zoom)
       .setPosition(cam.worldView.x + 4 / cam.zoom, cam.worldView.y + 4 / cam.zoom)
   }

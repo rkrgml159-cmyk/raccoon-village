@@ -25,4 +25,7 @@ describe('Lanes', () => {
   it('walkRangeFor never inverts: collapses to the centre', () => {
     expect(walkRangeFor([0.25, 0.75], 0.4)).toEqual([0.5, 0.5])
   })
+  it('walkRangeFor collapses to centre for a bear on a narrow portrait', () => {
+    expect(walkRangeFor([0.25, 0.75], 0.3)).toEqual([0.5, 0.5])
+  })
 })

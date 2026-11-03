@@ -7,6 +7,7 @@ declare global {
     __rv?: {
       ready: boolean
       ctx: DateContext
+      residents: Resident[]
       resident: Resident
       audio: 'off' | 'running' | 'suspended' | 'unavailable'
     }
