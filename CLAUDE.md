@@ -12,7 +12,7 @@ Phaser 4 · TypeScript · Vite · Vitest · Playwright · Capacitor · Supabase 
 
 ## 절대 규칙
 - `src/domain/**`은 Phaser를 import하지 않는다. 순수 TS, TDD(RED→GREEN→REFACTOR), 커버리지 90%+.
-- 렌더 변경은 `tests/capture` 스크린샷 비교로 검증한다. 에셋 파일(이미지/오디오)은 읽지 않는다. 메타 JSON만 다룬다.
+- 렌더 변경은 `tests/capture` 스크린샷 비교로 검증한다. 에셋 파일(이미지/오디오)은 읽지 않는다. 메타 JSON만 다룬다. 픽셀맵 JSON(`data/sprites/**`, `data/scenes/**`)은 에셋이 아니라 데이터다 — 읽고 고친다.
 - 대사/텍스트는 `data/dialogue/*.json`에만. 코드에 한국어 문자열 하드코딩 금지.
 - 소리: 갑작스러운 효과음·알림음 금지. 모든 오디오 -18 LUFS, 페이드 200ms+.
 - 자유 텍스트 입력은 닉네임(8자, 금칙어 필터) 하나뿐. 방명록은 선택식 문구. 마을 이름은 "<닉네임>의 디스토피아". 비밀값은 `.env`만, 커밋 금지.
