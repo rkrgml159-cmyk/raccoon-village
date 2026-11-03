@@ -1,0 +1,18 @@
+{
+  "spring-dawn": { "top": "#8a9fb5", "bottom": "#e2c9b4", "horizon": "#b8b5a2", "starAlpha": 0.3 },
+  "spring-day": { "top": "#9ec9e8", "bottom": "#e8f1e4", "horizon": "#c9d8c0", "starAlpha": 0 },
+  "spring-dusk": { "top": "#6a6f8c", "bottom": "#dba98a", "horizon": "#a28b78", "starAlpha": 0.3 },
+  "spring-night": { "top": "#10172b", "bottom": "#26324a", "horizon": "#37425a", "starAlpha": 1 },
+  "summer-dawn": { "top": "#7f9cb0", "bottom": "#e6cfa8", "horizon": "#b3b79c", "starAlpha": 0.2 },
+  "summer-day": { "top": "#8fbad4", "bottom": "#e4ecd8", "horizon": "#bccdae", "starAlpha": 0 },
+  "summer-dusk": { "top": "#5f6a88", "bottom": "#d89a72", "horizon": "#9c8368", "starAlpha": 0.25 },
+  "summer-night": { "top": "#0e1628", "bottom": "#22304a", "horizon": "#34425a", "starAlpha": 1 },
+  "autumn-dawn": { "top": "#7a869c", "bottom": "#d9b79a", "horizon": "#a99a86", "starAlpha": 0.3 },
+  "autumn-day": { "top": "#97b1c2", "bottom": "#e3e0cf", "horizon": "#c2bc9f", "starAlpha": 0 },
+  "autumn-dusk": { "top": "#5b4b7a", "bottom": "#e58a4a", "horizon": "#9a6a4f", "starAlpha": 0.2 },
+  "autumn-night": { "top": "#0f1426", "bottom": "#252c46", "horizon": "#363c54", "starAlpha": 1 },
+  "winter-dawn": { "top": "#7b8799", "bottom": "#cdc3c0", "horizon": "#a3a4a6", "starAlpha": 0.4 },
+  "winter-day": { "top": "#a9b8c4", "bottom": "#e6e9ea", "horizon": "#c8cdce", "starAlpha": 0 },
+  "winter-dusk": { "top": "#58607a", "bottom": "#bf9a8c", "horizon": "#8a8590", "starAlpha": 0.4 },
+  "winter-night": { "top": "#0b1026", "bottom": "#1d2742", "horizon": "#2c3550", "starAlpha": 1 }
+}
