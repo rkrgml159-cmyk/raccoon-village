@@ -242,6 +242,20 @@ describe('real data', () => {
     expect(total).toBe(14)
   })
 
+  it('quad-l rig is 48x40 with 14 frames and passes validateRig', () => {
+    const rig = RIGS['quad-l']
+    expect(rig.size).toEqual([48, 40])
+    expect(() => validateRig(rig)).not.toThrow()
+    const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
+    expect(total).toBe(14)
+  })
+
+  it('large quadruped species are registered on quad-l', () => {
+    for (const id of ['black-bear', 'wild-boar', 'water-deer', 'roe-deer', 'goral']) {
+      expect(SPECIES[id]?.rig, id).toBe('quad-l')
+    }
+  })
+
   it('every species composes every state frame 0 for its default variant', () => {
     for (const [id, sp] of Object.entries(SPECIES)) {
       const variant = resolveVariant(sp, defaultVariant(sp))
