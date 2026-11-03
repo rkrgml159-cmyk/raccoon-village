@@ -1,8 +1,11 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
+import { basename, dirname, extname } from 'node:path'
 import type { ChildProcess } from 'node:child_process'
 import { launchBrowser, parseArgs, sleep, startPreview, stopPreview, waitForUrl } from './lib'
 
 const PORT = 4175
+const M1_ACTIVE = 9.684
+const ACTIVE_THRESHOLD = 2.0
 
 interface Sample {
   t: number
@@ -15,6 +18,9 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2))
   const minutes = Number(args.minutes ?? 10)
   const interval = Number(args.interval ?? 30)
+  const nQuery = args.n ? `&n=${args.n}` : ''
+  const outPath = args.out ?? 'docs/metrics/M2a.md'
+  const title = basename(outPath, extname(outPath))
   const total = Math.max(1, Math.round((minutes * 60) / interval))
   const hiddenCount = Math.min(total - 1, Math.max(2, Math.round(total / 5)))
   const hiddenStart = Math.floor((total - hiddenCount) / 2)
@@ -29,7 +35,7 @@ async function main(): Promise<void> {
     try {
       const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
       const loadStart = Date.now()
-      await page.goto(`${base}w/?speed=1&seed=1`)
+      await page.goto(`${base}w/?speed=1&seed=1${nQuery}`)
       await page.waitForFunction(
         () => (window as unknown as { __rv?: { ready?: boolean } }).__rv?.ready === true,
       )
@@ -99,23 +105,28 @@ async function main(): Promise<void> {
       const activeMean = mean(samples.filter((s) => s.segment === 'active').map((s) => s.cpu))
       const hiddenMean = mean(samples.filter((s) => s.segment === 'hidden').map((s) => s.cpu))
       const ratio = activeMean > 0 ? hiddenMean / activeMean : NaN
-      const pass = ratio < 0.1
+      const hiddenPass = ratio < 0.1
+      const activeRatio = activeMean / M1_ACTIVE
+      const activePass = activeRatio <= ACTIVE_THRESHOLD
+      const pass = hiddenPass && activePass
       const summary = [
         `active mean: ${activeMean.toFixed(3)} cpu_s/${interval}s`,
         `hidden mean: ${hiddenMean.toFixed(3)} cpu_s/${interval}s`,
         `ratio hidden/active: ${(ratio * 100).toFixed(1)}%`,
         `first load (goto to __rv.ready): ${firstLoadMs} ms`,
         `observed fps over first 10 s (rAF callbacks / 10): ${observedFps.toFixed(1)}`,
-        `threshold (hidden < 10% of active): ${pass ? 'PASS' : 'FAIL'}`,
+        `threshold (hidden < 10% of active): ${hiddenPass ? 'PASS' : 'FAIL'}`,
+        `active vs M1 ${M1_ACTIVE} cpu_s/30s: ratio ${activeRatio.toFixed(2)} (threshold ${ACTIVE_THRESHOLD.toFixed(1)}) ${activePass ? 'PASS' : 'FAIL'}`,
       ]
       const md = [
-        '# M1 월페이퍼 전력 측정',
+        `# ${title} 월페이퍼 전력 측정`,
         '',
         `- 실행 시각: ${startedAt.toISOString()}`,
         `- Chromium: ${version}`,
         `- 환경: headless Chromium, software GL likely. WebGL renderer: ${glRenderer || 'unknown'}; UA: ${userAgent}`,
         '- hidden 구간은 `document.hidden`/`visibilityState`를 덮어써 에뮬레이트한 것이며 실제 브라우저 스로틀링이 아니다.',
-        `- 파라미터: minutes=${minutes}, interval=${interval}s, samples=${total}, hidden samples=${hiddenCount} (index ${hiddenStart}..${hiddenEnd - 1}), viewport=1280x720, url=/raccoon-village/w/?speed=1&seed=1`,
+        `- 파라미터: minutes=${minutes}, interval=${interval}s, samples=${total}, hidden samples=${hiddenCount} (index ${hiddenStart}..${hiddenEnd - 1}), viewport=1280x720, url=/raccoon-village/w/?speed=1&seed=1${nQuery}`,
+        `- 주민 수: n=${args.n ?? 'default 12'}`,
         '',
         '| time(s) | segment | cpu_s_per_' + interval + 's | heap_mb |',
         '| ---: | --- | ---: | ---: |',
@@ -128,8 +139,8 @@ async function main(): Promise<void> {
         ...summary.map((l) => `- ${l}`),
         '',
       ].join('\n')
-      mkdirSync('docs/metrics', { recursive: true })
-      writeFileSync('docs/metrics/M1.md', md)
+      mkdirSync(dirname(outPath), { recursive: true })
+      writeFileSync(outPath, md)
       console.log(summary.join('\n'))
       if (!pass) process.exitCode = 1
     } finally {
