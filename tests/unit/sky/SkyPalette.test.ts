@@ -35,7 +35,12 @@ describe('SkyPalette', () => {
     expect(getSky('nope')).toEqual(getSky('spring-day')))
   it('lerpHex midpoint', () => expect(lerpHex('#000000', '#ffffff', 0.5)).toBe('#808080'))
   it('lerpHex returns lowercase and handles uppercase input', () =>
-    expect(lerpHex('#AABBCC', '#AABBCC', 0.3)).toBe('#aabbcc'))
+    expect(lerpHex('#AABBCC', '#000000', 0.5)).toBe('#555e66'))
+  it('lerpHex clamps t to [0,1] and treats NaN as 0', () => {
+    expect(lerpHex('#000000', '#ffffff', -1)).toBe('#000000')
+    expect(lerpHex('#000000', '#ffffff', 2)).toBe('#ffffff')
+    expect(lerpHex('#102030', '#ffffff', NaN)).toBe('#102030')
+  })
   it('lerpSky blends colors and starAlpha', () => {
     const r = lerpSky(
       { top: '#000000', bottom: '#000000', horizon: '#000000', starAlpha: 0 },

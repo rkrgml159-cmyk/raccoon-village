@@ -15,10 +15,11 @@ export function getSky(key: string): SkyColors {
 }
 
 export function lerpHex(a: string, b: string, t: number): string {
+  const k = t > 0 ? Math.min(t, 1) : 0
   const ch = (h: string, i: number) => parseInt(h.slice(1 + i * 2, 3 + i * 2), 16)
   let out = '#'
   for (let i = 0; i < 3; i++) {
-    const v = Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * t)
+    const v = Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * k)
     out += v.toString(16).padStart(2, '0')
   }
   return out

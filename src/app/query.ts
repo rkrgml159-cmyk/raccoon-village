@@ -13,7 +13,8 @@ const flag = (v: string | null): boolean => v === '1' || v === 'true'
 export function parseQuery(search: string): BootOptions {
   const q = new URLSearchParams(search)
   const rawSpeed = Number(q.get('speed'))
-  const speed = Number.isFinite(rawSpeed) && rawSpeed > 0 ? Math.min(rawSpeed, MAX_SPEED) : 1
+  const speed =
+    Number.isFinite(rawSpeed) && rawSpeed > 0 ? Math.max(1, Math.min(rawSpeed, MAX_SPEED)) : 1
   const opts: BootOptions = { speed, still: flag(q.get('still')), debug: flag(q.get('debug')) }
   const at = q.get('at')
   if (at) opts.at = at

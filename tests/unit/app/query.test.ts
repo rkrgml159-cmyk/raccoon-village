@@ -16,6 +16,10 @@ describe('parseQuery', () => {
     expect(parseQuery('?speed=abc').speed).toBe(1)
     expect(parseQuery('?speed=0').speed).toBe(1)
   })
+  it('clamps sub-1 speed up to 1', () => {
+    expect(parseQuery('?speed=0.5').speed).toBe(1)
+    expect(parseQuery('?speed=0.001').speed).toBe(1)
+  })
   it('clamps speed to 3600', () => expect(parseQuery('?speed=99999').speed).toBe(3600))
   it('accepts true for flags and ignores other values', () => {
     expect(parseQuery('?still=true&debug=true')).toMatchObject({ still: true, debug: true })
