@@ -691,5 +691,254 @@
       }
     },
     "overlays": ["horns-goral", "chin-tuft", "tail-stub"]
+  },
+  "carrion-crow": {
+    "name": "까마귀",
+    "rig": "bird",
+    "scale": 0.7,
+    "share": 3,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "black": {
+        "B": "#1d1d22",
+        "b": "#34343c",
+        "W": "#26262c",
+        "L": "#2a2a2e",
+        "l": "#17171a",
+        "D": "#2a2a2e",
+        "E": "#4a4540",
+        "P": "#0a0a0a",
+        "N": "#17171a",
+        "M": "#1d1d22",
+        "m": "#34343c",
+        "H": "#3d3d48"
+      }
+    },
+    "overlays": ["beak-short"]
+  },
+  "magpie": {
+    "name": "까치",
+    "rig": "bird",
+    "scale": 0.7,
+    "share": 3,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "pied": {
+        "B": "#1c1c24",
+        "b": "#2d4a5e",
+        "W": "#f0eee8",
+        "L": "#2a2a2e",
+        "l": "#17171a",
+        "D": "#1c1c24",
+        "E": "#3a3028",
+        "P": "#0a0a0a",
+        "N": "#17171a",
+        "M": "#1c1c24",
+        "m": "#2d4a5e",
+        "H": "#f0eee8"
+      }
+    },
+    "overlays": ["beak-short", "tail-long", "wing-patch"]
+  },
+  "eagle-owl": {
+    "name": "수리부엉이",
+    "rig": "bird",
+    "scale": 0.9,
+    "share": 1,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "nocturnal": true,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "brown": {
+        "B": "#8a6a45",
+        "b": "#5e4429",
+        "W": "#d6c19a",
+        "L": "#b09a74",
+        "l": "#6e5a3e",
+        "D": "#3a3a3a",
+        "E": "#e39b3a",
+        "P": "#0d0d0d",
+        "N": "#3a3a3a",
+        "M": "#8a6a45",
+        "m": "#5e4429",
+        "H": "#a58760"
+      }
+    },
+    "overlays": ["beak-hooked", "ear-tufts-owl", "facial-disc"]
+  },
+  "woodpecker": {
+    "name": "딱따구리",
+    "rig": "bird",
+    "scale": 0.5,
+    "share": 2,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "pied-red": {
+        "B": "#25252a",
+        "b": "#3a3a42",
+        "W": "#f0ece4",
+        "L": "#5a5a5a",
+        "l": "#3a3a3a",
+        "D": "#2f2f33",
+        "E": "#f4f1ea",
+        "P": "#0a0a0a",
+        "N": "#2f2f33",
+        "M": "#25252a",
+        "m": "#3a3a42",
+        "H": "#d33b2f"
+      }
+    },
+    "overlays": ["beak-long", "crest"]
+  },
+  "jay": {
+    "name": "어치",
+    "rig": "bird",
+    "scale": 0.6,
+    "share": 2,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "pink-brown": {
+        "B": "#b4846f",
+        "b": "#8f6558",
+        "W": "#e0c9bc",
+        "L": "#c9a38d",
+        "l": "#8a6a5a",
+        "D": "#2c2c2c",
+        "E": "#f2efe8",
+        "P": "#111111",
+        "N": "#2c2c2c",
+        "M": "#b4846f",
+        "m": "#8f6558",
+        "H": "#d8b09c"
+      }
+    },
+    "overlays": ["beak-short", "wing-patch-blue"]
+  },
+  "pheasant": {
+    "name": "꿩",
+    "rig": "bird",
+    "scale": 0.9,
+    "share": 2,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "cock": {
+        "B": "#8c4a24",
+        "b": "#6b3516",
+        "W": "#4a3f2a",
+        "L": "#9a8a6a",
+        "l": "#6a5a40",
+        "D": "#d8c27a",
+        "E": "#f4f1ea",
+        "P": "#111111",
+        "N": "#6a5a40",
+        "M": "#b0702f",
+        "m": "#4a2f1a",
+        "H": "#c43a2f"
+      },
+      "hen": {
+        "B": "#a08258",
+        "b": "#7a5f3d",
+        "W": "#cbb68f",
+        "L": "#9a8a6a",
+        "l": "#6a5a40",
+        "D": "#9a8a70",
+        "E": "#f4f1ea",
+        "P": "#111111",
+        "N": "#6a5a40",
+        "M": "#b59a6c",
+        "m": "#5e4a30",
+        "H": "#cdb48a"
+      }
+    },
+    "overlays": ["beak-short", "tail-long-pheasant", "face-patch"]
   }
 }

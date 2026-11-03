@@ -1,0 +1,8 @@
+{
+  "id": "wing-patch",
+  "rigs": ["bird"],
+  "anchor": "back",
+  "layer": "above",
+  "offset": [-1, 2],
+  "rows": ["WWWW", "WWW."]
+}

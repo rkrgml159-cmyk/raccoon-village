@@ -1,0 +1,11 @@
+{
+  "id": "beak-hooked",
+  "rigs": ["bird"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [6, 3],
+  "rows": ["DD", ".D"],
+  "states": {
+    "sleep": { "offset": [0, 0], "rows": ["."] }
+  }
+}

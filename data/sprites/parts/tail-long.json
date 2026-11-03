@@ -1,0 +1,8 @@
+{
+  "id": "tail-long",
+  "rigs": ["bird"],
+  "anchor": "tail",
+  "layer": "above",
+  "offset": [-4, 0],
+  "rows": ["DDDDDD", "bbbbbb"]
+}

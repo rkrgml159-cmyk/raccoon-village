@@ -1,0 +1,28 @@
+{
+  "id": "tail-long-pheasant",
+  "rigs": ["bird"],
+  "anchor": "tail",
+  "layer": "above",
+  "offset": [-4, 0],
+  "rows": [
+    "..MMMM",
+    ".MMmMM",
+    ".MmMM.",
+    "MMMmM.",
+    "MmMM..",
+    "MMmM..",
+    "MmM...",
+    "mM....",
+    "M....."
+  ],
+  "states": {
+    "sit": {
+      "offset": [-4, 0],
+      "rows": ["..MMMM", ".MMmMM", "MMmMM.", "MmMM..", "mM...."]
+    },
+    "sleep": {
+      "offset": [-3, 0],
+      "rows": ["..MMMM", ".MMmMM", "MMmMM.", "MmMM..", "mM...."]
+    }
+  }
+}

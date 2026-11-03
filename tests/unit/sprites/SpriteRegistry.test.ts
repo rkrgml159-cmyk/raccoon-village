@@ -258,6 +258,21 @@ describe('real data', () => {
     expect(total).toBe(14)
   })
 
+  it('bird rig is 24x24 with 14 frames and passes validateRig', () => {
+    const rig = RIGS['bird']
+    expect(rig.size).toEqual([24, 24])
+    expect(() => validateRig(rig)).not.toThrow()
+    const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
+    expect(total).toBe(14)
+  })
+
+  it('the six mountain birds use the bird rig', () => {
+    for (const id of ['carrion-crow', 'magpie', 'eagle-owl', 'woodpecker', 'jay', 'pheasant']) {
+      expect(SPECIES[id]?.rig, id).toBe('bird')
+    }
+    expect(SPECIES['eagle-owl']?.nocturnal).toBe(true)
+  })
+
   it('heavy species use quad-l and deer species use quad-deer', () => {
     for (const id of ['black-bear', 'wild-boar', 'goral']) {
       expect(SPECIES[id]?.rig, id).toBe('quad-l')

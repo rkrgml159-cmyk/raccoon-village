@@ -1,0 +1,9 @@
+{
+  "id": "crest",
+  "rigs": ["bird"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [-1, -1],
+  "rows": [".XX.", "XXXX", "XXX."],
+  "fixed": "#d33b2f"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "ear-tufts-owl",
+  "rigs": ["bird"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [-1, -2],
+  "rows": ["B..B", "B..B"]
+}
