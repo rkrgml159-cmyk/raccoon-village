@@ -1,7 +1,8 @@
 import { policy, type Mode } from '@domain/wallpaper/PowerPolicy'
 
 export interface GameLike {
-  loop: { sleep(): void; wake(): void }
+  /** `running` mirrors Phaser.Core.TimeStep#running: sleep() is a no-op before the loop starts. */
+  loop: { sleep(): void; wake(): void; running?: boolean }
   events: { emit(ev: string): void }
 }
 export interface WindLike {
@@ -20,7 +21,7 @@ const RESUME = 'resume'
 /**
  * Apply PowerPolicy on visibility changes: stop the render loop while hidden (Phaser only pauses
  * its clock), and quiet the wind (only once it has been started). Returns apply() so callers can
- * run it once, e.g. when the page was opened in a background tab.
+ * run it once the loop is running, e.g. when the page was opened in a background tab.
  */
 export function bindPowerPolicy(
   game: GameLike,
@@ -37,8 +38,11 @@ export function bindPowerPolicy(
       reducedMotion: env.reducedMotion(),
     })
     if (targetFps === 0 && !sleeping) {
-      sleeping = true
+      // sleep() is a no-op while the loop has not started: stay "awake" so the next hidden
+      // event retries instead of being swallowed by the sleeping flag.
+      const canSleep = game.loop.running !== false
       game.loop.sleep()
+      sleeping = canSleep
     } else if (targetFps > 0 && sleeping) {
       sleeping = false
       game.loop.wake()

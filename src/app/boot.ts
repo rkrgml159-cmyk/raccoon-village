@@ -57,12 +57,15 @@ export function createGame(deps: BootDeps, parent = 'game'): Phaser.Game {
   })
 }
 
-/** Wire visibility → PowerPolicy, and apply it once after boot (background-tab start). */
+/**
+ * Wire visibility → PowerPolicy, and apply it once on the first frame (background-tab start).
+ * READY and postBoot both fire before TimeStep.start(), where loop.sleep() is still a no-op;
+ * the first PRE_STEP is the earliest point at which the loop can actually be put to sleep.
+ */
 export function bindPower(game: Phaser.Game, deps: BootDeps): void {
   const apply = bindPowerPolicy(game, deps.mode, deps.wind, WIND_GAIN, {
     doc: document,
     reducedMotion: () => matchMedia('(prefers-reduced-motion: reduce)').matches,
   })
-  if (game.isBooted) apply()
-  else game.events.once(Phaser.Core.Events.READY, apply)
+  game.events.once(Phaser.Core.Events.PRE_STEP, apply)
 }

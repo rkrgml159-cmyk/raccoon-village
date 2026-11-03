@@ -7,7 +7,10 @@ function setup(opts: { hidden?: boolean; wind?: string; mode?: 'play' | 'wallpap
     hidden: opts.hidden ?? false,
     addEventListener: (_t: 'visibilitychange', f: () => void) => listeners.push(f),
   }
-  const game = { loop: { sleep: vi.fn(), wake: vi.fn() }, events: { emit: vi.fn() } }
+  const game = {
+    loop: { sleep: vi.fn(), wake: vi.fn(), running: undefined as boolean | undefined },
+    events: { emit: vi.fn() },
+  }
   const wind = { state: opts.wind ?? 'running', fadeTo: vi.fn(), suspend: vi.fn() }
   const apply = bindPowerPolicy(game, opts.mode ?? 'wallpaper', wind, 0.12, {
     doc,
@@ -64,5 +67,29 @@ describe('bindPowerPolicy', () => {
     const { game, apply } = setup()
     apply()
     expect(game.loop.sleep).not.toHaveBeenCalled()
+  })
+  it('a no-op sleep before the loop runs is retried on the next hidden event', () => {
+    const { game, apply, fire } = setup({ hidden: true })
+    // Phaser's TimeStep.sleep() does nothing while running is false.
+    game.loop.running = false
+    apply()
+    expect(game.loop.sleep).toHaveBeenCalledTimes(1)
+    game.loop.running = true // loop started afterwards
+    fire(true)
+    expect(game.loop.sleep).toHaveBeenCalledTimes(2)
+    // and a real sleep is not repeated
+    game.loop.running = false
+    fire(true)
+    expect(game.loop.sleep).toHaveBeenCalledTimes(2)
+  })
+  it('a real sleep then wake round-trips with running state', () => {
+    const { game, fire } = setup()
+    game.loop.running = true
+    game.loop.sleep.mockImplementation(() => {
+      game.loop.running = false
+    })
+    fire(true)
+    fire(false)
+    expect(game.loop.wake).toHaveBeenCalledTimes(1)
   })
 })
