@@ -2,44 +2,57 @@ import Phaser from 'phaser'
 import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, type Resident } from '@domain/resident/Resident'
-import { tick } from '@domain/resident/UtilityAI'
-import { LANES, clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
+import { tick, profileFor, type Profile } from '@domain/resident/UtilityAI'
+import { createVillage } from '@domain/village/Village'
+import { showcaseLayout } from '@domain/village/Showcase'
+import { LANES, clampX, remapX, toScreen, walkRangeFor } from '@domain/village/Lanes'
+import { resolveVariant } from '@domain/sprites/Palette'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
-import {
-  RACCOON_KEYS,
-  generateRaccoonTextures,
-  registerRaccoonAnims,
-} from '../sprites/PlaceholderRaccoon'
+import { loadRegistry, animKey, defaultVariant, allVariants } from '@domain/sprites/SpriteRegistry'
+import { FOREST, PARTS, RIGS, SPECIES, TILES } from '@domain/sprites/catalog'
+import { STATES } from '@domain/sprites/validateRig'
+import { SpriteBank } from '../sprites/SpriteBank'
 import { SkyLayer } from '../sky/SkyLayer'
+import { ForestLayer } from '../background/ForestLayer'
 
 const RESIZE_DEBOUNCE_MS = 100
 const PORTRAIT_RATIO = 1.2
 /** Sprite pixels per world unit: a 40px-tall raccoon is ~1/9 of the viewport height. */
 const SPRITE_UNITS_PER_VIEW_HEIGHT = 360
-/** Placeholder raccoon texture width in px. */
-const SPRITE_WIDTH_PX = 48
+/** Screen pixels per sprite pixel at lane scale 1 on a 360-unit view. */
+const PX = 1.5
+const SHEET_GAP_X = 1.2
+const SHEET_GAP_Y = 1.3
+const RESIDENT_SPECIES = 'raccoon'
+const X_FALLBACK = [0.05, 0.95] as const
+const DEBUG_DEPTH = 10000
 const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
 
 /** Sprite scale: lane scale × the short viewport side (so portrait phones get a small raccoon). */
 function spriteScale(laneScale: number, view: { width: number; height: number }): number {
-  return (laneScale * Math.min(view.width, view.height)) / SPRITE_UNITS_PER_VIEW_HEIGHT
+  return (laneScale * PX * Math.min(view.width, view.height)) / SPRITE_UNITS_PER_VIEW_HEIGHT
 }
 
 export class VillageScene extends Phaser.Scene {
   readonly bus = new Emitter<GameEvents>()
 
-  private resident: Resident = createResident('raccoon-1', 0.5)
+  private residents: Resident[] = []
+  private sprites: Phaser.GameObjects.Sprite[] = []
+  private animKeys: string[] = []
+  private walkRanges = new Map<string, readonly [number, number]>()
+  private profiles = new Map<string, Profile>()
   private ctx!: DateContext
   private sky!: SkyLayer
+  private forest!: ForestLayer
   private blender!: SkyBlender
-  private sprite!: Phaser.GameObjects.Sprite
+  private bank!: SpriteBank
+  private sheetSprites: Phaser.GameObjects.Image[] = []
   private debugText?: Phaser.GameObjects.Text
-  private walkRange: readonly [number, number] = [0.05, 0.95]
   private resizeTimer: ReturnType<typeof setTimeout> | null = null
   private ready = false
-  private currentAnim = ''
   private stillShown = false
+  private laidOut = false
 
   constructor(private readonly deps: BootDeps) {
     super('village')
@@ -48,23 +61,41 @@ export class VillageScene extends Phaser.Scene {
   create(): void {
     const { deps } = this
     this.ready = false
-    this.currentAnim = ''
     this.stillShown = false
-    generateRaccoonTextures(this)
-    registerRaccoonAnims(this)
+    this.laidOut = false
+    try {
+      this.bank = new SpriteBank(this, loadRegistry({ rigs: RIGS, parts: PARTS, species: SPECIES }))
+    } catch (e) {
+      console.error('registry invalid', e)
+      return
+    }
+    this.sheetSprites = []
+    this.walkRanges.clear()
+    this.profiles.clear()
 
     this.ctx = computeDateContext(deps.clock.now())
     this.sky = new SkyLayer(this, deps.opts.seed ?? 0)
+    this.forest = new ForestLayer(this, FOREST, TILES, deps.opts.seed ?? 0)
     this.blender = new SkyBlender(getSky(this.ctx.skyKey), deps.blendMs)
-    this.sprite = this.add.sprite(0, 0, RACCOON_KEYS.idle[0]).setOrigin(0.5, 1)
-    for (const key of [...RACCOON_KEYS.idle, ...RACCOON_KEYS.walk, ...RACCOON_KEYS.sit]) {
-      this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+    this.residents = this.makeResidents()
+    for (const sp of new Set(this.residents.map((r) => r.species)))
+      this.profiles.set(sp, profileFor(SPECIES[sp]))
+    this.animKeys = this.residents.map(() => '')
+    this.sprites = this.residents.map((r) => {
+      this.bank.ensure(r.species, r.variant)
+      return this.add
+        .sprite(0, 0, this.bank.textureKey(r.species, r.variant, 'idle', 0))
+        .setOrigin(0.5, 1)
+    })
+    if (deps.opts.sheet && SPECIES[deps.opts.sheet]) {
+      for (const sprite of this.sprites) sprite.setVisible(false)
+      this.buildSheet(deps.opts.sheet)
     }
     if (deps.opts.debug) {
       this.debugText = this.add
         .text(0, 0, '', { fontFamily: 'monospace', fontSize: '14px', color: '#ffffff' })
         .setOrigin(0, 0)
-        .setDepth(100)
+        .setDepth(DEBUG_DEPTH)
     }
 
     const offSeason = this.bus.on('seasonChanged', ({ to }) => deps.wind.setSeason(to))
@@ -82,6 +113,7 @@ export class VillageScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, onResize)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       offSeason()
+      this.forest.destroy()
       this.game.events.off(Phaser.Core.Events.RESUME, onResume)
       this.scale.off(Phaser.Scale.Events.RESIZE, onResize)
       if (this.resizeTimer) clearTimeout(this.resizeTimer)
@@ -90,51 +122,65 @@ export class VillageScene extends Phaser.Scene {
     window.__rv = {
       ready: false,
       ctx: this.ctx,
-      resident: this.resident,
+      residents: this.residents,
+      resident: this.residents[0],
       audio: deps.wind.state,
     }
   }
 
   update(_t: number, dt: number): void {
     const { deps } = this
-    const still = deps.opts.still
+    const still = deps.opts.still || this.showcase
+    const sheet = this.sheetSprites.length > 0
 
-    if (still) {
+    if (sheet) {
+      this.blender.snapTo(getSky(this.ctx.skyKey))
+      this.placeSheet()
+    } else if (still) {
       this.blender.snapTo(getSky(this.ctx.skyKey))
       if (!this.stillShown) {
-        this.sprite.anims.stop()
-        this.sprite.setTexture(RACCOON_KEYS.idle[0])
+        this.residents.forEach((r, i) => {
+          this.sprites[i].anims.stop()
+          this.sprites[i].setTexture(this.bank.textureKey(r.species, r.variant, 'idle', 0))
+        })
         this.stillShown = true
       }
     } else {
-      const prev = this.resident
-      this.resident = tick(
-        this.resident,
-        dt,
-        { phase: this.ctx.phase, walkRange: this.walkRange },
-        deps.rng,
-      )
-      if (this.resident.state !== prev.state) {
-        this.bus.emit('residentStateChanged', {
-          id: this.resident.id,
-          state: this.resident.state,
-        })
-      }
       this.blender.update(dt)
-      const anim = `raccoon-${this.resident.state}`
-      if (anim !== this.currentAnim) {
-        this.sprite.play(anim)
-        this.currentAnim = anim
+      for (let i = 0; i < this.residents.length; i++) {
+        const prev = this.residents[i]
+        const next = tick(
+          prev,
+          dt,
+          {
+            phase: this.ctx.phase,
+            walkRange: this.walkRanges.get(prev.id) ?? X_FALLBACK,
+            profile: this.profiles.get(prev.species) as Profile,
+          },
+          deps.rng,
+        )
+        this.residents[i] = next
+        if (next.state !== prev.state) {
+          this.bus.emit('residentStateChanged', { id: next.id, state: next.state })
+        }
+        const anim = animKey(next.species, next.variant, next.state)
+        if (anim !== this.animKeys[i]) {
+          this.sprites[i].play(anim)
+          this.animKeys[i] = anim
+        }
       }
     }
 
+    this.forest.render(this.ctx.season, this.blender.current)
+    this.sky.setGroundY(this.forest.groundTop)
     this.sky.render(this.blender.current, this.ctx.moonPhase)
-    this.placeResident()
+    if (!sheet) this.placeResidents()
     this.updateDebug()
 
     if (window.__rv) {
       window.__rv.ctx = this.ctx
-      window.__rv.resident = this.resident
+      window.__rv.residents = this.residents
+      window.__rv.resident = this.residents[0]
       window.__rv.audio = deps.wind.state
       if (!this.ready) {
         this.ready = true
@@ -143,15 +189,93 @@ export class VillageScene extends Phaser.Scene {
     }
   }
 
-  private placeResident(): void {
+  private buildSheet(id: string): void {
+    const variant = defaultVariant(SPECIES[id])
+    this.bank.ensure(id, variant)
+    const rig = RIGS[SPECIES[id].rig]
+    for (const state of STATES) {
+      rig.frames[state].forEach((_f, index) => {
+        const img = this.add
+          .image(0, 0, this.bank.textureKey(id, variant, state, index))
+          .setOrigin(0.5, 1)
+          .setData('row', STATES.indexOf(state))
+          .setData('col', index)
+        this.sheetSprites.push(img)
+      })
+    }
+  }
+
+  private placeSheet(): void {
     const view = { width: this.scale.width, height: this.scale.height }
-    const r = this.resident
-    const { px, py, scale } = toScreen(r.lane, r.x, view)
-    this.sprite
-      .setPosition(px, py)
-      .setScale(spriteScale(scale, view))
-      .setFlipX(r.facing === 'left')
-      .setDepth(LANES.length + r.lane)
+    const [fw, fh] = this.bank.frameSize(this.deps.opts.sheet ?? RESIDENT_SPECIES)
+    const scale = spriteScale(1, view)
+    const dx = fw * scale * SHEET_GAP_X
+    const dy = fh * scale * SHEET_GAP_Y
+    const top = view.height / 2 - (dy * STATES.length) / 2 + dy
+    for (const img of this.sheetSprites) {
+      const row = img.getData('row') as number
+      const col = img.getData('col') as number
+      const count = this.sheetSprites.filter((o) => o.getData('row') === row).length
+      img
+        .setScale(scale)
+        .setPosition(view.width / 2 + (col - (count - 1) / 2) * dx, top + row * dy)
+        .setDepth(10)
+    }
+  }
+
+  private placeResidents(): void {
+    const view = { width: this.scale.width, height: this.scale.height }
+    for (let i = 0; i < this.residents.length; i++) {
+      const r = this.residents[i]
+      const { px, py, scale } = toScreen(r.lane, r.x, view)
+      this.sprites[i]
+        .setPosition(px, py)
+        .setScale(spriteScale(scale, view) * r.scale)
+        .setFlipX(r.facing === 'left')
+        .setDepth(r.lane * 1000 + py)
+    }
+  }
+
+  private get showcase(): boolean {
+    return this.deps.opts.species === 'all'
+  }
+
+  /** Residents are born inside the portrait visible range, so they need no remap afterwards. */
+  private spawnRange(): readonly [number, number] {
+    return this.isPortrait() ? VISIBLE_X.portrait : X_FALLBACK
+  }
+
+  private isPortrait(): boolean {
+    return this.scale.width / this.scale.height < PORTRAIT_RATIO
+  }
+
+  private makeResidents(): Resident[] {
+    const { opts } = this.deps
+    const bodyScaleOf = (id: string, v: string): number => resolveVariant(SPECIES[id], v).bodyScale
+    if (!this.showcase) {
+      return createVillage({
+        seed: opts.seed ?? 0,
+        n: opts.n,
+        species: SPECIES,
+        variantsOf: (_id, sp) => allVariants(sp),
+        bodyScaleOf,
+        halfWidthOf: (id, scale, lane) => {
+          const view = { width: this.scale.width, height: this.scale.height }
+          const display = spriteScale(LANES[lane].scale, view) * scale
+          return ((this.bank.frameSize(id)[0] / 2) * display) / view.width
+        },
+        range: this.spawnRange(),
+      })
+    }
+    return showcaseLayout(SPECIES).map(({ id, lane, x }) => {
+      const variant = defaultVariant(SPECIES[id])
+      return createResident(id, x, {
+        species: id,
+        variant,
+        lane,
+        scale: SPECIES[id].scale * bodyScaleOf(id, variant),
+      })
+    })
   }
 
   private refreshContext(snap: boolean): void {
@@ -173,15 +297,21 @@ export class VillageScene extends Phaser.Scene {
   private applyLayout(): void {
     const w = this.scale.width
     const h = this.scale.height
-    const portrait = w / h < PORTRAIT_RATIO
-    const laneScale = LANES[this.resident.lane].scale
-    const halfSpriteFrac =
-      ((SPRITE_WIDTH_PX / 2) * spriteScale(laneScale, { width: w, height: h })) / w
-    this.walkRange = walkRangeFor(
-      portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape,
-      halfSpriteFrac,
-    )
-    this.resident = { ...this.resident, x: clampX(this.resident.x, this.walkRange) }
+    const portrait = this.isPortrait()
+    const view = { width: w, height: h }
+    // Only a spawn over the full width needs remapping into the visible range.
+    const remap = !this.laidOut && !portrait
+    const visible = portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape
+    this.residents = this.residents.map((r) => {
+      const displayScale = spriteScale(LANES[r.lane].scale, view) * r.scale
+      const halfSpriteFrac = ((this.bank.frameSize(r.species)[0] / 2) * displayScale) / w
+      const range = walkRangeFor(visible, halfSpriteFrac)
+      this.walkRanges.set(r.id, range)
+      if (this.showcase) return r
+      const x = remap ? remapX(r.x, X_FALLBACK, range) : clampX(r.x, range)
+      return { ...r, x }
+    })
+    this.laidOut = true
     const cam = this.cameras.main
     // Portrait: zoom 2 centred on x 0.5 so lane x 0.25..0.75 fills the width.
     cam.setZoom(portrait ? 2 : 1)
@@ -189,7 +319,9 @@ export class VillageScene extends Phaser.Scene {
     cam.centerOn(w / 2, cy)
     const vw = w / cam.zoom
     const vh = h / cam.zoom
-    this.sky.resize(w, h, { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh })
+    const viewRect = { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh }
+    this.sky.resize(w, h, viewRect)
+    this.forest.resize(w, h, viewRect)
   }
 
   private updateDebug(): void {
@@ -199,7 +331,7 @@ export class VillageScene extends Phaser.Scene {
     const hh = String(hour).padStart(2, '0')
     const mm = String(minute).padStart(2, '0')
     this.debugText
-      .setText(`${skyKey} ${hh}:${mm} ${this.resident.state}`)
+      .setText(`${skyKey} ${hh}:${mm} ${this.residents[0]?.state ?? ''}`)
       .setScale(1 / cam.zoom)
       .setPosition(cam.worldView.x + 4 / cam.zoom, cam.worldView.y + 4 / cam.zoom)
   }

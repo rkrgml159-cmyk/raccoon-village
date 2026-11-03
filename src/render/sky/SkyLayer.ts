@@ -4,7 +4,7 @@ import { lerpHex, type SkyColors } from '@domain/sky/SkyPalette'
 
 const HORIZON_Y = 0.6
 const SKY_BANDS = 24
-const SKYLINE_COUNT = 10
+const SKY_OVERLAP = 2
 const STAR_COUNT = 30
 const STAR_BAND = HORIZON_Y - 0.1
 const MOON_X = 0.78
@@ -19,36 +19,23 @@ export interface View {
   height: number
 }
 
-interface Block {
-  x: number
-  w: number
-  h: number
-}
-
 const toInt = (hex: string): number => parseInt(hex.slice(1), 16)
 
 export class SkyLayer {
   private readonly sky: Phaser.GameObjects.Graphics
   private readonly stars: Phaser.GameObjects.Graphics
   private readonly moon: Phaser.GameObjects.Graphics
-  private readonly blocks: Block[] = []
   private readonly starPos: { x: number; y: number }[] = []
   private w = 0
   private h = 0
   private view: View = { x: 0, y: 0, width: 0, height: 0 }
+  private groundY = Number.POSITIVE_INFINITY
   private lastColors: SkyColors | null = null
   private lastMoon = -1
   private lastStarAlpha = -1
 
   constructor(scene: Phaser.Scene, seed: number) {
     const rng = mulberry32(seed)
-    for (let i = 0; i < SKYLINE_COUNT; i++) {
-      this.blocks.push({
-        x: (i + rng() * 0.8) / SKYLINE_COUNT,
-        w: 0.04 + rng() * 0.08,
-        h: 0.05 + rng() * 0.2,
-      })
-    }
     for (let i = 0; i < STAR_COUNT; i++) {
       this.starPos.push({ x: rng(), y: rng() * STAR_BAND })
     }
@@ -64,6 +51,13 @@ export class SkyLayer {
     this.lastColors = null
     this.lastMoon = -1
     this.drawStars()
+  }
+
+  /** World y where the opaque ground band actually starts; the sky is only painted above it. */
+  setGroundY(groundY: number): void {
+    if (groundY === this.groundY) return
+    this.groundY = groundY
+    this.lastColors = null
   }
 
   render(c: SkyColors, moonPhase: number): void {
@@ -93,15 +87,14 @@ export class SkyLayer {
     // never shows the background.
     const top = y - 2
     const bandH = (vh + 4) / SKY_BANDS
+    // Below the ground line the opaque forest ground covers the view, so stop painting there.
+    const bottom = Math.min(this.groundY + SKY_OVERLAP, y + vh + 2)
     for (let i = 0; i < SKY_BANDS; i++) {
+      const bandTop = top + i * bandH
+      if (bandTop >= bottom) break
       g.fillStyle(toInt(lerpHex(c.top, c.bottom, i / (SKY_BANDS - 1))), 1)
-      g.fillRect(x - 2, top + i * bandH, vw + 4, bandH + 1)
+      g.fillRect(x - 2, bandTop, vw + 4, Math.min(bandH + 1, bottom - bandTop))
     }
-    const horizonY = this.h * HORIZON_Y
-    g.fillStyle(toInt(c.horizon), 1)
-    for (const b of this.blocks) g.fillRect(x + b.x * vw, horizonY - b.h * vh, b.w * vw, b.h * vh)
-    g.fillStyle(toInt(lerpHex(c.horizon, '#000000', 0.12)), 1)
-    g.fillRect(x - 2, horizonY, vw + 4, y + vh + 2 - horizonY)
   }
 
   private drawStars(): void {

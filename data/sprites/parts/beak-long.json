@@ -1,0 +1,11 @@
+{
+  "id": "beak-long",
+  "rigs": ["bird"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [6, 3],
+  "rows": ["DDD"],
+  "states": {
+    "sleep": { "offset": [0, 0], "rows": ["."] }
+  }
+}

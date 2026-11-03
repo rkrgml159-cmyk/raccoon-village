@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 
-const STILL = '?at=2026-01-15T22:00&seed=1&still=1'
+const STILL = '?at=2026-01-15T22:00&seed=1&still=1&n=12'
 
 for (const path of ['', 'w/']) {
   test(`${path || 'play'} loads without console errors`, async ({ page }) => {
@@ -29,8 +29,18 @@ test('wallpaper sound button starts audio', async ({ page }) => {
 test('resident changes state over real time', async ({ page }) => {
   await page.goto('/raccoon-village/?at=2026-04-10T12:00&seed=5')
   await page.waitForFunction(() => window.__rv?.ready)
-  const s0 = await page.evaluate(() => window.__rv?.resident.state)
-  await page.waitForFunction((s) => window.__rv?.resident.state !== s, s0, {
-    timeout: 40000,
-  })
+  const s0 = await page.evaluate(() => window.__rv?.residents.map((r) => r.state) ?? [])
+  await page.waitForFunction(
+    (initial) => window.__rv?.residents.some((r, i) => r.state !== initial[i]),
+    s0,
+    { timeout: 40000 },
+  )
+})
+
+test('showcase shows all species', async ({ page, isMobile }) => {
+  test.skip(isMobile || page.viewportSize()?.width === 390, 'desktop only')
+  await page.goto('/raccoon-village/?species=all&at=2026-04-10T12:00&seed=1')
+  await page.waitForFunction(() => window.__rv?.ready)
+  expect(await page.evaluate(() => window.__rv?.residents.length)).toBe(25)
+  await expect(page).toHaveScreenshot('showcase.png')
 })

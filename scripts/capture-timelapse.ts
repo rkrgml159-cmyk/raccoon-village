@@ -8,6 +8,7 @@ const PORT = 4174
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2))
   const at = args.at ?? '2026-10-10T05:00'
+  const nQuery = args.n ? `&n=${args.n}` : ''
   const seconds = Number(args.seconds ?? 150)
   const outDir = resolve(args.out ?? 'captures')
   mkdirSync(outDir, { recursive: true })
@@ -27,7 +28,7 @@ async function main(): Promise<void> {
       })
       const page = await context.newPage()
       const video = page.video()
-      await page.goto(`${base}w/?at=${encodeURIComponent(at)}&speed=600&seed=1`)
+      await page.goto(`${base}w/?at=${encodeURIComponent(at)}&speed=600&seed=1${nQuery}`)
       await page.waitForFunction(
         () => (window as unknown as { __rv?: { ready?: boolean } }).__rv?.ready === true,
       )

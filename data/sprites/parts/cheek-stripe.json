@@ -1,0 +1,14 @@
+{
+  "id": "cheek-stripe",
+  "rigs": ["quad-s"],
+  "anchor": "back",
+  "layer": "above",
+  "offset": [-5, 1],
+  "rows": ["LLLLLLLLLLLL", "WWWWWWWWWWWW", "LLLLLLLLLLLL"],
+  "states": {
+    "sit": {
+      "offset": [1, -2],
+      "rows": [".LWL", "LWL.", "LWL.", "LWL.", "LWL.", "LWL."]
+    }
+  }
+}

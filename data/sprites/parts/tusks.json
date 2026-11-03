@@ -1,0 +1,9 @@
+{
+  "id": "tusks",
+  "rigs": ["quad-l"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [11, 7],
+  "rows": [".X", "XX"],
+  "fixed": "#e9e0c8"
+}

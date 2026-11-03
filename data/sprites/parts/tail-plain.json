@@ -1,0 +1,8 @@
+{
+  "id": "tail-plain",
+  "rigs": ["raccoon"],
+  "anchor": "tail",
+  "layer": "above",
+  "offset": [0, 0],
+  "rows": ["."]
+}

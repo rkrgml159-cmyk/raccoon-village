@@ -1,0 +1,8 @@
+{
+  "id": "muzzle-deer",
+  "rigs": ["quad-deer"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [7, 2],
+  "rows": ["WWW.", "WWWN", "WWW.", ".WW."]
+}

@@ -14,6 +14,7 @@
     "lint": "eslint . && prettier -c .",
     "e2e": "playwright test",
     "capture": "playwright test --update-snapshots",
+    "capture:sheet": "tsx scripts/capture-sheet.ts",
     "capture:timelapse": "tsx scripts/capture-timelapse.ts",
     "measure:wall": "tsx scripts/measure-wallpaper.ts"
   },

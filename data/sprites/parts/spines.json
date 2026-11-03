@@ -1,0 +1,35 @@
+{
+  "id": "spines",
+  "rigs": ["quad-s"],
+  "anchor": "back",
+  "layer": "above",
+  "offset": [-7, -2],
+  "rows": [
+    "l.l.l.l.l.l.l.l..",
+    ".LLLLLLLLLLLLLL..",
+    ".LlLlLlLlLlLlLl..",
+    "LlLlLlLlLlLlLlLl.",
+    "lL.Ll.lL.Ll.lL.Ll",
+    "L.L.L.L.L.L.L.L.L",
+    ".l..l..l..l..l..."
+  ],
+  "states": {
+    "sit": {
+      "offset": [-6, -4],
+      "rows": [
+        ".........L.L",
+        ".......LlLl.",
+        "......LlLl..",
+        ".....LlLl...",
+        "....LlLlL...",
+        "....lLlLl...",
+        "....LlLlL...",
+        "...LlLlLl...",
+        ".lLlLlLlL...",
+        "lLlLlLlLl...",
+        "LlLlLlL.....",
+        ".LlLlL......"
+      ]
+    }
+  }
+}

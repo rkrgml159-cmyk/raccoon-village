@@ -1,8 +1,10 @@
-export type ResidentState = 'idle' | 'walk' | 'sit'
+export type ResidentState = 'idle' | 'walk' | 'sit' | 'sleep'
 
 export interface Resident {
   id: string
-  species: 'raccoon'
+  species: string
+  variant: string
+  scale: number
   lane: 0 | 1 | 2
   x: number
   facing: 'left' | 'right'
@@ -13,11 +15,18 @@ export interface Resident {
   history: ResidentState[]
 }
 
-export function createResident(id: string, x = 0.5): Resident {
+/** The domain does not know the registry: callers pass the default variant in `init`. */
+export function createResident(
+  id: string,
+  x = 0.5,
+  init: Partial<Pick<Resident, 'species' | 'variant' | 'scale' | 'lane'>> = {},
+): Resident {
   return {
     id,
-    species: 'raccoon',
-    lane: 1,
+    species: init.species ?? 'raccoon',
+    variant: init.variant ?? '',
+    scale: init.scale ?? 1,
+    lane: init.lane ?? 1,
     x,
     facing: 'right',
     state: 'idle',

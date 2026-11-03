@@ -1,0 +1,9 @@
+{
+  "id": "wing-patch-blue",
+  "rigs": ["bird"],
+  "anchor": "back",
+  "layer": "above",
+  "offset": [-1, 2],
+  "rows": ["XXXX", "XXX."],
+  "fixed": "#4f7fbf"
+}

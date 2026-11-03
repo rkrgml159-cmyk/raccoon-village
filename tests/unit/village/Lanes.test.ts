@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
+import { clampX, remapX, toScreen, walkRangeFor } from '@domain/village/Lanes'
 
 describe('Lanes', () => {
   it('maps lane 1 center to screen', () => {
@@ -24,5 +24,17 @@ describe('Lanes', () => {
   })
   it('walkRangeFor never inverts: collapses to the centre', () => {
     expect(walkRangeFor([0.25, 0.75], 0.4)).toEqual([0.5, 0.5])
+  })
+  it('walkRangeFor collapses to centre for a bear on a narrow portrait', () => {
+    expect(walkRangeFor([0.25, 0.75], 0.3)).toEqual([0.5, 0.5])
+  })
+  it('remapX maps endpoints and midpoint linearly', () => {
+    expect(remapX(0.05, [0.05, 0.95], [0.3, 0.7])).toBeCloseTo(0.3, 9)
+    expect(remapX(0.95, [0.05, 0.95], [0.3, 0.7])).toBeCloseTo(0.7, 9)
+    expect(remapX(0.5, [0.05, 0.95], [0.3, 0.7])).toBeCloseTo(0.5, 9)
+  })
+  it('remapX returns the centre of a collapsed range', () => {
+    expect(remapX(0.2, [0.05, 0.95], [0.5, 0.5])).toBe(0.5)
+    expect(remapX(0.2, [0.4, 0.4], [0.3, 0.7])).toBeCloseTo(0.5, 9)
   })
 })

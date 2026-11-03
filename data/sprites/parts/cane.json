@@ -1,0 +1,37 @@
+{
+  "id": "cane",
+  "rigs": ["biped"],
+  "anchor": "front",
+  "layer": "above",
+  "offset": [0, 0],
+  "rows": [
+    "DDD",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D",
+    "..D"
+  ],
+  "states": {
+    "sit": {
+      "offset": [0, 0],
+      "rows": ["."]
+    },
+    "sleep": {
+      "offset": [0, 0],
+      "rows": ["."]
+    }
+  }
+}

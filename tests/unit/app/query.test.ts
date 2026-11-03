@@ -6,11 +6,13 @@ describe('parseQuery', () => {
     expect(parseQuery('?at=2026-01-15T22:00&speed=600&seed=7&still=1&debug=1')).toEqual({
       at: '2026-01-15T22:00',
       speed: 600,
+      n: 12,
       seed: 7,
       still: true,
       debug: true,
     }))
-  it('defaults', () => expect(parseQuery('')).toEqual({ speed: 1, still: false, debug: false }))
+  it('defaults', () =>
+    expect(parseQuery('')).toEqual({ speed: 1, n: 12, still: false, debug: false }))
   it('rejects bad speed', () => expect(parseQuery('?speed=-5').speed).toBe(1))
   it('rejects non-numeric speed and zero', () => {
     expect(parseQuery('?speed=abc').speed).toBe(1)
@@ -26,10 +28,28 @@ describe('parseQuery', () => {
     expect(parseQuery('?still=0&debug=no')).toMatchObject({ still: false, debug: false })
   })
   it('ignores non-numeric seed and empty at', () => {
-    expect(parseQuery('?seed=x&at=')).toEqual({ speed: 1, still: false, debug: false })
+    expect(parseQuery('?seed=x&at=')).toEqual({ speed: 1, n: 12, still: false, debug: false })
   })
   it('drops an unparseable at', () => {
     expect(parseQuery('?at=garbage')).not.toHaveProperty('at')
     expect(parseQuery('?at=2026-01-15Tzz:00')).not.toHaveProperty('at')
   })
+  it('parses sheet=raccoon', () => {
+    expect(parseQuery('?sheet=raccoon').sheet).toBe('raccoon')
+  })
+  it('ignores empty sheet', () => {
+    expect(parseQuery('?sheet=')).not.toHaveProperty('sheet')
+  })
+  it('n defaults to 12', () => expect(parseQuery('').n).toBe(12))
+  it('n clamps to [1,40]', () => {
+    expect(parseQuery('?n=0').n).toBe(1)
+    expect(parseQuery('?n=999').n).toBe(40)
+    expect(parseQuery('?n=7').n).toBe(7)
+  })
+  it('n=abc falls back to 12', () => {
+    expect(parseQuery('?n=abc').n).toBe(12)
+    expect(parseQuery('?n=').n).toBe(12)
+  })
+  it('species=all parsed', () => expect(parseQuery('?species=all').species).toBe('all'))
+  it('species=foo ignored', () => expect(parseQuery('?species=foo')).not.toHaveProperty('species'))
 })

@@ -1,0 +1,1047 @@
+{
+  "raccoon": {
+    "name": "너구리",
+    "rig": "raccoon",
+    "scale": 1.0,
+    "share": 0,
+    "lanes": [0.3, 0.4, 0.3],
+    "walkSpeed": 0.06,
+    "nocturnal": true,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.22,
+        "sit": 0.1,
+        "sleep": 0.08
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "grey": {
+        "B": "#8a8f99",
+        "b": "#6b7079",
+        "W": "#e9e4d8",
+        "L": "#55585f",
+        "l": "#3c3f45",
+        "D": "#2b2b2b",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#2b2b2b",
+        "m": "#2b2b2b",
+        "H": "#b5b9c2"
+      },
+      "brown": {
+        "B": "#7a5c43",
+        "b": "#5c4331",
+        "W": "#d9ccb5",
+        "L": "#4a3a2e",
+        "l": "#33271f",
+        "D": "#241b16",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#2a2019",
+        "m": "#2a2019",
+        "H": "#a58566"
+      },
+      "cinnamon": {
+        "B": "#a8673a",
+        "b": "#824d2a",
+        "W": "#e6cfae",
+        "L": "#5a3a24",
+        "l": "#3f2918",
+        "D": "#2a1c12",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#4a2f1d",
+        "m": "#4a2f1d",
+        "H": "#cf8f5e"
+      },
+      "blonde": {
+        "B": "#cfae7a",
+        "b": "#a8885a",
+        "W": "#f1e6cf",
+        "L": "#7a6444",
+        "l": "#594830",
+        "D": "#2f261c",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#6e5638",
+        "m": "#6e5638",
+        "H": "#e7cf9f"
+      },
+      "melanistic": {
+        "B": "#2f2d2c",
+        "b": "#1f1e1d",
+        "W": "#4a4745",
+        "L": "#181717",
+        "l": "#0f0e0e",
+        "D": "#0c0b0b",
+        "E": "#cfc8bb",
+        "P": "#0a0a0a",
+        "N": "#0a0a0a",
+        "M": "#141313",
+        "m": "#141313",
+        "H": "#55514f"
+      },
+      "albino": {
+        "B": "#f3efe8",
+        "b": "#d9d2c5",
+        "W": "#fbf7ee",
+        "L": "#cfc7ba",
+        "l": "#b5ad9f",
+        "D": "#8a5a5a",
+        "E": "#fff8f0",
+        "P": "#7a2a2a",
+        "N": "#d98a8a",
+        "M": "#e6dccb",
+        "m": "#e6dccb",
+        "H": "#ffffff"
+      }
+    },
+    "overlays": ["ears-round"],
+    "axes": {
+      "kind": {
+        "common": [],
+        "crab-eating": ["ears-small", "coat-short"],
+        "cozumel": ["tail-gold-tip"]
+      },
+      "mask": {
+        "default": ["mask-default"],
+        "wide": ["mask-wide"],
+        "one-eye": ["mask-one-eye"],
+        "none": []
+      },
+      "tail": {
+        "3": ["tail-stripes-3"],
+        "5": ["tail-stripes-5"],
+        "7": ["tail-stripes-7"],
+        "plain": ["tail-plain"]
+      },
+      "body": {
+        "normal": 1.0,
+        "chubby": 1.1,
+        "slim": 0.9,
+        "baby": 0.7
+      }
+    }
+  },
+  "korean-raccoon-dog": {
+    "name": "한국너구리",
+    "rig": "quad-s",
+    "scale": 1.0,
+    "share": 3,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "palettes": {
+      "brown": {
+        "B": "#6b5440",
+        "b": "#4f3d2e",
+        "W": "#a89880",
+        "L": "#3b2e24",
+        "l": "#2a2019",
+        "D": "#1f1812",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#14100d",
+        "M": "#241b15",
+        "m": "#241b15",
+        "H": "#8c7459"
+      }
+    },
+    "overlays": ["ears-round", "mask-dog", "tail-short"]
+  },
+  "fox": {
+    "name": "여우",
+    "rig": "quad-s",
+    "scale": 0.95,
+    "share": 3,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "palettes": {
+      "red": {
+        "B": "#c8642a",
+        "b": "#9c4a1f",
+        "W": "#efe3cf",
+        "L": "#3a2a22",
+        "l": "#2a1d17",
+        "D": "#2a1d17",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#3a2a22",
+        "m": "#3a2a22",
+        "H": "#e08a4a"
+      },
+      "grey": {
+        "B": "#8d8a85",
+        "b": "#6a6764",
+        "W": "#e6e1d6",
+        "L": "#2f2d2b",
+        "l": "#211f1e",
+        "D": "#211f1e",
+        "E": "#f0ece2",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#2f2d2b",
+        "m": "#2f2d2b",
+        "H": "#b3afa8"
+      }
+    },
+    "overlays": ["ears-pointed", "tail-bushy", "muzzle-long"]
+  },
+  "leopard-cat": {
+    "name": "삵",
+    "rig": "quad-s",
+    "scale": 0.9,
+    "share": 2,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "nocturnal": true,
+    "palettes": {
+      "spotted": {
+        "B": "#b89a6a",
+        "b": "#8f7548",
+        "W": "#efe6d2",
+        "L": "#9d8052",
+        "l": "#7b6240",
+        "D": "#2a2118",
+        "E": "#e6d9a0",
+        "P": "#111111",
+        "N": "#8a5a55",
+        "M": "#3a2c1e",
+        "m": "#3a2c1e",
+        "H": "#d3b98a"
+      }
+    },
+    "overlays": ["ears-pointed", "tail-thin", "spots"]
+  },
+  "marten": {
+    "name": "담비",
+    "rig": "quad-s",
+    "scale": 0.8,
+    "share": 2,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "nocturnal": true,
+    "palettes": {
+      "yellow-throat": {
+        "B": "#6b4a2c",
+        "b": "#4d341e",
+        "W": "#d9a640",
+        "L": "#3a2819",
+        "l": "#2a1c11",
+        "D": "#2a1c11",
+        "E": "#e9e2cf",
+        "P": "#111111",
+        "N": "#111111",
+        "M": "#3a2819",
+        "m": "#3a2819",
+        "H": "#8a6540"
+      }
+    },
+    "overlays": ["ears-round", "tail-bushy"]
+  },
+  "badger": {
+    "name": "오소리",
+    "rig": "quad-s",
+    "scale": 1.0,
+    "share": 2,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "nocturnal": true,
+    "palettes": {
+      "grey": {
+        "B": "#6e6f72",
+        "b": "#55565a",
+        "W": "#e9e6df",
+        "L": "#26262a",
+        "l": "#1a1a1d",
+        "D": "#17171a",
+        "E": "#e8e6e0",
+        "P": "#0e0e0e",
+        "N": "#111111",
+        "M": "#1c1c1f",
+        "m": "#1c1c1f",
+        "H": "#8c8d91"
+      }
+    },
+    "overlays": ["ears-tiny", "muzzle-stripe", "tail-short"]
+  },
+  "weasel": {
+    "name": "족제비",
+    "rig": "quad-s",
+    "scale": 0.55,
+    "share": 3,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.1,
+    "nocturnal": true,
+    "palettes": {
+      "brown": {
+        "B": "#8a5a32",
+        "b": "#6a4224",
+        "W": "#efe6d0",
+        "L": "#6a4224",
+        "l": "#4f311a",
+        "D": "#2a1a0e",
+        "E": "#efe6d0",
+        "P": "#111111",
+        "N": "#111111",
+        "M": "#6a4224",
+        "m": "#6a4224",
+        "H": "#a9774a"
+      },
+      "winter-white": {
+        "B": "#f1efe9",
+        "b": "#d9d5cc",
+        "W": "#fbfaf6",
+        "L": "#d9d5cc",
+        "l": "#bdb8ad",
+        "D": "#3a3a3a",
+        "E": "#ffffff",
+        "P": "#101010",
+        "N": "#101010",
+        "M": "#d9d5cc",
+        "m": "#d9d5cc",
+        "H": "#ffffff"
+      }
+    },
+    "overlays": ["ears-tiny", "tail-thin"]
+  },
+  "otter": {
+    "name": "수달",
+    "rig": "quad-s",
+    "scale": 0.9,
+    "share": 2,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "palettes": {
+      "brown": {
+        "B": "#6b4a33",
+        "b": "#4d3424",
+        "W": "#c9b496",
+        "L": "#4d3424",
+        "l": "#382619",
+        "D": "#241a12",
+        "E": "#e8e2d4",
+        "P": "#100c09",
+        "N": "#100c09",
+        "M": "#4d3424",
+        "m": "#4d3424",
+        "H": "#8c6a4c"
+      }
+    },
+    "overlays": ["ears-tiny", "tail-flat"]
+  },
+  "hare": {
+    "name": "멧토끼",
+    "rig": "quad-s",
+    "scale": 0.75,
+    "share": 3,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.07,
+    "palettes": {
+      "brown": {
+        "B": "#a07a4f",
+        "b": "#7d5c38",
+        "W": "#eadfc7",
+        "L": "#7d5c38",
+        "l": "#5c4228",
+        "D": "#3a2a18",
+        "E": "#efe6d0",
+        "P": "#111111",
+        "N": "#3a2a20",
+        "M": "#7d5c38",
+        "m": "#7d5c38",
+        "H": "#c19c70"
+      }
+    },
+    "overlays": ["ears-long", "tail-short"]
+  },
+  "chipmunk": {
+    "name": "다람쥐",
+    "rig": "quad-s",
+    "scale": 0.45,
+    "share": 4,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.1,
+    "palettes": {
+      "striped": {
+        "B": "#b2793f",
+        "b": "#8a5a2a",
+        "W": "#efe6d2",
+        "L": "#3a2a1c",
+        "l": "#2a1d12",
+        "D": "#2a1d12",
+        "E": "#efe6d2",
+        "P": "#111111",
+        "N": "#111111",
+        "M": "#3a2a1c",
+        "m": "#3a2a1c",
+        "H": "#d19a5c"
+      }
+    },
+    "overlays": ["ears-round", "tail-bushy", "cheek-stripe"]
+  },
+  "red-squirrel": {
+    "name": "청설모",
+    "rig": "quad-s",
+    "scale": 0.5,
+    "share": 4,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.1,
+    "palettes": {
+      "dark-grey": {
+        "B": "#5a5d62",
+        "b": "#404348",
+        "W": "#d8d4cb",
+        "L": "#2d2f33",
+        "l": "#202226",
+        "D": "#202226",
+        "E": "#e8e6e0",
+        "P": "#0e0e0e",
+        "N": "#0e0e0e",
+        "M": "#2d2f33",
+        "m": "#2d2f33",
+        "H": "#7d8087"
+      }
+    },
+    "overlays": ["ear-tufts", "tail-bushy"]
+  },
+  "hedgehog": {
+    "name": "고슴도치",
+    "rig": "quad-s",
+    "scale": 0.5,
+    "share": 2,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.04,
+    "nocturnal": true,
+    "palettes": {
+      "brown": {
+        "B": "#8a7a64",
+        "b": "#6a5b48",
+        "W": "#cdbfa5",
+        "L": "#3f3326",
+        "l": "#2b2218",
+        "D": "#2b2218",
+        "E": "#e8e2d4",
+        "P": "#100c09",
+        "N": "#100c09",
+        "M": "#3f3326",
+        "m": "#3f3326",
+        "H": "#a8977c"
+      }
+    },
+    "overlays": ["ears-tiny", "spines"]
+  },
+  "mole": {
+    "name": "두더지",
+    "rig": "quad-s",
+    "scale": 0.45,
+    "share": 1,
+    "lanes": [0.2, 0.3, 0.5],
+    "walkSpeed": 0.04,
+    "nocturnal": true,
+    "palettes": {
+      "black": {
+        "B": "#2b2a2d",
+        "b": "#1c1b1e",
+        "W": "#46444a",
+        "L": "#3a383d",
+        "l": "#29272b",
+        "D": "#111111",
+        "E": "#8a8a8a",
+        "P": "#000000",
+        "N": "#000000",
+        "M": "#111111",
+        "m": "#111111",
+        "H": "#4a484e"
+      }
+    },
+    "overlays": ["nose-pink", "tail-short"]
+  },
+  "black-bear": {
+    "name": "반달가슴곰",
+    "rig": "quad-l",
+    "scale": 1.7,
+    "share": 1,
+    "lanes": [0.5, 0.4, 0.1],
+    "walkSpeed": 0.045,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.15,
+        "sit": 0.15,
+        "sleep": 0.1
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "black": {
+        "B": "#2d2b29",
+        "b": "#1f1d1c",
+        "W": "#7a6347",
+        "L": "#1b1a19",
+        "l": "#111010",
+        "D": "#0d0c0c",
+        "E": "#d8d0bf",
+        "P": "#050505",
+        "N": "#0a0a0a",
+        "M": "#1b1a19",
+        "m": "#1b1a19",
+        "H": "#47423d"
+      },
+      "brown": {
+        "B": "#5e4130",
+        "b": "#46301f",
+        "W": "#9a7a58",
+        "L": "#35261b",
+        "l": "#24180f",
+        "D": "#1a120c",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#150f0b",
+        "M": "#35261b",
+        "m": "#35261b",
+        "H": "#7a5a40"
+      }
+    },
+    "overlays": ["ears-bear", "chest-crescent", "tail-stub"]
+  },
+  "wild-boar": {
+    "name": "멧돼지",
+    "rig": "quad-l",
+    "scale": 1.5,
+    "share": 1,
+    "lanes": [0.5, 0.4, 0.1],
+    "walkSpeed": 0.045,
+    "nocturnal": true,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.15,
+        "sit": 0.15,
+        "sleep": 0.1
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "dark-brown": {
+        "B": "#4d3b2f",
+        "b": "#352a21",
+        "W": "#75604d",
+        "L": "#2c221b",
+        "l": "#1e1612",
+        "D": "#19120e",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#2b1d1a",
+        "M": "#2c221b",
+        "m": "#2c221b",
+        "H": "#6a5645"
+      }
+    },
+    "overlays": ["snout-boar", "tusks", "mane-boar", "tail-stub"]
+  },
+  "water-deer": {
+    "name": "고라니",
+    "rig": "quad-deer",
+    "scale": 1.3,
+    "share": 2,
+    "lanes": [0.5, 0.4, 0.1],
+    "walkSpeed": 0.045,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.15,
+        "sit": 0.15,
+        "sleep": 0.1
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "tan": {
+        "B": "#b2905f",
+        "b": "#8d6d45",
+        "W": "#e4d6b8",
+        "L": "#5f4831",
+        "l": "#43321f",
+        "D": "#3a2a1b",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#1d140e",
+        "M": "#5f4831",
+        "m": "#5f4831",
+        "H": "#cfae7c"
+      }
+    },
+    "overlays": ["muzzle-deer", "tusks-small", "tail-stub"]
+  },
+  "roe-deer": {
+    "name": "노루",
+    "rig": "quad-deer",
+    "scale": 1.35,
+    "share": 2,
+    "lanes": [0.5, 0.4, 0.1],
+    "walkSpeed": 0.045,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.15,
+        "sit": 0.15,
+        "sleep": 0.1
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "red-brown": {
+        "B": "#a9633b",
+        "b": "#844725",
+        "W": "#e7d8bf",
+        "L": "#4f3526",
+        "l": "#37241a",
+        "D": "#4a3a2b",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#1c1410",
+        "M": "#4f3526",
+        "m": "#4f3526",
+        "H": "#c58558"
+      },
+      "grey-winter": {
+        "B": "#8b8277",
+        "b": "#6c645a",
+        "W": "#d0c8b9",
+        "L": "#484139",
+        "l": "#332e28",
+        "D": "#3f372d",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#1c1814",
+        "M": "#484139",
+        "m": "#484139",
+        "H": "#a69e92"
+      }
+    },
+    "overlays": ["antlers-small", "muzzle-deer", "tail-stub"]
+  },
+  "goral": {
+    "name": "산양",
+    "rig": "quad-l",
+    "scale": 1.3,
+    "share": 1,
+    "lanes": [0.5, 0.4, 0.1],
+    "walkSpeed": 0.045,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.15,
+        "sit": 0.15,
+        "sleep": 0.1
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "grey": {
+        "B": "#8c867a",
+        "b": "#6b665c",
+        "W": "#dad4c5",
+        "L": "#4a463f",
+        "l": "#35322d",
+        "D": "#1f1c19",
+        "E": "#e8e2d4",
+        "P": "#14100d",
+        "N": "#1c1916",
+        "M": "#4a463f",
+        "m": "#4a463f",
+        "H": "#a8a295"
+      }
+    },
+    "overlays": ["horns-goral", "chin-tuft", "tail-stub"]
+  },
+  "carrion-crow": {
+    "name": "까마귀",
+    "rig": "bird",
+    "scale": 0.7,
+    "share": 3,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "black": {
+        "B": "#1d1d22",
+        "b": "#34343c",
+        "W": "#26262c",
+        "L": "#2a2a2e",
+        "l": "#17171a",
+        "D": "#2a2a2e",
+        "E": "#4a4540",
+        "P": "#0a0a0a",
+        "N": "#17171a",
+        "M": "#1d1d22",
+        "m": "#34343c",
+        "H": "#3d3d48"
+      }
+    },
+    "overlays": ["beak-short"]
+  },
+  "magpie": {
+    "name": "까치",
+    "rig": "bird",
+    "scale": 0.7,
+    "share": 3,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "pied": {
+        "B": "#1c1c24",
+        "b": "#2d4a5e",
+        "W": "#f0eee8",
+        "L": "#2a2a2e",
+        "l": "#17171a",
+        "D": "#1c1c24",
+        "E": "#3a3028",
+        "P": "#0a0a0a",
+        "N": "#17171a",
+        "M": "#1c1c24",
+        "m": "#2d4a5e",
+        "H": "#f0eee8"
+      }
+    },
+    "overlays": ["beak-short", "tail-long", "wing-patch"]
+  },
+  "eagle-owl": {
+    "name": "수리부엉이",
+    "rig": "bird",
+    "scale": 0.9,
+    "share": 1,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "nocturnal": true,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "brown": {
+        "B": "#8a6a45",
+        "b": "#5e4429",
+        "W": "#d6c19a",
+        "L": "#b09a74",
+        "l": "#6e5a3e",
+        "D": "#3a3a3a",
+        "E": "#e39b3a",
+        "P": "#0d0d0d",
+        "N": "#3a3a3a",
+        "M": "#8a6a45",
+        "m": "#5e4429",
+        "H": "#a58760"
+      }
+    },
+    "overlays": ["beak-hooked", "ear-tufts-owl", "facial-disc"]
+  },
+  "woodpecker": {
+    "name": "딱따구리",
+    "rig": "bird",
+    "scale": 0.5,
+    "share": 2,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "pied-red": {
+        "B": "#25252a",
+        "b": "#3a3a42",
+        "W": "#f0ece4",
+        "L": "#5a5a5a",
+        "l": "#3a3a3a",
+        "D": "#2f2f33",
+        "E": "#f4f1ea",
+        "P": "#0a0a0a",
+        "N": "#2f2f33",
+        "M": "#25252a",
+        "m": "#3a3a42",
+        "H": "#d33b2f"
+      }
+    },
+    "overlays": ["beak-long", "crest"]
+  },
+  "jay": {
+    "name": "어치",
+    "rig": "bird",
+    "scale": 0.6,
+    "share": 2,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "pink-brown": {
+        "B": "#b4846f",
+        "b": "#8f6558",
+        "W": "#e0c9bc",
+        "L": "#c9a38d",
+        "l": "#8a6a5a",
+        "D": "#2c2c2c",
+        "E": "#f2efe8",
+        "P": "#111111",
+        "N": "#2c2c2c",
+        "M": "#b4846f",
+        "m": "#8f6558",
+        "H": "#d8b09c"
+      }
+    },
+    "overlays": ["beak-short", "wing-patch-blue"]
+  },
+  "pheasant": {
+    "name": "꿩",
+    "rig": "bird",
+    "scale": 0.9,
+    "share": 2,
+    "lanes": [0.4, 0.4, 0.2],
+    "walkSpeed": 0.1,
+    "weights": {
+      "default": {
+        "idle": 0.65,
+        "walk": 0.25,
+        "sit": 0.07,
+        "sleep": 0.03
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "cock": {
+        "B": "#8c4a24",
+        "b": "#6b3516",
+        "W": "#4a3f2a",
+        "L": "#9a8a6a",
+        "l": "#6a5a40",
+        "D": "#d8c27a",
+        "E": "#f4f1ea",
+        "P": "#111111",
+        "N": "#6a5a40",
+        "M": "#b0702f",
+        "m": "#4a2f1a",
+        "H": "#c43a2f"
+      },
+      "hen": {
+        "B": "#a08258",
+        "b": "#7a5f3d",
+        "W": "#cbb68f",
+        "L": "#9a8a6a",
+        "l": "#6a5a40",
+        "D": "#9a8a70",
+        "E": "#f4f1ea",
+        "P": "#111111",
+        "N": "#6a5a40",
+        "M": "#b59a6c",
+        "m": "#5e4a30",
+        "H": "#cdb48a"
+      }
+    },
+    "overlays": ["beak-short", "tail-long-pheasant", "face-patch"]
+  },
+  "human": {
+    "name": "사람",
+    "rig": "biped",
+    "scale": 1.4,
+    "share": 1,
+    "lanes": [0.3, 0.5, 0.2],
+    "walkSpeed": 0.06,
+    "nocturnal": false,
+    "weights": {
+      "default": {
+        "idle": 0.55,
+        "walk": 0.3,
+        "sit": 0.1,
+        "sleep": 0.05
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "skin-1": {
+        "B": "#e3bfa0",
+        "b": "#c49a7a",
+        "W": "#b08d57",
+        "L": "#3f4a63",
+        "l": "#2e374b",
+        "D": "#2e2824",
+        "E": "#f1ede4",
+        "P": "#1c1a19",
+        "N": "#c58f72",
+        "M": "#7a4a2a",
+        "m": "#7a6a58",
+        "H": "#f0d3b9"
+      },
+      "skin-2": {
+        "B": "#c68e63",
+        "b": "#a3704b",
+        "W": "#5d7284",
+        "L": "#6a4e3a",
+        "l": "#4e3828",
+        "D": "#2b2521",
+        "E": "#f1ede4",
+        "P": "#1c1a19",
+        "N": "#97623f",
+        "M": "#3b2a20",
+        "m": "#6b7060",
+        "H": "#d9a87e"
+      },
+      "skin-3": {
+        "B": "#8d5a3c",
+        "b": "#6e4229",
+        "W": "#8a847a",
+        "L": "#6b7566",
+        "l": "#4e574a",
+        "D": "#27231f",
+        "E": "#efeadf",
+        "P": "#16120f",
+        "N": "#5f3820",
+        "M": "#5a4d44",
+        "m": "#7b6a52",
+        "H": "#a87550"
+      },
+      "skin-4": {
+        "B": "#6b4431",
+        "b": "#4f3022",
+        "W": "#9a5a3a",
+        "L": "#b3a07c",
+        "l": "#8f7f60",
+        "D": "#211c19",
+        "E": "#ece6da",
+        "P": "#120e0c",
+        "N": "#3c2418",
+        "M": "#17120f",
+        "m": "#6a6a5a",
+        "H": "#86593f"
+      }
+    },
+    "overlays": [],
+    "axes": {
+      "kind": {
+        "adult": [],
+        "child": [],
+        "elder": ["cane"]
+      },
+      "mask": {
+        "short": ["hair-short"],
+        "long": ["hair-long"],
+        "bun": ["hair-bun"],
+        "cap": ["hair-cap"]
+      },
+      "tail": {
+        "none": []
+      },
+      "body": {
+        "adult": 1.0,
+        "child": 0.75,
+        "elder": 0.95
+      }
+    }
+  }
+}

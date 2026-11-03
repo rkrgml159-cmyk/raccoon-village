@@ -1,0 +1,21 @@
+{
+  "id": "window-broken",
+  "size": [12, 14],
+  "ground": 13,
+  "rows": [
+    "VttVttVttVtt",
+    "TTTTTTTTTTTT",
+    "TTDDDTTDDDTT",
+    "TTDSDTTDDDTT",
+    "TT..DTTDDDTT",
+    "TTDDDTTDDDTT",
+    "TTTTTTTTTTTT",
+    "TTDDDTTDDDTT",
+    "TTDDDTTDDDTT",
+    "TTDDDTTDSDTT",
+    "TTDDDTTDDDTT",
+    "TTDDDTTDDDTT",
+    "TTTTTTTTTTTT",
+    "tttttttttttt"
+  ]
+}

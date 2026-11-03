@@ -1,0 +1,23 @@
+{
+  "id": "tail-bushy",
+  "rigs": ["quad-s"],
+  "anchor": "tail",
+  "layer": "below",
+  "offset": [-5, -6],
+  "rows": [
+    ".BBB.....",
+    "bBBBB....",
+    "bBBBBB...",
+    "bBBBBBB..",
+    "bBBBBBBBB",
+    ".BBBBBBBB",
+    "..BBBBBBB",
+    "....bbbb."
+  ],
+  "states": {
+    "sleep": {
+      "offset": [-5, -1],
+      "rows": [".BBBBB", "BBBBBB", "BBBBBB", ".bbbbb"]
+    }
+  }
+}

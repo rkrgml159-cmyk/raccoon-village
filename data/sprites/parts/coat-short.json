@@ -1,0 +1,18 @@
+{
+  "id": "coat-short",
+  "rigs": ["raccoon"],
+  "anchor": "back",
+  "layer": "above",
+  "offset": [-9, 6],
+  "rows": ["bbbbbbbbbb"],
+  "states": {
+    "sit": {
+      "offset": [-2, 6],
+      "rows": ["bbbbbbbb"]
+    },
+    "sleep": {
+      "offset": [-7, 3],
+      "rows": ["bbbbbbbbbb"]
+    }
+  }
+}

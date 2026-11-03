@@ -1,0 +1,14 @@
+{
+  "id": "tail-thin",
+  "rigs": ["quad-s"],
+  "anchor": "tail",
+  "layer": "below",
+  "offset": [-5, -3],
+  "rows": ["B.....", "BB....", ".BBB..", "...BBB"],
+  "states": {
+    "sleep": {
+      "offset": [-5, 0],
+      "rows": ["B.....", "BBBBBB"]
+    }
+  }
+}

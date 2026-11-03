@@ -1,0 +1,8 @@
+{
+  "id": "muzzle-stripe",
+  "rigs": ["quad-s"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [0, 0],
+  "rows": [".WWWWW...", "..WWWWWW.", "......WWW"]
+}

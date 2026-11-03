@@ -1,0 +1,8 @@
+{
+  "id": "chin-tuft",
+  "rigs": ["quad-l"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [7, 10],
+  "rows": ["DD", ".D"]
+}

@@ -1,0 +1,8 @@
+{
+  "id": "antlers-small",
+  "rigs": ["quad-deer"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [2, -2],
+  "rows": ["D.D.D", "D.D.D", ".DDD.", "..D.."]
+}

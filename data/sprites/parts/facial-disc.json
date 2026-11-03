@@ -1,0 +1,11 @@
+{
+  "id": "facial-disc",
+  "rigs": ["bird"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [1, 1],
+  "rows": ["WWWW", "W..W", "WWWW"],
+  "states": {
+    "sleep": { "offset": [0, 0], "rows": ["."] }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "face-patch",
+  "rigs": ["bird"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [2, 3],
+  "rows": ["HHHH"],
+  "states": {
+    "sleep": { "offset": [0, 0], "rows": ["."] }
+  }
+}

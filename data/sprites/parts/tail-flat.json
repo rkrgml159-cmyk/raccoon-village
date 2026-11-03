@@ -1,0 +1,14 @@
+{
+  "id": "tail-flat",
+  "rigs": ["quad-s"],
+  "anchor": "tail",
+  "layer": "below",
+  "offset": [-5, 1],
+  "rows": [".BBBBB", "BBBBBB", "bbbbbb"],
+  "states": {
+    "sleep": {
+      "offset": [-5, 1],
+      "rows": [".BBBBB", "bbbbbb"]
+    }
+  }
+}

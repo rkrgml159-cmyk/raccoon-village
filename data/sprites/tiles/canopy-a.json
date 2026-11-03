@@ -1,0 +1,23 @@
+{
+  "id": "canopy-a",
+  "size": [40, 16],
+  "ground": 15,
+  "rows": [
+    "...................F...FfF..............",
+    ".................F.FFFFF.FF.............",
+    "......fFF..F..F.FFFFFFFFFFF.............",
+    "...ffF.FF.FFF.F.FFFFFfFFFFF.FF.Ff.......",
+    "..F..FfFFFfFfFFFFFFFF.FFFfFFFFFF..F.f...",
+    "..FFFF.FFFfFfFFFFFFFFFFFFfFFFFFFFFFf....",
+    "..fFFFFFFF.F.FFFFFFFFFFFF.FFFFFFFFF.....",
+    "f.fFFFFFFFFFfFFFFFFFFFFFFFFFFFFFFFFFF.f.",
+    ".f.FFFFFfFFF.FFFfFfFFFFFfFFFFFFFFFfFF..f",
+    ".fFFFfFFfFFFFFFFfFffFFFffFFFFFFFfFfFFF..",
+    "..FfffFF.FFfffFF.f.fFfff.FFFFFFFfF.fff..",
+    "..fff.FFFfFfffff..f.ff..fffffffF.fFfff..",
+    "......Fffff....f........f..ffffFffF.....",
+    "......f....f.............f.....f..ff....",
+    "............................f.f...f.....",
+    "........................................"
+  ]
+}
