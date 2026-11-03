@@ -37,6 +37,19 @@ describe('UtilityAI', () => {
     expect(r1.x).toBeLessThanOrEqual(0.7)
     expect(r1.state).not.toBe('walk')
   })
+  it('a walk toward a now-out-of-range target is clamped and ends when the range shrinks', () => {
+    const r0 = {
+      ...createResident('a', 0.6),
+      state: 'walk' as const,
+      targetX: 0.9,
+      stateT: Infinity,
+    }
+    const r1 = tick(r0, 16, { ...ctx, walkRange: [0.3, 0.7] }, () => 0.5)
+    expect(r1.x).toBeLessThanOrEqual(0.7)
+    expect(r1.state !== 'walk' || r1.targetX! <= 0.7).toBe(true)
+    const r2 = tick({ ...r0, x: 0.9 }, 16, { ...ctx, walkRange: [0.3, 0.7] }, () => 0.5)
+    expect(r2.x).toBeLessThanOrEqual(0.7)
+  })
   it('walk target is within ±0.1..0.4 and clamped to walkRange', () => {
     for (let i = 0; i < 200; i++) {
       const rng = mulberry32(i)
@@ -80,8 +93,8 @@ describe('UtilityAI', () => {
     const rng = mulberry32(3)
     const n = { idle: 0, walk: 0, sit: 0 }
     for (let i = 0; i < 10000; i++) n[chooseNext('idle', [], 'night', rng)]++
-    expect(n.sit / 10000).toBeCloseTo(0.2, 1)
-    expect(n.walk / 10000).toBeLessThan(0.08)
+    expect(Math.abs(n.sit / 10000 - 0.2)).toBeLessThanOrEqual(0.03)
+    expect(Math.abs(n.walk / 10000 - 0.05)).toBeLessThanOrEqual(0.03)
   })
   it('never picks the same state three times in a row, and never walk right after walk', () => {
     const rng = mulberry32(9)

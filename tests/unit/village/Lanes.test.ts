@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clampX, toScreen } from '@domain/village/Lanes'
+import { clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
 
 describe('Lanes', () => {
   it('maps lane 1 center to screen', () => {
@@ -16,5 +16,13 @@ describe('Lanes', () => {
       b = toScreen(2, 0.5, { width: 100, height: 100 })
     expect(a.scale).toBeLessThan(b.scale)
     expect(a.py).toBeLessThan(b.py)
+  })
+  it('walkRangeFor shrinks the visible range by the sprite half-width', () => {
+    const r = walkRangeFor([0.25, 0.75], 0.067)
+    expect(r[0]).toBeCloseTo(0.317, 3)
+    expect(r[1]).toBeCloseTo(0.683, 3)
+  })
+  it('walkRangeFor never inverts: collapses to the centre', () => {
+    expect(walkRangeFor([0.25, 0.75], 0.4)).toEqual([0.5, 0.5])
   })
 })

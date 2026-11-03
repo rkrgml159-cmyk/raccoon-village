@@ -77,7 +77,19 @@ function startState(r: Resident, ctx: AIContext, rng: () => number): Resident {
 export function tick(r: Resident, dtMs: number, ctx: AIContext, rng: () => number): Resident {
   let cur: Resident = { ...r, history: [...r.history], stateT: r.stateT - dtMs }
   let expired = cur.stateT <= 0
+  // The range can shrink mid-walk (resize/rotation): keep x and the target inside it.
+  cur.x = clampX(cur.x, ctx.walkRange)
+  let retargeted = false
   if (cur.state === 'walk' && cur.targetX !== undefined) {
+    const clamped = clampX(cur.targetX, ctx.walkRange)
+    if (clamped !== cur.targetX) {
+      cur.targetX = clamped
+      retargeted = true
+    }
+  }
+  if (retargeted) {
+    expired = true
+  } else if (cur.state === 'walk' && cur.targetX !== undefined) {
     const step = (WALK_SPEED * dtMs) / 1000
     const diff = cur.targetX - cur.x
     cur.facing = diff < 0 ? 'left' : 'right'

@@ -18,3 +18,17 @@ export function toScreen(
   const l = LANES[lane]
   return { px: x * viewport.width, py: l.y * viewport.height, scale: l.scale }
 }
+
+/** Shrinks the visible x-range by half a sprite width on both sides; never inverted. */
+export function walkRangeFor(
+  visible: readonly [number, number],
+  halfSpriteFrac: number,
+): readonly [number, number] {
+  const lo = visible[0] + halfSpriteFrac
+  const hi = visible[1] - halfSpriteFrac
+  if (lo > hi) {
+    const mid = (visible[0] + visible[1]) / 2
+    return [mid, mid]
+  }
+  return [lo, hi]
+}
