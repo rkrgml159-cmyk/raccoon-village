@@ -8,10 +8,13 @@ export interface VillageInput {
   species: Record<string, SpeciesDef>
   variantsOf: (id: string, sp: SpeciesDef) => string[]
   bodyScaleOf: (id: string, variant: string) => number
+  /** Half the sprite width as a fraction of the view width, for spawn spacing. */
+  halfWidthOf: (id: string, scale: number) => number
 }
 
 const RACCOON_RATIO = 0.6
 const MAX_HUMANS = 2
+const GUARANTEE_HUMAN_FROM = 10
 const MIN_GAP = 0.05
 const X_MIN = 0.1
 const X_MAX = 0.9
@@ -39,18 +42,20 @@ function pickLane(sp: SpeciesDef, rng: () => number): 0 | 1 | 2 {
   return 2
 }
 
-function spreadLane(lane: Resident[]): void {
-  const gap = Math.min(MIN_GAP, (EDGE[1] - EDGE[0]) / Math.max(1, lane.length - 1))
+function spreadLane(lane: Resident[], halfWidthOf: (r: Resident) => number): void {
   lane.sort((a, b) => a.x - b.x)
+  const range = EDGE[1] - EDGE[0]
+  let gaps = lane.slice(1).map((r, i) => Math.max(MIN_GAP, halfWidthOf(lane[i]) + halfWidthOf(r)))
+  if (gaps.reduce((s, g) => s + g, 0) > range) gaps = gaps.map(() => range / (lane.length - 1))
   for (let i = 1; i < lane.length; i++) {
-    if (lane[i].x < lane[i - 1].x + gap) lane[i].x = lane[i - 1].x + gap
+    if (lane[i].x < lane[i - 1].x + gaps[i - 1]) lane[i].x = lane[i - 1].x + gaps[i - 1]
   }
   const over = lane.length > 0 ? lane[lane.length - 1].x - EDGE[1] : 0
   if (over > 0) {
     for (const r of lane) r.x -= over
-    // Left edge may now be below the clamp: re-push rightwards (always fits: gap <= range / (count - 1)).
+    // Left edge may now be below the clamp: re-push rightwards (always fits: sum of gaps <= range).
     for (let i = 0; i < lane.length; i++) {
-      const min = i === 0 ? EDGE[0] : lane[i - 1].x + gap
+      const min = i === 0 ? EDGE[0] : lane[i - 1].x + gaps[i - 1]
       if (lane[i].x < min) lane[i].x = min
     }
   }
@@ -65,10 +70,13 @@ export function createVillage(input: VillageInput): Resident[] {
 
   const picks: string[] = Array<string>(raccoons).fill('raccoon')
   let humans = 0
+  const reserveHuman = n >= GUARANTEE_HUMAN_FROM && others.includes('human')
   for (let i = raccoons; i < n; i++) {
     let pool = others
     if (humans >= MAX_HUMANS) pool = others.filter((id) => id !== 'human')
-    const id = pool.length > 0 ? pickWeighted(pool, (s) => species[s].share, rng) : 'raccoon'
+    let id: string
+    if (reserveHuman && humans === 0 && i === n - 1) id = 'human'
+    else id = pool.length > 0 ? pickWeighted(pool, (s) => species[s].share, rng) : 'raccoon'
     if (id === 'human') humans++
     picks.push(id)
   }
@@ -91,6 +99,12 @@ export function createVillage(input: VillageInput): Resident[] {
     return r
   })
 
-  for (const lane of [0, 1, 2]) spreadLane(residents.filter((r) => r.lane === lane))
+  const halfWidth = (r: Resident): number => input.halfWidthOf(r.species, r.scale)
+  for (const lane of [0, 1, 2]) {
+    spreadLane(
+      residents.filter((r) => r.lane === lane),
+      halfWidth,
+    )
+  }
   return residents
 }

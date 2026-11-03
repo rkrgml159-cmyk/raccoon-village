@@ -126,6 +126,8 @@ export interface ComposeLayerInput {
   seed?: number
   /** Buffer row of the tiles' ground line (default: heightPx). */
   layerRow?: number
+  /** First row of the soil band; default is the lower third of the ground band. Never above it. */
+  soilStartRow?: number
 }
 
 /** Rows of line colour on top of the ground band (one tile pixel, as the old render drew). */
@@ -156,6 +158,7 @@ function paintGround(
   top: number,
   gp: NonNullable<ComposeLayerInput['groundPalette']>,
   seed: number,
+  soilStartRow?: number,
 ): void {
   const G = hexToRgb(gp.G)
   const g = hexToRgb(gp.g)
@@ -163,7 +166,8 @@ function paintGround(
   const F = hexToRgb(gp.F ?? gp.g)
   const bottom = buf.h
   const height = Math.max(0, bottom - top)
-  const earthTop = bottom - Math.round(height * EARTH_SHARE)
+  const defaultTop = bottom - Math.round(height * EARTH_SHARE)
+  const earthTop = Math.min(bottom, Math.max(defaultTop, soilStartRow ?? defaultTop))
   fillRect(buf, G, 0, top, buf.w, height)
   fillRect(buf, g, 0, top, buf.w, GROUND_LINE_ROWS)
   fillRect(buf, t, 0, earthTop, buf.w, bottom - earthTop)
@@ -194,7 +198,7 @@ export function composeLayer(input: ComposeLayerInput): FrameBuffer {
     rgba: new Uint8ClampedArray(widthPx * heightPx * 4),
   }
   if (input.groundRow !== undefined && input.groundPalette) {
-    paintGround(buf, input.groundRow, input.groundPalette, input.seed ?? 0)
+    paintGround(buf, input.groundRow, input.groundPalette, input.seed ?? 0, input.soilStartRow)
   }
   const layerRow = input.layerRow ?? heightPx
   const cache = new Map<string, FrameBuffer>()

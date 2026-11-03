@@ -106,11 +106,19 @@ describe('loadRegistry', () => {
   })
 
   it('rejects part not allowed on rig', () => {
-    expect(() => loadRegistry(makeReg({}, { rigs: ['other'] }))).toThrow(/^species s: .*'test'/)
+    const reg = makeReg({}, { rigs: ['other'] })
+    reg.rigs.other = { ...makeRig(), id: 'other' }
+    expect(() => loadRegistry(reg)).toThrow(/^species s: .*'test'/)
   })
 
   it('rejects part with unknown anchor', () => {
     expect(() => loadRegistry(makeReg({}, { anchor: 'wing' }))).toThrow(/^part p: .*anchor 'wing'/)
+  })
+
+  it('rejects part listing an unknown rig', () => {
+    expect(() => loadRegistry(makeReg({}, { rigs: ['test', 'nope'] }))).toThrow(
+      "part p: unknown rig 'nope'",
+    )
   })
 
   it('rejects part with malformed rows', () => {

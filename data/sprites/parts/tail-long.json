@@ -4,5 +4,8 @@
   "anchor": "tail",
   "layer": "above",
   "offset": [-4, 0],
-  "rows": ["DDDDDD", "bbbbbb"]
+  "rows": ["DDDDDD", "bbbbbb"],
+  "states": {
+    "sleep": { "offset": [-3, 0], "rows": ["DDDDDD", "bbbbbb"] }
+  }
 }

@@ -46,7 +46,7 @@ function validatePart(part: PartDef, rigs: Record<string, RigDef>): void {
   if (part.fixed !== undefined && !HEX.test(part.fixed)) fail(`invalid hex color '${part.fixed}'`)
   for (const rigId of part.rigs) {
     const rig = rigs[rigId]
-    if (!rig) continue
+    if (!rig) fail(`unknown rig '${rigId}'`)
     for (const state of STATES) {
       rig.frames[state].forEach((frame, i) => {
         if (!(part.anchor in frame.anchors)) {

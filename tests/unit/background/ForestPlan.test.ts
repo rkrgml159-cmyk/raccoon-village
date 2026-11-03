@@ -182,6 +182,36 @@ describe('composeLayer', () => {
     expect(px(buf, 5, 8)).toEqual([0x10, 0x20, 0x30, 255])
   })
 
+  it('starts the soil at soilStartRow when it is lower than the default', () => {
+    const buf = composeLayer({
+      ...base,
+      widthPx: 12,
+      heightPx: 12,
+      placements: [],
+      groundRow: 3,
+      groundPalette: { G: pal.G, g: pal.g, t: pal.t },
+      soilStartRow: 10,
+    })
+    expect(px(buf, 5, 8)).toEqual([0x10, 0x20, 0x30, 255])
+    expect(px(buf, 5, 9)).toEqual([0x10, 0x20, 0x30, 255])
+    expect(px(buf, 5, 10)).toEqual([0x70, 0x80, 0x90, 255])
+    expect(px(buf, 5, 11)).toEqual([0x70, 0x80, 0x90, 255])
+  })
+
+  it('never lets soilStartRow raise the soil above the default third', () => {
+    const buf = composeLayer({
+      ...base,
+      widthPx: 12,
+      heightPx: 12,
+      placements: [],
+      groundRow: 3,
+      groundPalette: { G: pal.G, g: pal.g, t: pal.t },
+      soilStartRow: 4,
+    })
+    expect(px(buf, 5, 8)).toEqual([0x10, 0x20, 0x30, 255])
+    expect(px(buf, 5, 9)).toEqual([0x70, 0x80, 0x90, 255])
+  })
+
   it('draws tiles over the ground band', () => {
     const buf = composeLayer({
       ...base,

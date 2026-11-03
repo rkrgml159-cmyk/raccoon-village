@@ -104,21 +104,21 @@ describe('UtilityAI', () => {
   it('night weights: sit ≈ 20%, walk ≈ 5% over 10k samples', () => {
     const rng = mulberry32(3)
     const n = { idle: 0, walk: 0, sit: 0, sleep: 0 }
-    for (let i = 0; i < 10000; i++) n[chooseNext('idle', [], 'night', W.night, rng)]++
+    for (let i = 0; i < 10000; i++) n[chooseNext('idle', [], W.night, rng)]++
     expect(Math.abs(n.sit / 10000 - 0.15)).toBeLessThanOrEqual(0.03)
     expect(Math.abs(n.walk / 10000 - 0.05)).toBeLessThanOrEqual(0.03)
   })
   it('never picks the same state three times in a row, and never walk right after walk', () => {
     const rng = mulberry32(9)
     for (let i = 0; i < 2000; i++) {
-      const s = chooseNext('sit', ['sit', 'sit'], 'day', W.default, rng)
+      const s = chooseNext('sit', ['sit', 'sit'], W.default, rng)
       expect(s).not.toBe('sit')
     }
   })
   it('walk never follows walk', () => {
     const rng = mulberry32(5)
     for (let i = 0; i < 500; i++) {
-      expect(chooseNext('walk', ['idle', 'walk'], 'day', W.default, rng)).not.toBe('walk')
+      expect(chooseNext('walk', ['idle', 'walk'], W.default, rng)).not.toBe('walk')
     }
   })
   it('durations within spec ranges', () => {
@@ -204,8 +204,7 @@ describe('UtilityAI', () => {
     const rng = mulberry32(21)
     let sleep = 0
     for (let i = 0; i < 1000; i++) {
-      if (chooseNext('idle', [], 'night', RIG_DEFAULT_PROFILE.weights.night, rng) === 'sleep')
-        sleep++
+      if (chooseNext('idle', [], RIG_DEFAULT_PROFILE.weights.night, rng) === 'sleep') sleep++
     }
     expect(Math.abs(sleep / 1000 - 0.35)).toBeLessThanOrEqual(0.05)
   })
@@ -237,7 +236,7 @@ describe('UtilityAI', () => {
   it('no three in a row still holds with sleep', () => {
     const rng = mulberry32(13)
     for (let i = 0; i < 2000; i++) {
-      expect(chooseNext('sleep', ['sleep', 'sleep'], 'night', W.night, rng)).not.toBe('sleep')
+      expect(chooseNext('sleep', ['sleep', 'sleep'], W.night, rng)).not.toBe('sleep')
     }
   })
   it('profileFor fills missing fields from the rig default', () => {

@@ -51,7 +51,6 @@ export function effectivePhase(phase: Phase, nocturnal: boolean): Phase {
 export function chooseNext(
   prev: ResidentState,
   history: ResidentState[],
-  _phase: Phase,
   weights: Weights,
   rng: () => number,
 ): ResidentState {
@@ -77,7 +76,7 @@ function sampleDuration(range: number[], rng: () => number): number {
 function startState(r: Resident, ctx: AIContext, rng: () => number): Resident {
   const phase = effectivePhase(ctx.phase, ctx.profile.nocturnal)
   const weights = phase === 'night' ? ctx.profile.weights.night : ctx.profile.weights.default
-  const next = chooseNext(r.state, r.history, phase, weights, rng)
+  const next = chooseNext(r.state, r.history, weights, rng)
   const history = [...r.history, r.state].slice(-HISTORY_SIZE)
   if (next === 'walk') {
     let dir = rng() < 0.5 ? -1 : 1

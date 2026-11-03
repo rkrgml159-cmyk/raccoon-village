@@ -32,3 +32,14 @@ export function walkRangeFor(
   }
   return [lo, hi]
 }
+
+/** Linear remap of x from one range into another; a collapsed range yields its centre. */
+export function remapX(
+  x: number,
+  from: readonly [number, number],
+  to: readonly [number, number],
+): number {
+  const span = from[1] - from[0]
+  if (span <= 0 || to[1] <= to[0]) return (to[0] + to[1]) / 2
+  return to[0] + ((x - from[0]) / span) * (to[1] - to[0])
+}
