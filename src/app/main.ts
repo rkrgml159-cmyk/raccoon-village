@@ -1,8 +1,8 @@
-import { bindPowerPolicy, createGame, makeDeps } from './boot'
+import { bindPower, createGame, makeDeps } from './boot'
 
 const deps = makeDeps('play')
 const game = createGame(deps)
-bindPowerPolicy(game, deps)
+bindPower(game, deps)
 
 // Audio only after a user gesture. Touch `pointerdown` does not unlock audio, so listen for
 // `pointerup`/`click` and keep listening until the synth is running (or unavailable).

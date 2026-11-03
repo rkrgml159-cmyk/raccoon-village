@@ -1,11 +1,11 @@
 import ui from '../../data/ui.json'
-import { bindPowerPolicy, createGame, makeDeps } from './boot'
+import { bindPower, createGame, makeDeps } from './boot'
 
 const CURSOR_HIDE_MS = 3000
 
 const deps = makeDeps('wallpaper')
 const game = createGame(deps)
-bindPowerPolicy(game, deps)
+bindPower(game, deps)
 
 const container = document.getElementById('ui')
 if (container) {
