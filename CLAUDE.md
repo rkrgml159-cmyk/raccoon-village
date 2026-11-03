@@ -4,6 +4,7 @@
 
 ## 먼저 읽을 것
 - `docs/decisions.md` (확정 결정) → `docs/09-roadmap.md` (현재 마일스톤) → 작업 중인 `docs/superpowers/plans/*.md`
+- 성능 기록: `docs/metrics/` (마일스톤별 측정)
 - 설계 상세: `docs/03-gameplay-design.md`, `docs/04-tech-architecture.md`. 톤/금지 목록: `docs/02-story-worldbuilding.md`
 
 ## 스택
@@ -25,12 +26,18 @@ Phaser 4 · TypeScript · Vite · Vitest · Playwright · Capacitor · Supabase 
 
 ## 명령
 ```
-npm run dev          # /play
-npm run dev:wall     # /w/demo (월페이퍼 모드)
-npm test             # vitest
-npm run e2e          # playwright smoke (mobile-portrait, desktop, wallpaper)
-npm run capture      # 데브로그용 스크린샷/타임랩스
-npm run cap:ios / cap:android
+npm run dev              # /play
+npm run dev:wall         # /w/ (월페이퍼 모드)
+npm run build            # tsc --noEmit && vite build
+npm run preview          # 빌드 결과 미리보기
+npm test                 # vitest
+npm run test:cov         # 커버리지 (src/domain 90%+)
+npm run lint             # eslint + prettier -c
+npm run e2e              # playwright smoke (mobile-portrait, desktop, wallpaper)
+npm run capture          # 스크린샷 베이스라인 갱신 (tests/capture/baseline)
+npm run capture:timelapse # 데브로그용 타임랩스 -> captures/
+npm run measure:wall     # 월페이퍼 CPU 측정 -> docs/metrics/
+npm run cap:ios / cap:android   # (M5)
 ```
 
 ## 톤
