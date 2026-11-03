@@ -3,7 +3,7 @@ import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, type Resident } from '@domain/resident/Resident'
 import { tick } from '@domain/resident/UtilityAI'
-import { LANES, clampX, toScreen } from '@domain/village/Lanes'
+import { LANES, clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
 import {
@@ -17,6 +17,14 @@ const RESIZE_DEBOUNCE_MS = 100
 const PORTRAIT_RATIO = 1.2
 /** Sprite pixels per world unit: a 40px-tall raccoon is ~1/9 of the viewport height. */
 const SPRITE_UNITS_PER_VIEW_HEIGHT = 360
+/** Placeholder raccoon texture width in px. */
+const SPRITE_WIDTH_PX = 48
+const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
+
+/** Sprite scale: lane scale × the short viewport side (so portrait phones get a small raccoon). */
+function spriteScale(laneScale: number, view: { width: number; height: number }): number {
+  return (laneScale * Math.min(view.width, view.height)) / SPRITE_UNITS_PER_VIEW_HEIGHT
+}
 
 export class VillageScene extends Phaser.Scene {
   readonly bus = new Emitter<GameEvents>()
@@ -141,7 +149,7 @@ export class VillageScene extends Phaser.Scene {
     const { px, py, scale } = toScreen(r.lane, r.x, view)
     this.sprite
       .setPosition(px, py)
-      .setScale((scale * view.height) / SPRITE_UNITS_PER_VIEW_HEIGHT)
+      .setScale(spriteScale(scale, view))
       .setFlipX(r.facing === 'left')
       .setDepth(LANES.length + r.lane)
   }
@@ -166,7 +174,13 @@ export class VillageScene extends Phaser.Scene {
     const w = this.scale.width
     const h = this.scale.height
     const portrait = w / h < PORTRAIT_RATIO
-    this.walkRange = portrait ? [0.3, 0.7] : [0.05, 0.95]
+    const laneScale = LANES[this.resident.lane].scale
+    const halfSpriteFrac =
+      ((SPRITE_WIDTH_PX / 2) * spriteScale(laneScale, { width: w, height: h })) / w
+    this.walkRange = walkRangeFor(
+      portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape,
+      halfSpriteFrac,
+    )
     this.resident = { ...this.resident, x: clampX(this.resident.x, this.walkRange) }
     const cam = this.cameras.main
     // Portrait: zoom 2 centred on x 0.5 so lane x 0.25..0.75 fills the width.

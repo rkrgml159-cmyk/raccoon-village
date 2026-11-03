@@ -86,7 +86,8 @@ export class WindSynth {
       await ctx.resume()
       this._state = 'running'
       this.fadeTo(0.12, 200)
-    } catch {
+    } catch (e) {
+      console.warn('WindSynth: audio unavailable, continuing silently', e)
       this.ctx = null
       this._state = 'unavailable'
     }

@@ -3,6 +3,7 @@ import { mulberry32 } from '@domain/rng'
 import { lerpHex, type SkyColors } from '@domain/sky/SkyPalette'
 
 const HORIZON_Y = 0.6
+const SKY_BANDS = 24
 const SKYLINE_COUNT = 10
 const STAR_COUNT = 30
 const STAR_BAND = HORIZON_Y - 0.1
@@ -88,9 +89,14 @@ export class SkyLayer {
     const { x, y, width: vw, height: vh } = this.view
     const g = this.sky
     g.clear()
-    // Overscan by 2px so the camera edge never shows the background.
-    g.fillGradientStyle(toInt(c.top), toInt(c.top), toInt(c.bottom), toInt(c.bottom), 1)
-    g.fillRect(x - 2, y - 2, vw + 4, vh + 4)
+    // Horizontal bands (fillGradientStyle is WebGL-only). Overscan by 2px so the camera edge
+    // never shows the background.
+    const top = y - 2
+    const bandH = (vh + 4) / SKY_BANDS
+    for (let i = 0; i < SKY_BANDS; i++) {
+      g.fillStyle(toInt(lerpHex(c.top, c.bottom, i / (SKY_BANDS - 1))), 1)
+      g.fillRect(x - 2, top + i * bandH, vw + 4, bandH + 1)
+    }
     const horizonY = this.h * HORIZON_Y
     g.fillStyle(toInt(c.horizon), 1)
     for (const b of this.blocks) g.fillRect(x + b.x * vw, horizonY - b.h * vh, b.w * vw, b.h * vh)
