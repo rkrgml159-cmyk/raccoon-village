@@ -111,3 +111,123 @@ export function paintTile(tile: TileDef, palette: Record<string, string>): Frame
   })
   return { w: map.w, h: map.h, rgba }
 }
+
+export interface ComposeLayerInput {
+  placements: Placement[]
+  tiles: Record<string, TileDef>
+  palette: Record<string, string>
+  /** Buffer size in native tile pixels (1 buffer pixel = 1 tile pixel). */
+  widthPx: number
+  heightPx: number
+  /** First row of the ground band; the band runs to the bottom of the buffer. */
+  groundRow?: number
+  groundPalette?: { G: string; g: string; t: string; F?: string }
+  /** Seed for the grass dither and flecks on the ground band. */
+  seed?: number
+  flipX?: boolean
+  /** Buffer row of the tiles' ground line (default: heightPx). */
+  layerRow?: number
+}
+
+const GROUND_LINE_ROWS = 2
+const EARTH_SHARE = 1 / 3
+const GROUND_SEED_OFFSET = 7000
+
+function fillRect(
+  buf: FrameBuffer,
+  rgb: [number, number, number],
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+): void {
+  const x0 = Math.max(0, x)
+  const x1 = Math.min(buf.w, x + w)
+  const y0 = Math.max(0, y)
+  const y1 = Math.min(buf.h, y + h)
+  for (let yy = y0; yy < y1; yy++) {
+    for (let xx = x0; xx < x1; xx++)
+      buf.rgba.set([rgb[0], rgb[1], rgb[2], 255], (yy * buf.w + xx) * 4)
+  }
+}
+
+function paintGround(
+  buf: FrameBuffer,
+  top: number,
+  gp: NonNullable<ComposeLayerInput['groundPalette']>,
+  seed: number,
+): void {
+  const G = hexToRgb(gp.G)
+  const g = hexToRgb(gp.g)
+  const t = hexToRgb(gp.t)
+  const F = hexToRgb(gp.F ?? gp.g)
+  const bottom = buf.h
+  const height = Math.max(0, bottom - top)
+  const earthTop = bottom - Math.round(height * EARTH_SHARE)
+  fillRect(buf, G, 0, top, buf.w, height)
+  fillRect(buf, g, 0, top, buf.w, GROUND_LINE_ROWS)
+  fillRect(buf, t, 0, earthTop, buf.w, bottom - earthTop)
+  const rng = mulberry32(seed + GROUND_SEED_OFFSET)
+  const bits = Math.ceil(buf.w / 3)
+  for (let i = 0; i < bits; i++) {
+    const x = Math.floor(rng() * buf.w)
+    const up = 1 + Math.floor(rng() * 2)
+    fillRect(buf, g, x, top - up, 2, up)
+  }
+  const flecks = Math.ceil(buf.w / 6)
+  for (let i = 0; i < flecks; i++) {
+    const x = Math.floor(rng() * buf.w)
+    const y = top + 3 + Math.floor(rng() * Math.max(1, earthTop - top - 6))
+    fillRect(buf, rng() < 0.5 ? g : F, x, y, 3, 1)
+  }
+}
+
+/**
+ * Composes a whole layer at native tile resolution into one RGBA buffer. Placement x is in
+ * native pixels; a tile's top row is `layerRow - (ground + 1)`. Ground band is drawn first.
+ */
+export function composeLayer(input: ComposeLayerInput): FrameBuffer {
+  const { placements, tiles, palette, widthPx, heightPx } = input
+  const buf: FrameBuffer = {
+    w: widthPx,
+    h: heightPx,
+    rgba: new Uint8ClampedArray(widthPx * heightPx * 4),
+  }
+  if (input.groundRow !== undefined && input.groundPalette) {
+    paintGround(buf, input.groundRow, input.groundPalette, input.seed ?? 0)
+  }
+  const layerRow = input.layerRow ?? heightPx
+  const cache = new Map<string, FrameBuffer>()
+  for (const p of placements) {
+    const tile = tiles[p.tile]
+    let src = cache.get(p.tile)
+    if (!src) {
+      src = paintTile(tile, palette)
+      cache.set(p.tile, src)
+    }
+    const flip = p.flip !== (input.flipX ?? false)
+    const oy = layerRow - (tile.ground + 1)
+    const ox = Math.round(p.x)
+    for (let y = 0; y < src.h; y++) {
+      const py = oy + y
+      if (py < 0 || py >= buf.h) continue
+      for (let x = 0; x < src.w; x++) {
+        const px = ox + x
+        if (px < 0 || px >= buf.w) continue
+        const si = (y * src.w + (flip ? src.w - 1 - x : x)) * 4
+        if (src.rgba[si + 3] === 0) continue
+        buf.rgba.set(src.rgba.subarray(si, si + 4), (py * buf.w + px) * 4)
+      }
+    }
+  }
+  return buf
+}
+
+/** Multiplies the colour channels in place by rgb/255 (alpha untouched). */
+export function multiplyBuffer(buf: FrameBuffer, rgb: [number, number, number]): void {
+  for (let i = 0; i < buf.rgba.length; i += 4) {
+    buf.rgba[i] = Math.round((buf.rgba[i] * rgb[0]) / 255)
+    buf.rgba[i + 1] = Math.round((buf.rgba[i + 1] * rgb[1]) / 255)
+    buf.rgba[i + 2] = Math.round((buf.rgba[i + 2] * rgb[2]) / 255)
+  }
+}

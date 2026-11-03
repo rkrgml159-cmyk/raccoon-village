@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { paintTile, planLayer, tintFor } from '../../../src/domain/background/ForestPlan'
+import {
+  composeLayer,
+  multiplyBuffer,
+  paintTile,
+  planLayer,
+  tintFor,
+} from '../../../src/domain/background/ForestPlan'
 import type { SceneLayer, TileDef } from '../../../src/domain/sprites/types'
 
 function tile(id: string, w = 10, h = 8): TileDef {
@@ -116,5 +122,98 @@ describe('paintTile', () => {
     expect(buf.w).toBe(2)
     expect(buf.h).toBe(1)
     expect(Array.from(buf.rgba)).toEqual([0, 0, 0, 0, 0x10, 0x20, 0x30, 255])
+  })
+})
+
+describe('composeLayer', () => {
+  const pal = { G: '#102030', g: '#405060', t: '#708090', F: '#a0b0c0' }
+  const px = (b: { w: number; rgba: Uint8ClampedArray }, x: number, y: number): number[] =>
+    Array.from(b.rgba.slice((y * b.w + x) * 4, (y * b.w + x) * 4 + 4))
+  // 2x2 tile: top row '.G', bottom row 'G.', ground = 1 (bottom row on the line)
+  const t2: TileDef = { id: 't2', size: [2, 2], rows: ['.G', 'G.'], ground: 1 }
+  const base = { tiles: { t2 }, palette: pal, widthPx: 8, heightPx: 6, layerRow: 4 }
+
+  it('paints a tile at x and layerRow - (ground + 1)', () => {
+    // y_top = 4 - 2 = 2
+    const buf = composeLayer({ ...base, placements: [{ tile: 't2', x: 3, flip: false }] })
+    expect(buf.w).toBe(8)
+    expect(buf.h).toBe(6)
+    expect(px(buf, 4, 2)).toEqual([0x10, 0x20, 0x30, 255])
+    expect(px(buf, 3, 3)).toEqual([0x10, 0x20, 0x30, 255])
+    expect(px(buf, 3, 2)[3]).toBe(0)
+    expect(px(buf, 4, 3)[3]).toBe(0)
+  })
+
+  it('mirrors flipped tiles horizontally', () => {
+    const buf = composeLayer({ ...base, placements: [{ tile: 't2', x: 3, flip: true }] })
+    expect(px(buf, 3, 2)[3]).toBe(255)
+    expect(px(buf, 4, 3)[3]).toBe(255)
+    expect(px(buf, 4, 2)[3]).toBe(0)
+  })
+
+  it('clips at the buffer edges', () => {
+    const buf = composeLayer({
+      ...base,
+      placements: [
+        { tile: 't2', x: -1, flip: false },
+        { tile: 't2', x: 7, flip: false },
+      ],
+    })
+    expect(px(buf, 0, 3)[3]).toBe(0)
+    expect(px(buf, 0, 2)[3]).toBe(255)
+    expect(px(buf, 7, 3)[3]).toBe(255)
+    expect(buf.rgba.length).toBe(8 * 6 * 4)
+  })
+
+  it('fills the ground band: line on top, earth on the lower third', () => {
+    const buf = composeLayer({
+      ...base,
+      widthPx: 12,
+      heightPx: 12,
+      placements: [],
+      groundRow: 3,
+      groundPalette: { G: pal.G, g: pal.g, t: pal.t },
+    })
+    expect(px(buf, 5, 11)).toEqual([0x70, 0x80, 0x90, 255])
+    expect(px(buf, 5, 3)).toEqual([0x40, 0x50, 0x60, 255])
+    expect(px(buf, 5, 4)).toEqual([0x40, 0x50, 0x60, 255])
+    expect(px(buf, 5, 5)[3]).toBe(255)
+    expect(px(buf, 5, 2)[3] === 0 || px(buf, 5, 2)[3] === 255).toBe(true)
+    expect(px(buf, 5, 8)).toEqual([0x10, 0x20, 0x30, 255])
+  })
+
+  it('draws tiles over the ground band', () => {
+    const buf = composeLayer({
+      ...base,
+      heightPx: 12,
+      layerRow: 6,
+      placements: [{ tile: 't2', x: 0, flip: false }],
+      groundRow: 4,
+      groundPalette: { G: pal.G, g: pal.g, t: pal.t },
+    })
+    // tile rows 4..5; row 4 col 1 is tile 'G' over the ground-line colour
+    expect(px(buf, 1, 4)).toEqual([0x10, 0x20, 0x30, 255])
+    expect(px(buf, 0, 4)).toEqual([0x40, 0x50, 0x60, 255])
+  })
+
+  it('is deterministic', () => {
+    const input = {
+      ...base,
+      widthPx: 60,
+      heightPx: 30,
+      placements: [{ tile: 't2', x: 5, flip: true }],
+      groundRow: 10,
+      groundPalette: { G: pal.G, g: pal.g, t: pal.t, F: pal.F },
+      seed: 3,
+    }
+    expect(Array.from(composeLayer(input).rgba)).toEqual(Array.from(composeLayer(input).rgba))
+  })
+})
+
+describe('multiplyBuffer', () => {
+  it('multiplies rgb channels by 0..255 factors and keeps alpha', () => {
+    const buf = { w: 1, h: 1, rgba: new Uint8ClampedArray([200, 100, 50, 255]) }
+    multiplyBuffer(buf, [255, 128, 0])
+    expect(Array.from(buf.rgba)).toEqual([200, 50, 0, 255])
   })
 })

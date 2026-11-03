@@ -1,6 +1,6 @@
 # M2a 월페이퍼 전력 측정
 
-- 실행 시각: 2026-11-03T14:20:05.395Z
+- 실행 시각: 2026-11-03T15:41:58.487Z
 - Chromium: 153.0.8010.12
 - 환경: headless Chromium, software GL likely. WebGL renderer: ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver); UA: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.8010.12 Safari/537.36
 - hidden 구간은 `document.hidden`/`visibilityState`를 덮어써 에뮬레이트한 것이며 실제 브라우저 스로틀링이 아니다.
@@ -9,39 +9,33 @@
 
 | time(s) | segment | cpu_s_per_30s | heap_mb |
 | ---: | --- | ---: | ---: |
-| 30 | active | 26.264 | 8.9 |
-| 60 | active | 26.477 | 8.5 |
-| 90 | active | 26.808 | 8.6 |
-| 120 | active | 26.371 | 8.5 |
-| 150 | active | 26.611 | 8.7 |
-| 180 | active | 26.670 | 8.7 |
-| 210 | active | 26.340 | 8.9 |
-| 240 | active | 26.256 | 8.7 |
-| 270 | hidden | 0.090 | 6.7 |
-| 300 | hidden | 0.001 | 6.7 |
+| 30 | active | 25.086 | 9.2 |
+| 60 | active | 24.655 | 11.1 |
+| 90 | active | 24.849 | 8.9 |
+| 120 | active | 24.554 | 10.3 |
+| 150 | active | 24.629 | 8.4 |
+| 180 | active | 24.413 | 9.8 |
+| 210 | active | 24.383 | 10.8 |
+| 240 | active | 24.707 | 8.8 |
+| 270 | hidden | 0.073 | 6.7 |
+| 300 | hidden | 0.002 | 6.7 |
 | 330 | hidden | 0.000 | 6.7 |
 | 360 | hidden | 0.001 | 6.7 |
-| 390 | active | 26.413 | 7.4 |
-| 420 | active | 26.204 | 7.6 |
-| 450 | active | 26.191 | 7.5 |
-| 480 | active | 26.427 | 7.3 |
-| 510 | active | 26.320 | 7.5 |
-| 540 | active | 26.392 | 7.4 |
-| 570 | active | 26.035 | 7.1 |
-| 600 | active | 26.427 | 7.1 |
+| 390 | active | 24.806 | 7.3 |
+| 420 | active | 24.189 | 7.3 |
+| 450 | active | 24.788 | 7.2 |
+| 480 | active | 24.617 | 7.5 |
+| 510 | active | 24.838 | 7.9 |
+| 540 | active | 24.465 | 7.3 |
+| 570 | active | 24.566 | 7.3 |
+| 600 | active | 24.716 | 7.8 |
 
 ## 요약
 
-- active mean: 26.388 cpu_s/30s
-- hidden mean: 0.023 cpu_s/30s
+- active mean: 24.641 cpu_s/30s
+- hidden mean: 0.019 cpu_s/30s
 - ratio hidden/active: 0.1%
-- first load (goto to __rv.ready): 597 ms
-- observed fps over first 10 s (rAF callbacks / 10): 25.6
+- first load (goto to __rv.ready): 614 ms
+- observed fps over first 10 s (rAF callbacks / 10): 52.1
 - threshold (hidden < 10% of active): PASS
-- active vs M1 9.684 cpu_s/30s: ratio 2.72 (threshold 2.0) FAIL
-
-## 메모
-
-- 주민 수는 원인이 아니다: n=1 / 12 / 30 모두 active ≈ 25-26 cpu_s/30s (2분 프로파일 런).
-- 숲 RenderTexture 3장을 숨기면 active ≈ 8.7 (M1과 동일 수준). 증가분은 headless 소프트웨어 GL의 전면 쿼드 합성 비용이다. 틴트(setTint) 제거는 영향 없음.
-- 레이어를 세로로 잘라 RT를 줄여 보았으나 (2.72 -> 2.64) 노이즈 수준이라 반영하지 않았다.
+- active vs M1 9.684 cpu_s/30s: ratio 2.54 (threshold 2.0) FAIL
