@@ -1,0 +1,8 @@
+{
+  "id": "hair-short",
+  "rigs": ["biped"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [-3, 0],
+  "rows": [".MMMMM.", "MMMMMM.", "M......"]
+}

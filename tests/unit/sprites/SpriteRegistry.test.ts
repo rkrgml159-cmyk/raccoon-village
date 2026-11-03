@@ -266,6 +266,36 @@ describe('real data', () => {
     expect(total).toBe(14)
   })
 
+  it('biped rig is 24x40 with 14 frames and passes validateRig', () => {
+    const rig = RIGS['biped']
+    expect(rig.size).toEqual([24, 40])
+    expect(() => validateRig(rig)).not.toThrow()
+    const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
+    expect(total).toBe(14)
+  })
+
+  it('human variants = 144', () => {
+    const human = SPECIES.human
+    expect(human.rig).toBe('biped')
+    expect(allVariants(human)).toHaveLength(144)
+    expect(defaultVariant(human)).toBe('skin-1|adult|short|none|adult')
+  })
+
+  it('human composes idle[0] for every variant', () => {
+    const human = SPECIES.human
+    const rig = RIGS[human.rig]
+    for (const variant of allVariants(human)) {
+      const buf = composeFrame({
+        rig,
+        state: 'idle',
+        index: 0,
+        variant: resolveVariant(human, variant),
+        parts: PARTS,
+      })
+      expect(buf.rgba.length).toBe(24 * 40 * 4)
+    }
+  })
+
   it('the six mountain birds use the bird rig', () => {
     for (const id of ['carrion-crow', 'magpie', 'eagle-owl', 'woodpecker', 'jay', 'pheasant']) {
       expect(SPECIES[id]?.rig, id).toBe('bird')

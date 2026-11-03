@@ -940,5 +940,108 @@
       }
     },
     "overlays": ["beak-short", "tail-long-pheasant", "face-patch"]
+  },
+  "human": {
+    "name": "사람",
+    "rig": "biped",
+    "scale": 1.4,
+    "share": 1,
+    "lanes": [0.3, 0.5, 0.2],
+    "walkSpeed": 0.06,
+    "nocturnal": false,
+    "weights": {
+      "default": {
+        "idle": 0.55,
+        "walk": 0.3,
+        "sit": 0.1,
+        "sleep": 0.05
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "skin-1": {
+        "B": "#e3bfa0",
+        "b": "#c49a7a",
+        "W": "#6f7552",
+        "L": "#4f4a40",
+        "l": "#3a362f",
+        "D": "#2e2824",
+        "E": "#f1ede4",
+        "P": "#1c1a19",
+        "N": "#c58f72",
+        "M": "#1f1b19",
+        "m": "#7a6a58",
+        "H": "#f0d3b9"
+      },
+      "skin-2": {
+        "B": "#c68e63",
+        "b": "#a3704b",
+        "W": "#5d7284",
+        "L": "#5a5148",
+        "l": "#403a33",
+        "D": "#2b2521",
+        "E": "#f1ede4",
+        "P": "#1c1a19",
+        "N": "#97623f",
+        "M": "#3b2a20",
+        "m": "#6b7060",
+        "H": "#d9a87e"
+      },
+      "skin-3": {
+        "B": "#8d5a3c",
+        "b": "#6e4229",
+        "W": "#8a847a",
+        "L": "#46484f",
+        "l": "#32343a",
+        "D": "#27231f",
+        "E": "#efeadf",
+        "P": "#16120f",
+        "N": "#5f3820",
+        "M": "#a09d98",
+        "m": "#7b6a52",
+        "H": "#a87550"
+      },
+      "skin-4": {
+        "B": "#6b4431",
+        "b": "#4f3022",
+        "W": "#9a5a3a",
+        "L": "#3f3a36",
+        "l": "#2b2724",
+        "D": "#211c19",
+        "E": "#ece6da",
+        "P": "#120e0c",
+        "N": "#3c2418",
+        "M": "#2d1e14",
+        "m": "#6a6a5a",
+        "H": "#86593f"
+      }
+    },
+    "overlays": [],
+    "axes": {
+      "kind": {
+        "adult": [],
+        "child": [],
+        "elder": ["cane"]
+      },
+      "mask": {
+        "short": ["hair-short"],
+        "long": ["hair-long"],
+        "bun": ["hair-bun"],
+        "cap": ["hair-cap"]
+      },
+      "tail": {
+        "none": []
+      },
+      "body": {
+        "adult": 1.0,
+        "child": 0.75,
+        "elder": 0.95
+      }
+    }
   }
 }
