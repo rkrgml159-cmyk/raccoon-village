@@ -580,4 +580,4 @@ test('resident changes state over time with FastClock', async ({ page }) => {
 - **스펙 커버리지**: §2 폴더(T1·T12), §3.1~3.6(T3·T4·T2·T6·T5·T7·T7), §4.1(T10), §4.2(T8·T11), §4.3(T12), §4.4(T11·T12), §4.5(T12), §5 표(T3 tz 실패·극단 날짜, T11 Audio 실패, T12 resume·디바운스, Phaser AUTO 폴백은 기본값), §6.1(T2~T9), §6.2(T13·T14), §6.3(T15), §6.4(T16), §7(T17). 누락 없음.
 - **타입 일관성**: `computeDateContext`, `tick`, `chooseNext`, `policy`, `SkyBlender.snapTo/setTarget/update`, `makeDeps/createGame`, `window.__rv` 이름을 전 태스크에서 동일하게 사용.
 - **Review Focus 반영**: 1→T3, 2→T8(snapTo)·T12(resume), 3→T8(blendMs=60000/speed)·T12, 4→T5(range)·T6(walkRange)·T12(zoom), 5→T11(resume await)·T13(버튼 테스트).
-- **비율**: 스펙 약 190줄, 계획 약 330줄. 코드 블록은 테스트 단언과 시그니처 위주.
+- **비율**: 스펙 약 190줄, 계획 약 580줄(약 3배). 늘어난 분량의 대부분은 테스트 단언 코드(T3·T6·T13)이며 구현 본문은 시그니처와 한 줄 접근법만 적었다.
