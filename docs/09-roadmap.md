@@ -29,4 +29,4 @@
 
 ## 측정 (매 마일스톤 기록)
 - 번들 크기 / 첫 로드 시간 / 월페이퍼 1시간 CPU / vitest 커버리지 / 인스타 팔로워
-- M1 (2026-11-03): 번들 JS 1,384.81 kB (gzip 364.18 kB, Phaser 청크 포함) / 커버리지 `src/domain` ≥ 98% 라인 / 월페이퍼 CPU 숨김÷활성 0.1% (`docs/metrics/M1.md`) / vitest 81 + e2e 8
+- M1 (2026-11-03): 번들 JS 1,385.56 kB (gzip 364.49 kB, Phaser 청크 포함) / 첫 로드 310 ms (로컬 프리뷰, `__rv.ready`까지) / 커버리지 `src/domain` 98.84% statements · 99.03% branches · 100% functions / 월페이퍼 CPU 숨김÷활성 0.2% (`docs/metrics/M1.md`, 10분 측정) / vitest 95 + e2e 8
