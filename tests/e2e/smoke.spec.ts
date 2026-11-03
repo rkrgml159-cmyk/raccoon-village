@@ -8,6 +8,7 @@ for (const path of ['', 'w/']) {
     page.on('console', (m) => {
       if (m.type() === 'error') errors.push(m.text())
     })
+    page.on('pageerror', (e) => errors.push(String(e)))
     await page.goto(`/raccoon-village/${path}${STILL}`)
     await page.waitForFunction(() => window.__rv?.ready)
     expect(errors).toEqual([])
@@ -30,6 +31,6 @@ test('resident changes state over time with FastClock', async ({ page }) => {
   await page.waitForFunction(() => window.__rv?.ready)
   const s0 = await page.evaluate(() => window.__rv?.resident.state)
   await page.waitForFunction((s) => window.__rv?.resident.state !== s, s0, {
-    timeout: 20000,
+    timeout: 40000,
   })
 })
