@@ -1,0 +1,9 @@
+{
+  "id": "nose-pink",
+  "rigs": ["quad-s"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [8, 3],
+  "rows": [".X.", "XXX", "XX."],
+  "fixed": "#e0a0a6"
+}

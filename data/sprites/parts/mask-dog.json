@@ -1,0 +1,8 @@
+{
+  "id": "mask-dog",
+  "rigs": ["quad-s"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [2, 1],
+  "rows": ["MMMMMM", "MM..MM", "MMMMM."]
+}

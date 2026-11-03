@@ -1,0 +1,8 @@
+{
+  "id": "tail-short",
+  "rigs": ["quad-s"],
+  "anchor": "tail",
+  "layer": "below",
+  "offset": [-2, -2],
+  "rows": [".BB", "BBB", "BBB"]
+}

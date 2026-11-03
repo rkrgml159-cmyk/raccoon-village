@@ -1,0 +1,8 @@
+{
+  "id": "ear-tufts",
+  "rigs": ["quad-s"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [-3, -4],
+  "rows": [".L..L.", ".L..L.", "BB..BB", "BB..BB"]
+}

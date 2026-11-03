@@ -1,0 +1,8 @@
+{
+  "id": "ears-pointed",
+  "rigs": ["quad-s"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [-3, -3],
+  "rows": [".L..L.", "BB..BB", "BB..BB"]
+}

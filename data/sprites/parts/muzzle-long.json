@@ -1,0 +1,8 @@
+{
+  "id": "muzzle-long",
+  "rigs": ["quad-s"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [9, 3],
+  "rows": ["BB", "WN", "WW"]
+}

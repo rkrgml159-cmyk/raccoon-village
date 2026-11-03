@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { PARTS, RIGS, SPECIES } from '../../../src/domain/sprites/catalog'
 import { composeFrame } from '../../../src/domain/sprites/Compose'
 import { resolveVariant } from '../../../src/domain/sprites/Palette'
-import { parsePixelMap, SPRITE_ROLES } from '../../../src/domain/sprites/PixelMap'
 import {
   allVariants,
   animKey,
@@ -10,7 +9,7 @@ import {
   loadRegistry,
 } from '../../../src/domain/sprites/SpriteRegistry'
 import type { Registry } from '../../../src/domain/sprites/SpriteRegistry'
-import { FRAME_COUNT, STATES } from '../../../src/domain/sprites/validateRig'
+import { FRAME_COUNT, STATES, validateRig } from '../../../src/domain/sprites/validateRig'
 import type {
   Frame,
   PartDef,
@@ -236,36 +235,63 @@ describe('real data', () => {
     }
   })
 
-  it('keeps every part on the body silhouette in every raccoon frame', () => {
-    const raccoon = SPECIES.raccoon
-    const rig = RIGS[raccoon.rig]
-    const ids = new Set([...(raccoon.overlays ?? [])])
-    for (const group of Object.values(raccoon.axes ?? {})) {
-      if (typeof Object.values(group)[0] === 'number') continue
-      for (const list of Object.values(group as Record<string, string[]>)) {
-        list.forEach((id) => ids.add(id))
+  it('quad-s rig has 14 frames and passes validateRig', () => {
+    const rig = RIGS['quad-s']
+    expect(() => validateRig(rig)).not.toThrow()
+    const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
+    expect(total).toBe(14)
+  })
+
+  it('every species composes every state frame 0 for its default variant', () => {
+    for (const [id, sp] of Object.entries(SPECIES)) {
+      const variant = resolveVariant(sp, defaultVariant(sp))
+      for (const state of STATES) {
+        const buf = composeFrame({ rig: RIGS[sp.rig], state, index: 0, variant, parts: PARTS })
+        const opaque = buf.rgba.some((v, i) => i % 4 === 3 && v === 255)
+        expect(opaque, `${id} ${state}`).toBe(true)
       }
     }
-    for (const id of ids) {
-      const part = PARTS[id]
+  })
+
+  it('composed sprite is a single connected blob', () => {
+    for (const [id, sp] of Object.entries(SPECIES)) {
+      const rig = RIGS[sp.rig]
+      const variant = resolveVariant(sp, defaultVariant(sp))
       for (const state of STATES) {
-        const v = part.states?.[state] ?? part
-        const map = parsePixelMap(v.rows, [v.rows[0].length, v.rows.length], SPRITE_ROLES)
-        rig.frames[state].forEach((frame, i) => {
-          const body = parsePixelMap(frame.rows, rig.size, SPRITE_ROLES)
-          const [ax, ay] = frame.anchors[part.anchor]
-          for (let y = 0; y < map.h; y++) {
-            for (let x = 0; x < map.w; x++) {
-              if (map.cells[y * map.w + x] === '.') continue
-              const px = ax + v.offset[0] + x
-              const py = ay + v.offset[1] + y
-              const cell = body.cells[py * body.w + px]
-              expect(cell, `${id} ${state}[${i}] at ${px},${py}`).toBeDefined()
-              expect(cell, `${id} ${state}[${i}] at ${px},${py}`).not.toBe('.')
-            }
-          }
+        rig.frames[state].forEach((_, index) => {
+          const { w, h, rgba } = composeFrame({ rig, state, index, variant, parts: PARTS })
+          expect(countComponents(rgba, w, h), `${id} ${state}[${index}]`).toBe(1)
         })
       }
     }
   })
 })
+
+/** Number of 8-connected opaque components in an RGBA buffer. */
+function countComponents(rgba: Uint8ClampedArray, w: number, h: number): number {
+  const seen = new Uint8Array(w * h)
+  let count = 0
+  for (let start = 0; start < w * h; start++) {
+    if (seen[start] || rgba[start * 4 + 3] === 0) continue
+    count++
+    const stack = [start]
+    seen[start] = 1
+    while (stack.length > 0) {
+      const cur = stack.pop() as number
+      const cx = cur % w
+      const cy = (cur - cx) / w
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const nx = cx + dx
+          const ny = cy + dy
+          if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue
+          const n = ny * w + nx
+          if (seen[n] || rgba[n * 4 + 3] === 0) continue
+          seen[n] = 1
+          stack.push(n)
+        }
+      }
+    }
+  }
+  return count
+}

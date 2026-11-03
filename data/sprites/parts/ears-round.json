@@ -1,6 +1,6 @@
 {
   "id": "ears-round",
-  "rigs": ["raccoon"],
+  "rigs": ["raccoon", "quad-s"],
   "anchor": "ears",
   "layer": "above",
   "offset": [-1, -1],
