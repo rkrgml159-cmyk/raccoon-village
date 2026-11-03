@@ -37,9 +37,19 @@ function phaseOf(season: Season, minutes: number): Phase {
   return 'night'
 }
 
+const NEW_MOON_EPOCH_MS = Date.UTC(2000, 0, 6, 18, 14)
+const SYNODIC_DAYS = 29.530588
+const DAY_MS = 86400e3
+
+/** Lunar cycle position in [0, 1): 0 = new moon, 0.5 = full moon. */
+export function moonPhase(date: Date): number {
+  const days = (date.getTime() - NEW_MOON_EPOCH_MS) / DAY_MS
+  return (((days % SYNODIC_DAYS) + SYNODIC_DAYS) % SYNODIC_DAYS) / SYNODIC_DAYS
+}
+
 export function computeDateContext(date: Date, tz = 'Asia/Seoul'): DateContext {
   const { month, hour, minute } = localParts(date, tz)
   const season = seasonOf(month)
   const phase = phaseOf(season, hour * 60 + minute)
-  return { phase, season, moonPhase: 0, skyKey: `${season}-${phase}`, hour, minute }
+  return { phase, season, moonPhase: moonPhase(date), skyKey: `${season}-${phase}`, hour, minute }
 }

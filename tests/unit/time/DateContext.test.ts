@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { FixedClock } from '@domain/time/Clock'
-import { computeDateContext, localParts } from '@domain/time/DateContext'
+import { computeDateContext, localParts, moonPhase } from '@domain/time/DateContext'
 
 const seoul = (iso: string) => new FixedClock(iso).now()
 
@@ -35,7 +35,9 @@ describe('computeDateContext', () => {
   })
   it('reports hour and minute', () => {
     const c = computeDateContext(seoul('2026-04-10T07:05'))
-    expect([c.hour, c.minute, c.moonPhase]).toEqual([7, 5, 0])
+    expect([c.hour, c.minute]).toEqual([7, 5])
+    expect(c.moonPhase).toBeGreaterThanOrEqual(0)
+    expect(c.moonPhase).toBeLessThan(1)
     expect(c.skyKey).toBe('spring-day')
   })
   it('uses given timezone', () => {
@@ -64,5 +66,20 @@ describe('localParts', () => {
       hour: 0,
       minute: 0,
     })
+  })
+})
+
+describe('moonPhase', () => {
+  it('new moon epoch → 0, +14.765 days → ~0.5', () => {
+    const epoch = new Date('2000-01-06T18:14:00Z')
+    expect(moonPhase(epoch)).toBeCloseTo(0, 3)
+    expect(moonPhase(new Date(epoch.getTime() + 14.765294 * 86400e3))).toBeCloseTo(0.5, 2)
+    expect(moonPhase(new Date(epoch.getTime() - 86400e3))).toBeGreaterThan(0.9)
+  })
+})
+
+describe('skyKey', () => {
+  it('combines season and phase', () => {
+    expect(computeDateContext(new FixedClock('2026-10-10T18:00').now()).skyKey).toBe('autumn-dusk')
   })
 })
