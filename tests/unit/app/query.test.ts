@@ -32,4 +32,10 @@ describe('parseQuery', () => {
     expect(parseQuery('?at=garbage')).not.toHaveProperty('at')
     expect(parseQuery('?at=2026-01-15Tzz:00')).not.toHaveProperty('at')
   })
+  it('parses sheet=raccoon', () => {
+    expect(parseQuery('?sheet=raccoon').sheet).toBe('raccoon')
+  })
+  it('ignores empty sheet', () => {
+    expect(parseQuery('?sheet=')).not.toHaveProperty('sheet')
+  })
 })

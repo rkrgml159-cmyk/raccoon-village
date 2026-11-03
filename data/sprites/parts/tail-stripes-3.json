@@ -4,7 +4,7 @@
   "anchor": "tail",
   "layer": "above",
   "offset": [-8, -3],
-  "rows": [".m..m...", "....m.m."],
+  "rows": [".m..m...", "....m...", "......m."],
   "states": {
     "sit": {
       "offset": [-6, -1],

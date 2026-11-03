@@ -6,24 +6,26 @@ import { tick } from '@domain/resident/UtilityAI'
 import { LANES, clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
-import {
-  RACCOON_KEYS,
-  generateRaccoonTextures,
-  registerRaccoonAnims,
-} from '../sprites/PlaceholderRaccoon'
+import { loadRegistry, animKey, defaultVariant } from '@domain/sprites/SpriteRegistry'
+import { PARTS, RIGS, SPECIES } from '@domain/sprites/catalog'
+import { STATES } from '@domain/sprites/validateRig'
+import { SpriteBank } from '../sprites/SpriteBank'
 import { SkyLayer } from '../sky/SkyLayer'
 
 const RESIZE_DEBOUNCE_MS = 100
 const PORTRAIT_RATIO = 1.2
 /** Sprite pixels per world unit: a 40px-tall raccoon is ~1/9 of the viewport height. */
 const SPRITE_UNITS_PER_VIEW_HEIGHT = 360
-/** Placeholder raccoon texture width in px. */
-const SPRITE_WIDTH_PX = 48
+/** Screen pixels per sprite pixel at lane scale 1 on a 360-unit view. */
+const PX = 1.5
+const SHEET_GAP_X = 1.2
+const SHEET_GAP_Y = 1.3
+const RESIDENT_SPECIES = 'raccoon'
 const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
 
 /** Sprite scale: lane scale × the short viewport side (so portrait phones get a small raccoon). */
 function spriteScale(laneScale: number, view: { width: number; height: number }): number {
-  return (laneScale * Math.min(view.width, view.height)) / SPRITE_UNITS_PER_VIEW_HEIGHT
+  return (laneScale * PX * Math.min(view.width, view.height)) / SPRITE_UNITS_PER_VIEW_HEIGHT
 }
 
 export class VillageScene extends Phaser.Scene {
@@ -34,6 +36,9 @@ export class VillageScene extends Phaser.Scene {
   private sky!: SkyLayer
   private blender!: SkyBlender
   private sprite!: Phaser.GameObjects.Sprite
+  private bank!: SpriteBank
+  private variant = ''
+  private sheetSprites: Phaser.GameObjects.Image[] = []
   private debugText?: Phaser.GameObjects.Text
   private walkRange: readonly [number, number] = [0.05, 0.95]
   private resizeTimer: ReturnType<typeof setTimeout> | null = null
@@ -50,15 +55,20 @@ export class VillageScene extends Phaser.Scene {
     this.ready = false
     this.currentAnim = ''
     this.stillShown = false
-    generateRaccoonTextures(this)
-    registerRaccoonAnims(this)
+    this.bank = new SpriteBank(this, loadRegistry({ rigs: RIGS, parts: PARTS, species: SPECIES }))
+    this.variant = defaultVariant(SPECIES[RESIDENT_SPECIES])
+    this.bank.ensure(RESIDENT_SPECIES, this.variant)
+    this.sheetSprites = []
 
     this.ctx = computeDateContext(deps.clock.now())
     this.sky = new SkyLayer(this, deps.opts.seed ?? 0)
     this.blender = new SkyBlender(getSky(this.ctx.skyKey), deps.blendMs)
-    this.sprite = this.add.sprite(0, 0, RACCOON_KEYS.idle[0]).setOrigin(0.5, 1)
-    for (const key of [...RACCOON_KEYS.idle, ...RACCOON_KEYS.walk, ...RACCOON_KEYS.sit]) {
-      this.textures.get(key).setFilter(Phaser.Textures.FilterMode.NEAREST)
+    this.sprite = this.add
+      .sprite(0, 0, this.bank.textureKey(RESIDENT_SPECIES, this.variant, 'idle', 0))
+      .setOrigin(0.5, 1)
+    if (deps.opts.sheet && SPECIES[deps.opts.sheet]) {
+      this.sprite.setVisible(false)
+      this.buildSheet(deps.opts.sheet)
     }
     if (deps.opts.debug) {
       this.debugText = this.add
@@ -98,12 +108,16 @@ export class VillageScene extends Phaser.Scene {
   update(_t: number, dt: number): void {
     const { deps } = this
     const still = deps.opts.still
+    const sheet = this.sheetSprites.length > 0
 
-    if (still) {
+    if (sheet) {
+      this.blender.snapTo(getSky(this.ctx.skyKey))
+      this.placeSheet()
+    } else if (still) {
       this.blender.snapTo(getSky(this.ctx.skyKey))
       if (!this.stillShown) {
         this.sprite.anims.stop()
-        this.sprite.setTexture(RACCOON_KEYS.idle[0])
+        this.sprite.setTexture(this.bank.textureKey(RESIDENT_SPECIES, this.variant, 'idle', 0))
         this.stillShown = true
       }
     } else {
@@ -121,7 +135,7 @@ export class VillageScene extends Phaser.Scene {
         })
       }
       this.blender.update(dt)
-      const anim = `raccoon-${this.resident.state}`
+      const anim = animKey(RESIDENT_SPECIES, this.variant, this.resident.state)
       if (anim !== this.currentAnim) {
         this.sprite.play(anim)
         this.currentAnim = anim
@@ -129,7 +143,7 @@ export class VillageScene extends Phaser.Scene {
     }
 
     this.sky.render(this.blender.current, this.ctx.moonPhase)
-    this.placeResident()
+    if (!sheet) this.placeResident()
     this.updateDebug()
 
     if (window.__rv) {
@@ -140,6 +154,40 @@ export class VillageScene extends Phaser.Scene {
         this.ready = true
         window.__rv.ready = true
       }
+    }
+  }
+
+  private buildSheet(id: string): void {
+    const variant = defaultVariant(SPECIES[id])
+    this.bank.ensure(id, variant)
+    const rig = RIGS[SPECIES[id].rig]
+    for (const state of STATES) {
+      rig.frames[state].forEach((_f, index) => {
+        const img = this.add
+          .image(0, 0, this.bank.textureKey(id, variant, state, index))
+          .setOrigin(0.5, 1)
+          .setData('row', STATES.indexOf(state))
+          .setData('col', index)
+        this.sheetSprites.push(img)
+      })
+    }
+  }
+
+  private placeSheet(): void {
+    const view = { width: this.scale.width, height: this.scale.height }
+    const [fw, fh] = this.bank.frameSize(this.deps.opts.sheet ?? RESIDENT_SPECIES)
+    const scale = spriteScale(1, view)
+    const dx = fw * scale * SHEET_GAP_X
+    const dy = fh * scale * SHEET_GAP_Y
+    const top = view.height / 2 - (dy * STATES.length) / 2 + dy
+    for (const img of this.sheetSprites) {
+      const row = img.getData('row') as number
+      const col = img.getData('col') as number
+      const count = this.sheetSprites.filter((o) => o.getData('row') === row).length
+      img
+        .setScale(scale)
+        .setPosition(view.width / 2 + (col - (count - 1) / 2) * dx, top + row * dy)
+        .setDepth(10)
     }
   }
 
@@ -176,7 +224,9 @@ export class VillageScene extends Phaser.Scene {
     const portrait = w / h < PORTRAIT_RATIO
     const laneScale = LANES[this.resident.lane].scale
     const halfSpriteFrac =
-      ((SPRITE_WIDTH_PX / 2) * spriteScale(laneScale, { width: w, height: h })) / w
+      ((this.bank.frameSize(RESIDENT_SPECIES)[0] / 2) *
+        spriteScale(laneScale, { width: w, height: h })) /
+      w
     this.walkRange = walkRangeFor(
       portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape,
       halfSpriteFrac,

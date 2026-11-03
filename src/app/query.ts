@@ -6,6 +6,7 @@ export interface BootOptions {
   seed?: number
   still: boolean
   debug: boolean
+  sheet?: string
 }
 
 const MAX_SPEED = 3600
@@ -28,5 +29,7 @@ export function parseQuery(search: string): BootOptions {
   const seedRaw = q.get('seed')
   if (seedRaw !== null && seedRaw !== '' && Number.isFinite(Number(seedRaw)))
     opts.seed = Number(seedRaw)
+  const sheet = q.get('sheet')
+  if (sheet) opts.sheet = sheet
   return opts
 }
