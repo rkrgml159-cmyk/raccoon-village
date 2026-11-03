@@ -56,15 +56,28 @@ export function createGame(deps: BootDeps, parent = 'game'): Phaser.Game {
   })
 }
 
-/** Quiet the wind while the page is hidden; bring it back when visible (only once started). */
-export function bindAudioPolicy(deps: BootDeps): void {
+/**
+ * Apply PowerPolicy on visibility changes: stop the render loop while hidden (Phaser only pauses
+ * its clock), and quiet the wind (only once it has been started).
+ */
+export function bindPowerPolicy(game: Phaser.Game, deps: BootDeps): void {
+  let sleeping = false
   document.addEventListener('visibilitychange', () => {
-    if (deps.wind.state === 'off' || deps.wind.state === 'unavailable') return
-    const { audioAllowed } = policy({
+    const { audioAllowed, targetFps } = policy({
       mode: deps.mode,
       hidden: document.hidden,
       reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
     })
+    if (targetFps === 0 && !sleeping) {
+      sleeping = true
+      game.loop.sleep()
+    } else if (targetFps > 0 && sleeping) {
+      sleeping = false
+      game.loop.wake()
+      // The scene recomputes DateContext and snaps the sky on RESUME.
+      game.events.emit(Phaser.Core.Events.RESUME)
+    }
+    if (deps.wind.state === 'off' || deps.wind.state === 'unavailable') return
     if (audioAllowed) deps.wind.fadeTo(WIND_GAIN)
     else deps.wind.suspend()
   })
