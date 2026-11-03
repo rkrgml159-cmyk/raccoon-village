@@ -1,0 +1,8 @@
+{
+  "id": "ears-round",
+  "rigs": ["raccoon"],
+  "anchor": "ears",
+  "layer": "above",
+  "offset": [-1, -1],
+  "rows": ["H..H"]
+}

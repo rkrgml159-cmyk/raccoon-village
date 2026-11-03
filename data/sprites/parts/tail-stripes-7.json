@@ -1,0 +1,18 @@
+{
+  "id": "tail-stripes-7",
+  "rigs": ["raccoon"],
+  "anchor": "tail",
+  "layer": "above",
+  "offset": [-8, -3],
+  "rows": ["mmm.mm..", "..m.mmmm"],
+  "states": {
+    "sit": {
+      "offset": [-6, -1],
+      "rows": ["mmm.mmm", "mmm.mmm", "mmm.mmm", "mmm.mmm"]
+    },
+    "sleep": {
+      "offset": [-8, -1],
+      "rows": ["mm.mmm.mm", "mm.mmm.mm", "mm.mmm.mm", "mm.mmm.mm"]
+    }
+  }
+}

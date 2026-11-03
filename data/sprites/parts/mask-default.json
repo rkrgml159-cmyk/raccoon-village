@@ -1,0 +1,14 @@
+{
+  "id": "mask-default",
+  "rigs": ["raccoon"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [1, 2],
+  "rows": ["MMMMMMMM", "MMM..MMM", "MMMMMMMM"],
+  "states": {
+    "sleep": {
+      "offset": [0, 2],
+      "rows": ["MMMMMMMM", "MMM.....", "MMMMM..."]
+    }
+  }
+}

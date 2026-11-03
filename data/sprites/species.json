@@ -1,0 +1,137 @@
+{
+  "raccoon": {
+    "name": "너구리",
+    "rig": "raccoon",
+    "scale": 1.0,
+    "share": 0,
+    "lanes": [0.3, 0.4, 0.3],
+    "walkSpeed": 0.06,
+    "nocturnal": true,
+    "weights": {
+      "default": {
+        "idle": 0.6,
+        "walk": 0.22,
+        "sit": 0.1,
+        "sleep": 0.08
+      },
+      "night": {
+        "idle": 0.45,
+        "walk": 0.05,
+        "sit": 0.15,
+        "sleep": 0.35
+      }
+    },
+    "palettes": {
+      "grey": {
+        "B": "#8a8f99",
+        "b": "#6b7079",
+        "W": "#e9e4d8",
+        "L": "#55585f",
+        "l": "#3c3f45",
+        "D": "#2b2b2b",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#2b2b2b",
+        "m": "#2b2b2b",
+        "H": "#b5b9c2"
+      },
+      "brown": {
+        "B": "#7a5c43",
+        "b": "#5c4331",
+        "W": "#d9ccb5",
+        "L": "#4a3a2e",
+        "l": "#33271f",
+        "D": "#241b16",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#2a2019",
+        "m": "#2a2019",
+        "H": "#a58566"
+      },
+      "cinnamon": {
+        "B": "#a8673a",
+        "b": "#824d2a",
+        "W": "#e6cfae",
+        "L": "#5a3a24",
+        "l": "#3f2918",
+        "D": "#2a1c12",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#4a2f1d",
+        "m": "#4a2f1d",
+        "H": "#cf8f5e"
+      },
+      "blonde": {
+        "B": "#cfae7a",
+        "b": "#a8885a",
+        "W": "#f1e6cf",
+        "L": "#7a6444",
+        "l": "#594830",
+        "D": "#2f261c",
+        "E": "#f4f1ea",
+        "P": "#1a1a1a",
+        "N": "#1a1a1a",
+        "M": "#6e5638",
+        "m": "#6e5638",
+        "H": "#e7cf9f"
+      },
+      "melanistic": {
+        "B": "#2f2d2c",
+        "b": "#1f1e1d",
+        "W": "#4a4745",
+        "L": "#181717",
+        "l": "#0f0e0e",
+        "D": "#0c0b0b",
+        "E": "#cfc8bb",
+        "P": "#0a0a0a",
+        "N": "#0a0a0a",
+        "M": "#141313",
+        "m": "#141313",
+        "H": "#55514f"
+      },
+      "albino": {
+        "B": "#f3efe8",
+        "b": "#d9d2c5",
+        "W": "#fbf7ee",
+        "L": "#cfc7ba",
+        "l": "#b5ad9f",
+        "D": "#8a5a5a",
+        "E": "#fff8f0",
+        "P": "#7a2a2a",
+        "N": "#d98a8a",
+        "M": "#e6dccb",
+        "m": "#e6dccb",
+        "H": "#ffffff"
+      }
+    },
+    "overlays": ["ears-round"],
+    "axes": {
+      "kind": {
+        "common": [],
+        "crab-eating": ["ears-small", "coat-short"],
+        "cozumel": ["tail-gold-tip"]
+      },
+      "mask": {
+        "default": ["mask-default"],
+        "wide": ["mask-wide"],
+        "one-eye": ["mask-one-eye"],
+        "none": []
+      },
+      "tail": {
+        "3": ["tail-stripes-3"],
+        "5": ["tail-stripes-5"],
+        "7": ["tail-stripes-7"],
+        "plain": ["tail-plain"]
+      },
+      "body": {
+        "normal": 1.0,
+        "chubby": 1.1,
+        "slim": 0.9,
+        "baby": 0.7
+      }
+    }
+  }
+}

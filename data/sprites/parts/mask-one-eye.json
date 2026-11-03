@@ -1,0 +1,14 @@
+{
+  "id": "mask-one-eye",
+  "rigs": ["raccoon"],
+  "anchor": "head",
+  "layer": "above",
+  "offset": [3, 2],
+  "rows": ["MMMM", "M..M", "MMMM"],
+  "states": {
+    "sleep": {
+      "offset": [2, 2],
+      "rows": ["MMMM", "M..M", "MMM."]
+    }
+  }
+}

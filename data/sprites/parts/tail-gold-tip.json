@@ -1,0 +1,19 @@
+{
+  "id": "tail-gold-tip",
+  "rigs": ["raccoon"],
+  "anchor": "tail",
+  "layer": "above",
+  "offset": [-8, -3],
+  "rows": ["XXX"],
+  "fixed": "#d9a441",
+  "states": {
+    "sit": {
+      "offset": [-6, -1],
+      "rows": ["X", "X", "X", "X"]
+    },
+    "sleep": {
+      "offset": [-8, -1],
+      "rows": ["X", "X", "X", "X"]
+    }
+  }
+}
