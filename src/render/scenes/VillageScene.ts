@@ -39,6 +39,9 @@ export class VillageScene extends Phaser.Scene {
 
   create(): void {
     const { deps } = this
+    this.ready = false
+    this.currentAnim = ''
+    this.stillShown = false
     generateRaccoonTextures(this)
     registerRaccoonAnims(this)
 
@@ -56,7 +59,7 @@ export class VillageScene extends Phaser.Scene {
         .setDepth(100)
     }
 
-    this.bus.on('seasonChanged', ({ to }) => deps.wind.setSeason(to))
+    const offSeason = this.bus.on('seasonChanged', ({ to }) => deps.wind.setSeason(to))
     deps.wind.setSeason(this.ctx.season)
 
     this.applyLayout()
@@ -70,6 +73,7 @@ export class VillageScene extends Phaser.Scene {
     }
     this.scale.on(Phaser.Scale.Events.RESIZE, onResize)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      offSeason()
       this.game.events.off(Phaser.Core.Events.RESUME, onResume)
       this.scale.off(Phaser.Scale.Events.RESIZE, onResize)
       if (this.resizeTimer) clearTimeout(this.resizeTimer)
@@ -167,8 +171,11 @@ export class VillageScene extends Phaser.Scene {
     const cam = this.cameras.main
     // Portrait: zoom 2 centred on x 0.5 so lane x 0.25..0.75 fills the width.
     cam.setZoom(portrait ? 2 : 1)
-    cam.centerOn(w / 2, portrait ? h * 0.6 : h / 2)
-    this.sky.resize(w, h)
+    const cy = portrait ? h * 0.6 : h / 2
+    cam.centerOn(w / 2, cy)
+    const vw = w / cam.zoom
+    const vh = h / cam.zoom
+    this.sky.resize(w, h, { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh })
   }
 
   private updateDebug(): void {

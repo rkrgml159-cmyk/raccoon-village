@@ -121,6 +121,7 @@ export class WindSynth {
     const { ctx } = this
     if (!ctx || this._state !== 'running') return
     this.fadeTo(0)
+    if (this.suspendTimer) clearTimeout(this.suspendTimer)
     this.suspendTimer = setTimeout(() => {
       this.suspendTimer = null
       this._state = 'suspended'

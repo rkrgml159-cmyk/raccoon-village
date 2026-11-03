@@ -5,9 +5,18 @@ import { lerpHex, type SkyColors } from '@domain/sky/SkyPalette'
 const HORIZON_Y = 0.6
 const SKYLINE_COUNT = 10
 const STAR_COUNT = 30
+const STAR_BAND = HORIZON_Y - 0.1
 const MOON_X = 0.78
 const MOON_Y = 0.18
 const MOON_R = 0.04
+
+/** Visible world rectangle (the main camera's worldView). */
+export interface View {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 interface Block {
   x: number
@@ -25,6 +34,7 @@ export class SkyLayer {
   private readonly starPos: { x: number; y: number }[] = []
   private w = 0
   private h = 0
+  private view: View = { x: 0, y: 0, width: 0, height: 0 }
   private lastColors: SkyColors | null = null
   private lastMoon = -1
   private lastStarAlpha = -1
@@ -39,16 +49,17 @@ export class SkyLayer {
       })
     }
     for (let i = 0; i < STAR_COUNT; i++) {
-      this.starPos.push({ x: rng(), y: rng() * (HORIZON_Y - 0.1) })
+      this.starPos.push({ x: rng(), y: rng() * STAR_BAND })
     }
     this.sky = scene.add.graphics().setDepth(-30)
     this.stars = scene.add.graphics().setDepth(-20)
     this.moon = scene.add.graphics().setDepth(-10)
   }
 
-  resize(w: number, h: number): void {
+  resize(w: number, h: number, view: View = { x: 0, y: 0, width: w, height: h }): void {
     this.w = w
     this.h = h
+    this.view = view
     this.lastColors = null
     this.lastMoon = -1
     this.drawStars()
@@ -74,33 +85,38 @@ export class SkyLayer {
   }
 
   private drawSky(c: SkyColors): void {
-    const { w, h } = this
+    const { x, y, width: vw, height: vh } = this.view
     const g = this.sky
     g.clear()
+    // Overscan by 2px so the camera edge never shows the background.
     g.fillGradientStyle(toInt(c.top), toInt(c.top), toInt(c.bottom), toInt(c.bottom), 1)
-    g.fillRect(0, 0, w, h)
-    const horizonY = h * HORIZON_Y
+    g.fillRect(x - 2, y - 2, vw + 4, vh + 4)
+    const horizonY = this.h * HORIZON_Y
     g.fillStyle(toInt(c.horizon), 1)
-    for (const b of this.blocks) g.fillRect(b.x * w, horizonY - b.h * h, b.w * w, b.h * h)
+    for (const b of this.blocks) g.fillRect(x + b.x * vw, horizonY - b.h * vh, b.w * vw, b.h * vh)
     g.fillStyle(toInt(lerpHex(c.horizon, '#000000', 0.12)), 1)
-    g.fillRect(0, horizonY, w, h - horizonY)
+    g.fillRect(x - 2, horizonY, vw + 4, y + vh + 2 - horizonY)
   }
 
   private drawStars(): void {
+    const { x, y, width: vw, height: vh } = this.view
+    const band = Math.max(0, this.h * HORIZON_Y - vh * 0.05 - y)
     const g = this.stars
     g.clear()
     g.fillStyle(0xffffff, 1)
-    for (const s of this.starPos)
-      g.fillRect(Math.floor(s.x * this.w), Math.floor(s.y * this.h), 2, 2)
+    for (const s of this.starPos) {
+      g.fillRect(Math.floor(x + s.x * vw), Math.floor(y + (s.y / STAR_BAND) * band), 2, 2)
+    }
   }
 
   /** Lit part of the disc = disc minus a disc shifted sideways by the shadow offset. */
   private drawMoon(phase: number): void {
     const g = this.moon
     g.clear()
-    const r = Math.max(2, Math.round(this.h * MOON_R))
-    const cx = Math.round(this.w * MOON_X)
-    const cy = Math.round(this.h * MOON_Y)
+    const { x, y, width: vw, height: vh } = this.view
+    const r = Math.max(2, Math.round(vh * MOON_R))
+    const cx = Math.round(x + vw * MOON_X)
+    const cy = Math.round(y + vh * MOON_Y)
     const lit = 1 - Math.abs(phase - 0.5) * 2
     const off = (phase < 0.5 ? -1 : 1) * lit * 2 * r
     g.fillStyle(0xf2efe0, 1)
