@@ -38,7 +38,7 @@ describe('showcaseLayout', () => {
   })
 
   it('spaces each lane evenly inside the margins', () => {
-    for (const lane of [0, 1, 2] as const) {
+    for (const lane of [0, 2] as const) {
       const xs = layout
         .filter((e) => e.lane === lane)
         .map((e) => e.x)
@@ -47,6 +47,39 @@ describe('showcaseLayout', () => {
       expect(xs[xs.length - 1]).toBeCloseTo(0.92, 9)
       for (let i = 1; i < xs.length; i++)
         expect(xs[i] - xs[i - 1]).toBeGreaterThanOrEqual(0.84 / (xs.length - 1) - 1e-9)
+    }
+  })
+
+  it('insets lane 1 by half a lane-2 step', () => {
+    const xs = (lane: number): number[] =>
+      layout
+        .filter((e) => e.lane === lane)
+        .map((e) => e.x)
+        .sort((a, b) => a - b)
+    const l2 = xs(2)
+    const step = l2[1] - l2[0]
+    const l1 = xs(1)
+    expect(l1[0]).toBeCloseTo(0.08 + step / 2, 9)
+    expect(l1[l1.length - 1]).toBeLessThanOrEqual(0.92 - step / 2 + 1e-9)
+    for (let i = 1; i < l1.length; i++) expect(l1[i] - l1[i - 1]).toBeCloseTo(step, 9)
+  })
+
+  it('no two species in lanes 1 and 2 share an x column within 0.02', () => {
+    const a = layout.filter((e) => e.lane === 1)
+    const b = layout.filter((e) => e.lane === 2)
+    for (const p of a) for (const q of b) expect(Math.abs(p.x - q.x)).toBeGreaterThan(0.02)
+  })
+
+  it('adjacent lanes alternate size at matching columns', () => {
+    const front = layout.filter((e) => e.lane !== 0)
+    const sorted = front.map((e) => scaleOf(e.id)).sort((x, y) => x - y)
+    const median = (sorted[(sorted.length - 1) >> 1] + sorted[sorted.length >> 1]) / 2
+    const big = (id: string): boolean => scaleOf(id) > median
+    const l2 = layout.filter((e) => e.lane === 2).sort((p, q) => p.x - q.x)
+    for (const p of layout.filter((e) => e.lane === 1)) {
+      let near = l2[0]
+      for (const q of l2) if (Math.abs(q.x - p.x) < Math.abs(near.x - p.x) - 1e-9) near = q
+      expect(big(near.id)).toBe(!big(p.id))
     }
   })
 
@@ -66,6 +99,14 @@ describe('showcaseLayout', () => {
 
   it('is deterministic', () => {
     expect(showcaseLayout(species)).toEqual(layout)
+  })
+
+  it('handles odd counts', () => {
+    for (const n of [2, 3, 4, 6, 7, 24]) {
+      const l = showcaseLayout(table(n))
+      expect(new Set(l.map((e) => e.id)).size).toBe(n)
+      for (const e of l) expect(e.x).toBeGreaterThanOrEqual(0.08 - 1e-9)
+    }
   })
 
   it('handles tiny tables', () => {

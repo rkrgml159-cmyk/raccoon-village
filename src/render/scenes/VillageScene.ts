@@ -240,6 +240,15 @@ export class VillageScene extends Phaser.Scene {
     return this.deps.opts.species === 'all'
   }
 
+  /** Residents are born inside the portrait visible range, so they need no remap afterwards. */
+  private spawnRange(): readonly [number, number] {
+    return this.isPortrait() ? VISIBLE_X.portrait : X_FALLBACK
+  }
+
+  private isPortrait(): boolean {
+    return this.scale.width / this.scale.height < PORTRAIT_RATIO
+  }
+
   private makeResidents(): Resident[] {
     const { opts } = this.deps
     const bodyScaleOf = (id: string, v: string): number => resolveVariant(SPECIES[id], v).bodyScale
@@ -250,10 +259,12 @@ export class VillageScene extends Phaser.Scene {
         species: SPECIES,
         variantsOf: (_id, sp) => allVariants(sp),
         bodyScaleOf,
-        halfWidthOf: (id, scale) => {
+        halfWidthOf: (id, scale, lane) => {
           const view = { width: this.scale.width, height: this.scale.height }
-          return ((this.bank.frameSize(id)[0] / 2) * spriteScale(1, view) * scale) / view.width
+          const display = spriteScale(LANES[lane].scale, view) * scale
+          return ((this.bank.frameSize(id)[0] / 2) * display) / view.width
         },
+        range: this.spawnRange(),
       })
     }
     return showcaseLayout(SPECIES).map(({ id, lane, x }) => {
@@ -286,9 +297,10 @@ export class VillageScene extends Phaser.Scene {
   private applyLayout(): void {
     const w = this.scale.width
     const h = this.scale.height
-    const portrait = w / h < PORTRAIT_RATIO
+    const portrait = this.isPortrait()
     const view = { width: w, height: h }
-    const first = !this.laidOut
+    // Only a spawn over the full width needs remapping into the visible range.
+    const remap = !this.laidOut && !portrait
     const visible = portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape
     this.residents = this.residents.map((r) => {
       const displayScale = spriteScale(LANES[r.lane].scale, view) * r.scale
@@ -296,7 +308,7 @@ export class VillageScene extends Phaser.Scene {
       const range = walkRangeFor(visible, halfSpriteFrac)
       this.walkRanges.set(r.id, range)
       if (this.showcase) return r
-      const x = first ? remapX(r.x, X_FALLBACK, range) : clampX(r.x, range)
+      const x = remap ? remapX(r.x, X_FALLBACK, range) : clampX(r.x, range)
       return { ...r, x }
     })
     this.laidOut = true

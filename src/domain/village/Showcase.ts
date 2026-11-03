@@ -15,31 +15,27 @@ function spaced(count: number, index: number): number {
 }
 
 /**
- * Lays every species out for the `?species=all` view: the largest go to the back lane, the
- * rest alternate large/small along the two front lanes so big animals never stack.
+ * Lays every species out for the `?species=all` view: the largest go to the back lane; the rest
+ * are split over the two front lanes. Each lane alternates big/small, lane 1 starts big and lane 2
+ * small, and lane 1 shares lane 2's step shifted by half of it, so no species hides behind another.
  */
 export function showcaseLayout(species: Record<string, SpeciesDef>): ShowcaseEntry[] {
   const ids = Object.keys(species).sort((a, b) => species[b].scale - species[a].scale)
   const back = ids.slice(0, BACK_COUNT)
   const rest = ids.slice(BACK_COUNT)
-  const mixed: string[] = []
-  let lo = 0
-  let hi = rest.length - 1
-  while (lo <= hi) {
-    mixed.push(rest[lo++])
-    if (lo <= hi) mixed.push(rest[hi--])
-  }
-  const lanes: string[][] = [back, [], []]
-  // Pairs (big, small) go to lane 1, then lane 2, so each lane alternates big/small. Lane 1 is
-  // laid out small-first so its big animals sit between the big ones of lane 2, not above them.
-  for (let k = 0; k < mixed.length; k += 2) {
-    const lane = (k / 2) % 2 === 0 ? 1 : 2
-    const pair = mixed.slice(k, k + 2)
-    lanes[lane].push(...(lane === 1 ? pair.reverse() : pair))
-  }
+  const bigs = rest.slice(0, Math.ceil(rest.length / 2))
+  const smalls = rest.slice(bigs.length)
+  const take = (preferBig: boolean): string =>
+    (preferBig ? (bigs.length > 0 ? bigs : smalls) : smalls.length > 0 ? smalls : bigs).shift()!
+  const n1 = Math.max(0, Math.floor((rest.length - 1) / 2))
+  const n2 = rest.length - n1
+  const lane1 = Array.from({ length: n1 }, (_, j) => take(j % 2 === 0))
+  const lane2 = Array.from({ length: n2 }, (_, j) => take(j % 2 === 1))
+  const step2 = n2 > 1 ? (1 - 2 * MARGIN) / (n2 - 1) : 0
   const out: ShowcaseEntry[] = []
-  lanes.forEach((list, lane) =>
-    list.forEach((id, i) => out.push({ id, lane: lane as 0 | 1 | 2, x: spaced(list.length, i) })),
-  )
+  back.forEach((id, i) => out.push({ id, lane: 0, x: spaced(back.length, i) }))
+  // Lane 1 uses lane 2's step, so each of its animals sits midway between two lane-2 animals.
+  lane1.forEach((id, i) => out.push({ id, lane: 1, x: MARGIN + step2 * (i + 0.5) }))
+  lane2.forEach((id, i) => out.push({ id, lane: 2, x: spaced(n2, i) }))
   return out
 }
