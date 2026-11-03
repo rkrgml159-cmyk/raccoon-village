@@ -7,7 +7,7 @@
 - 확정 결정 로그: [docs/decisions.md](docs/decisions.md)
 - 스택: Phaser 4 · TypeScript · Vite · Capacitor · Supabase (예정)
 
-현재 단계: **M2a 완료**(배포 대기, main 병합 후). 산짐승 24종 + 사람과 이끼 숲 배경이 들어갔다. 다음: M2b 마음과 말. (M1은 2026-11-03 GitHub Pages 배포 완료.)
+현재 단계: **M2a 배포 완료**(2026-11-03, GitHub Pages, main 2849529). 산짐승 24종 + 사람과 이끼 숲 배경이 들어갔다. 다음: M2b 마음과 말.
 
 ## 로컬 실행
 ```
@@ -46,6 +46,6 @@ npm run capture:sheet -- --sheet=<종족 id>   # 시트 캡처 (--species=all, -
 - [x] `?species=all`에서 25종이 서로 다른 실루엣·색으로 보인다 — 쇼케이스 베이스라인 `tests/capture/baseline/showcase-desktop.png`
 - [x] 기본 마을(`n=12`) 1시간 방치 시 모든 주민이 멍·걷기·앉기·자기를 하며 화면 이탈이 없고 스폰 시 겹치지 않는다(지나칠 때의 겹침은 M2b 회피 전까지 허용; 세로 화면에서 주민이 많으면 겹칠 수 있음(M2b 회피 전)) — 데스크톱 `play-desktop.png`에서 스폰 겹침 없음 확인
 - [x] 이끼 숲·폐허 배경이 4계절×4시간대에서 어색하지 않다 — `npm run capture:sheet -- --bg=1` 16장을 리뷰에서 판정(로컬 산출물)
-- [x] 도메인 커버리지 90%+, 데이터 검증 테스트, e2e 녹색 — statements 98.24% · branches 96.68% · functions 100% · lines 99.12%, 단위 225(18파일), e2e 9 통과 + 1 건너뜀(쇼케이스는 desktop 전용)
+- [x] 도메인 커버리지 90%+, 데이터 검증 테스트, e2e 녹색 — statements 98.35% · branches 96.65% · functions 100% · lines 99.16%, 단위 253(19파일), e2e 9 통과 + 1 건너뜀(쇼케이스는 desktop 전용)
 - [x] 30마리 월페이퍼 전력 PASS — `docs/metrics/M2a.md`: 활성 21.94 cpu_s/30s(M1의 2.27배, 기준 2.5배로 수정 — 메모 참조), 숨김 0.024, 비율 0.1%
-- [ ] 문서 갱신(02·03·05·09·decisions·CLAUDE.md·README 완료) + Pages 배포 — 배포는 main 병합 후
+- [x] 문서 갱신(02·03·05·09·decisions·CLAUDE.md·README) + Pages 배포 — main 2849529, run 41679182501 verify+deploy 녹색, deployment 7525160071 success

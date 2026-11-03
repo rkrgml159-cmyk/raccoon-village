@@ -32,4 +32,4 @@
 ## 측정 (매 마일스톤 기록)
 - 번들 크기 / 첫 로드 시간 / 월페이퍼 1시간 CPU / vitest 커버리지 / 인스타 팔로워
 - M1 (2026-11-03): 번들 JS 1,385.56 kB (gzip 364.49 kB, Phaser 청크 포함) / 첫 로드 310 ms (로컬 프리뷰, `__rv.ready`까지) / 커버리지 `src/domain` 98.84% statements · 99.03% branches · 100% functions / 월페이퍼 CPU 숨김÷활성 0.2% (`docs/metrics/M1.md`, 10분 측정) / vitest 95 + e2e 8
-- M2a (2026-11-03): 번들 `boot-*.js` 1,561.22 kB (gzip 383.60 kB) / 첫 로드 549 ms (n=30, 로컬 프리뷰, `__rv.ready`까지) / 커버리지 `src/domain` 98.24% statements · 96.68% branches · 100% functions · 99.12% lines / 월페이퍼 n=30 10분: 활성 21.94 cpu_s/30s (M1 9.684의 2.27배, 기준 2.0→2.5배로 수정, SwiftShader 측정·실기기는 M5), 숨김 0.024, 숨김÷활성 0.1% PASS (`docs/metrics/M2a.md`) / vitest 225(18파일) + e2e 9 통과·1 건너뜀(쇼케이스는 desktop 전용)
+- M2a (2026-11-03): 번들 `boot-*.js` 1,561.22 kB (gzip 383.60 kB) / 첫 로드 549 ms (n=30, 로컬 프리뷰, `__rv.ready`까지) / 커버리지 `src/domain` 98.35% statements · 96.65% branches · 100% functions · 99.16% lines / 월페이퍼 n=30 10분: 활성 21.94 cpu_s/30s (M1 9.684의 2.27배, 기준 2.0→2.5배로 수정, SwiftShader 측정·실기기는 M5), 숨김 0.024, 숨김÷활성 0.1% PASS (`docs/metrics/M2a.md`) / vitest 253(19파일) + e2e 9 통과·1 건너뜀(쇼케이스는 desktop 전용)
