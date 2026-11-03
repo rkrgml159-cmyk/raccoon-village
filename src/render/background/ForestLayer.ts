@@ -7,8 +7,12 @@ import type { SceneDef, SceneLayer, TileDef } from '@domain/sprites/types'
 import type { Season } from '@domain/time/DateContext'
 import type { View } from '../sky/SkyLayer'
 
-const DEPTH: Record<SceneLayer['id'], number> = { back: -5, mid: -3, front: 5000 }
+const DEPTH: Record<SceneLayer['id'], number> = { back: -5, mid: -3, front: 1_000_000 }
 const REFERENCE_SIZE = 360
+/** Soil band never starts above this fraction of the world height (lane 2 stands at 0.82). */
+const SOIL_MIN_FRACTION = 0.86
+/** Portrait: front layer ground line sits this far down the visible view. */
+const FRONT_PORTRAIT_Y = 0.98
 /** Rows of grass dither kept above the ground line inside the mid buffer. */
 const GROUND_HEADROOM = 3
 /** The baked back-layer fog is rebuilt when the horizon colour drifts by more than this. */
@@ -121,19 +125,29 @@ export class ForestLayer {
     const palette = this.def.palettes[season]
     const scale = layer.scale * (Math.min(this.w, this.h) / REFERENCE_SIZE)
     const widthPx = Math.ceil(vw / scale)
-    const baseY = layer.y * this.h - vy // ground line of this layer, view-relative screen px
+    // Ground line of this layer, view-relative screen px. On tall (zoomed) phones the front
+    // layer hugs the visible bottom instead of 0.90 of the world height.
+    const frontOnView = layer.id === 'front' && vh < this.h
+    const baseY = frontOnView ? vh * FRONT_PORTRAIT_Y : layer.y * this.h - vy
     const placements = planLayer(layer, this.tiles, this.seed, widthPx, 1)
     // Crop to the occupied rows: from the tallest placed tile down (no transparent padding).
     const used = placements.map((p) => this.tiles[p.tile])
     let above = Math.max(1, ...used.map((t) => t.ground + 1))
     const below = Math.max(0, ...used.map((t) => t.size[1] - t.ground - 1))
     let groundRow: number | undefined
+    let soilStartRow: number | undefined
     let bottomRows = below
     if (layer.id === 'mid') {
       const groundTop = this.def.ground.y * this.h - vy
       above = Math.max(above, Math.ceil((baseY - groundTop) / scale) + GROUND_HEADROOM)
       bottomRows = Math.max(below, Math.ceil((vh - baseY) / scale))
       groundRow = above - Math.round((baseY - groundTop) / scale)
+      // Soil starts below lane 2 (0.82h) so every lane stands on moss, also on tall phones.
+      const soilY = Math.max(
+        groundTop + ((vh - groundTop) * 2) / 3,
+        SOIL_MIN_FRACTION * this.h - vy,
+      )
+      soilStartRow = above + Math.round((soilY - baseY) / scale)
     }
     const heightPx = above + bottomRows
     const top = Math.round(baseY - above * scale)
@@ -146,6 +160,7 @@ export class ForestLayer {
       heightPx,
       layerRow: above,
       groundRow,
+      soilStartRow,
       groundPalette:
         groundRow === undefined
           ? undefined

@@ -4,7 +4,8 @@ import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, type Resident } from '@domain/resident/Resident'
 import { tick, profileFor, type Profile } from '@domain/resident/UtilityAI'
 import { createVillage } from '@domain/village/Village'
-import { LANES, clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
+import { showcaseLayout } from '@domain/village/Showcase'
+import { LANES, clampX, remapX, toScreen, walkRangeFor } from '@domain/village/Lanes'
 import { resolveVariant } from '@domain/sprites/Palette'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
@@ -25,7 +26,7 @@ const SHEET_GAP_X = 1.2
 const SHEET_GAP_Y = 1.3
 const RESIDENT_SPECIES = 'raccoon'
 const X_FALLBACK = [0.05, 0.95] as const
-const SHOWCASE_MARGIN = 0.08
+const DEBUG_DEPTH = 10000
 const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
 
 /** Sprite scale: lane scale × the short viewport side (so portrait phones get a small raccoon). */
@@ -51,6 +52,7 @@ export class VillageScene extends Phaser.Scene {
   private resizeTimer: ReturnType<typeof setTimeout> | null = null
   private ready = false
   private stillShown = false
+  private laidOut = false
 
   constructor(private readonly deps: BootDeps) {
     super('village')
@@ -60,7 +62,13 @@ export class VillageScene extends Phaser.Scene {
     const { deps } = this
     this.ready = false
     this.stillShown = false
-    this.bank = new SpriteBank(this, loadRegistry({ rigs: RIGS, parts: PARTS, species: SPECIES }))
+    this.laidOut = false
+    try {
+      this.bank = new SpriteBank(this, loadRegistry({ rigs: RIGS, parts: PARTS, species: SPECIES }))
+    } catch (e) {
+      console.error('registry invalid', e)
+      return
+    }
     this.sheetSprites = []
     this.walkRanges.clear()
     this.profiles.clear()
@@ -87,7 +95,7 @@ export class VillageScene extends Phaser.Scene {
       this.debugText = this.add
         .text(0, 0, '', { fontFamily: 'monospace', fontSize: '14px', color: '#ffffff' })
         .setOrigin(0, 0)
-        .setDepth(100)
+        .setDepth(DEBUG_DEPTH)
     }
 
     const offSeason = this.bus.on('seasonChanged', ({ to }) => deps.wind.setSeason(to))
@@ -242,16 +250,13 @@ export class VillageScene extends Phaser.Scene {
         species: SPECIES,
         variantsOf: (_id, sp) => allVariants(sp),
         bodyScaleOf,
+        halfWidthOf: (id, scale) => {
+          const view = { width: this.scale.width, height: this.scale.height }
+          return ((this.bank.frameSize(id)[0] / 2) * spriteScale(1, view) * scale) / view.width
+        },
       })
     }
-    const ids = Object.keys(SPECIES)
-    return ids.map((id, i) => {
-      const lane = (i % 3) as 0 | 1 | 2
-      const inLane = Math.ceil((ids.length - lane) / 3)
-      const idx = Math.floor(i / 3)
-      const x =
-        SHOWCASE_MARGIN +
-        (inLane > 1 ? idx * ((1 - 2 * SHOWCASE_MARGIN) / (inLane - 1)) : 0.5 - SHOWCASE_MARGIN)
+    return showcaseLayout(SPECIES).map(({ id, lane, x }) => {
       const variant = defaultVariant(SPECIES[id])
       return createResident(id, x, {
         species: id,
@@ -283,14 +288,18 @@ export class VillageScene extends Phaser.Scene {
     const h = this.scale.height
     const portrait = w / h < PORTRAIT_RATIO
     const view = { width: w, height: h }
+    const first = !this.laidOut
     const visible = portrait ? VISIBLE_X.portrait : VISIBLE_X.landscape
     this.residents = this.residents.map((r) => {
       const displayScale = spriteScale(LANES[r.lane].scale, view) * r.scale
       const halfSpriteFrac = ((this.bank.frameSize(r.species)[0] / 2) * displayScale) / w
       const range = walkRangeFor(visible, halfSpriteFrac)
       this.walkRanges.set(r.id, range)
-      return this.showcase ? r : { ...r, x: clampX(r.x, range) }
+      if (this.showcase) return r
+      const x = first ? remapX(r.x, X_FALLBACK, range) : clampX(r.x, range)
+      return { ...r, x }
     })
+    this.laidOut = true
     const cam = this.cameras.main
     // Portrait: zoom 2 centred on x 0.5 so lane x 0.25..0.75 fills the width.
     cam.setZoom(portrait ? 2 : 1)
