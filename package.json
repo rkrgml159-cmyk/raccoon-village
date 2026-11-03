@@ -26,11 +26,11 @@
   },
   "homepage": "https://github.com/rkrgml159-cmyk/raccoon-village#readme",
   "dependencies": {
-    "phaser": "^4.2.1"
+    "phaser": "4.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
-    "@playwright/test": "^1.63.0",
+    "@playwright/test": "1.63.0",
     "@vitest/coverage-v8": "^5.1.0",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
