@@ -1,5 +1,5 @@
-import { parsePixelMap, SPRITE_ROLES, usedRoles } from './PixelMap'
-import type { PartDef, RigDef, SpeciesDef, SpriteState } from './types'
+import { parsePixelMap, SPRITE_ROLES, TILE_ROLES, usedRoles } from './PixelMap'
+import type { PartDef, RigDef, SceneDef, SpeciesDef, SpriteState, TileDef } from './types'
 import { STATES, validateRig } from './validateRig'
 
 export interface Registry {
@@ -144,4 +144,42 @@ export function allVariants(sp: SpeciesDef): string[] {
     }
   }
   return out
+}
+
+const SCENE_LAYER_IDS = ['back', 'mid', 'front']
+const SEASONS = ['spring', 'summer', 'autumn', 'winter'] as const
+
+/** Validates a forest scene against the tile set; throws `scene: ...` on the first problem. */
+export function validateScene(scene: SceneDef, tiles: Record<string, TileDef>): void {
+  const fail = (msg: string): never => {
+    throw new Error(`scene: ${msg}`)
+  }
+  const unit = (v: number): boolean => v >= 0 && v <= 1
+  if (!unit(scene.ground.y)) fail(`ground.y ${scene.ground.y} outside 0-1`)
+  if (scene.layers.length !== SCENE_LAYER_IDS.length) fail('expected exactly 3 layers')
+  const needed = new Set<string>()
+  scene.layers.forEach((layer, i) => {
+    if (layer.id !== SCENE_LAYER_IDS[i]) fail(`layer ${i} must be '${SCENE_LAYER_IDS[i]}'`)
+    if (!unit(layer.density)) fail(`layer ${layer.id} density ${layer.density} outside 0-1`)
+    if (!unit(layer.y)) fail(`layer ${layer.id} y ${layer.y} outside 0-1`)
+    for (const entry of layer.tiles) {
+      const tile = tiles[entry.id]
+      if (!tile) fail(`layer ${layer.id} tile '${entry.id}' not found`)
+      try {
+        const map = parsePixelMap(tile.rows, tile.size, TILE_ROLES)
+        for (const r of usedRoles(map)) needed.add(r)
+      } catch (e) {
+        fail(`tile ${entry.id}: ${(e as Error).message}`)
+      }
+    }
+  })
+  for (const season of SEASONS) {
+    const palette = scene.palettes[season] ?? {}
+    for (const role of needed) {
+      if (!(role in palette)) fail(`palette ${season} is missing role '${role}'`)
+    }
+    for (const [role, color] of Object.entries(palette)) {
+      if (!HEX.test(color)) fail(`palette ${season} role ${role}: invalid hex color '${color}'`)
+    }
+  }
 }

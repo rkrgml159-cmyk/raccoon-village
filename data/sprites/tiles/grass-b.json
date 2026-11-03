@@ -1,0 +1,13 @@
+{
+  "id": "grass-b",
+  "size": [12, 6],
+  "ground": 5,
+  "rows": [
+    "...F........",
+    "...F...F....",
+    "F...F.F.F...",
+    "F.F.F.F.F..F",
+    "g.g.g.g.g..g",
+    "gggggggggggg"
+  ]
+}

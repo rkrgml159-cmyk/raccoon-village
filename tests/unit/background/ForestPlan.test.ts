@@ -1,0 +1,104 @@
+import { describe, expect, it } from 'vitest'
+import { paintTile, planLayer, tintFor } from '../../../src/domain/background/ForestPlan'
+import type { SceneLayer, TileDef } from '../../../src/domain/sprites/types'
+
+function tile(id: string, w = 10, h = 8): TileDef {
+  return { id, size: [w, h], rows: Array.from({ length: h }, () => 'T'.repeat(w)), ground: h - 1 }
+}
+
+const TILES: Record<string, TileDef> = {
+  a: tile('a'),
+  b: tile('b', 12),
+  cabin: tile('cabin', 20),
+}
+
+const back: SceneLayer = {
+  id: 'back',
+  y: 0.56,
+  scale: 2,
+  density: 0.9,
+  tiles: [
+    { id: 'a', w: 3 },
+    { id: 'b', w: 2 },
+  ],
+}
+
+const mid: SceneLayer = {
+  id: 'mid',
+  y: 0.62,
+  scale: 2.5,
+  density: 0.55,
+  tiles: [
+    { id: 'a', w: 4 },
+    { id: 'cabin', w: 5, max: 1 },
+  ],
+}
+
+describe('planLayer', () => {
+  it('back layer covers the full width', () => {
+    const scale = 2
+    const plan = planLayer(back, TILES, 7, 640, scale)
+    expect(plan[0].x).toBe(0)
+    const last = plan[plan.length - 1]
+    const lastW = TILES[last.tile].size[0] * scale
+    expect(last.x + lastW).toBeGreaterThanOrEqual(640)
+    for (let i = 1; i < plan.length; i++) {
+      const prev = plan[i - 1]
+      expect(plan[i].x).toBeCloseTo(prev.x + TILES[prev.tile].size[0] * scale)
+    }
+  })
+
+  it('mid layer count follows density', () => {
+    expect(planLayer(mid, TILES, 3, 800, 2.5)).toHaveLength(7)
+  })
+
+  it('keeps at least one slot for tiny density', () => {
+    expect(planLayer({ ...mid, density: 0 }, TILES, 3, 800, 2.5)).toHaveLength(1)
+  })
+
+  it('respects max', () => {
+    for (let seed = 0; seed < 30; seed++) {
+      const plan = planLayer({ ...mid, density: 1 }, TILES, seed, 800, 2.5)
+      expect(plan.filter((p) => p.tile === 'cabin').length).toBeLessThanOrEqual(1)
+    }
+  })
+
+  it('skips the slot when no candidate is left', () => {
+    const only: SceneLayer = { ...mid, tiles: [{ id: 'cabin', w: 1, max: 1 }] }
+    expect(planLayer(only, TILES, 1, 800, 2.5)).toHaveLength(1)
+  })
+
+  it('deterministic for seed', () => {
+    expect(planLayer(mid, TILES, 42, 800, 2.5)).toEqual(planLayer(mid, TILES, 42, 800, 2.5))
+  })
+
+  it('changes with seed', () => {
+    expect(planLayer(mid, TILES, 1, 800, 2.5)).not.toEqual(planLayer(mid, TILES, 2, 800, 2.5))
+  })
+})
+
+describe('tintFor', () => {
+  const sky = (bottom: string) => ({ top: bottom, bottom, horizon: bottom, starAlpha: 0 })
+  it('night sky gives a dark grey', () => {
+    const c = tintFor(sky('#26324a'))
+    const r = (c >> 16) & 0xff
+    expect(r).toBeLessThan(0x80)
+    expect(c).toBe(r * 0x010101)
+  })
+  it('bright sky gives white', () => {
+    expect(tintFor(sky('#ffffff'))).toBe(0xffffff)
+  })
+  it('day sky is near white', () => {
+    expect((tintFor(sky('#e8f1e4')) >> 16) & 0xff).toBeGreaterThan(0xe0)
+  })
+})
+
+describe('paintTile', () => {
+  it('paints roles with palette colours and leaves dots transparent', () => {
+    const t: TileDef = { id: 't', size: [2, 1], rows: ['.G'], ground: 0 }
+    const buf = paintTile(t, { G: '#102030' })
+    expect(buf.w).toBe(2)
+    expect(buf.h).toBe(1)
+    expect(Array.from(buf.rgba)).toEqual([0, 0, 0, 0, 0x10, 0x20, 0x30, 255])
+  })
+})

@@ -1,0 +1,17 @@
+{
+  "id": "log-fallen",
+  "size": [32, 10],
+  "ground": 9,
+  "rows": [
+    "................................",
+    "................................",
+    "..tGGGGGGGGGGGGGGGGGGGGGGGGGGG..",
+    ".ttGtGTGTGTGTGTGTGTGTGTGTGTGTGT.",
+    ".ttTtgTTTTgTTTTgTTTTgTTTTgTTTTT.",
+    "tttTttTTTTTTTTTTTTTTTTTTTTTTTTT.",
+    ".tttttTTTTTtTTTTTtTTTTTtTTTTTTT.",
+    ".tttttttttttttttttttttttttttttT.",
+    ".TttttttttttttttttttttttttttttT.",
+    "..tttttttttttttttttttttttttttt.."
+  ]
+}

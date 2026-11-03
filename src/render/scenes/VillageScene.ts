@@ -9,10 +9,11 @@ import { resolveVariant } from '@domain/sprites/Palette'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
 import { loadRegistry, animKey, defaultVariant, allVariants } from '@domain/sprites/SpriteRegistry'
-import { PARTS, RIGS, SPECIES } from '@domain/sprites/catalog'
+import { FOREST, PARTS, RIGS, SPECIES, TILES } from '@domain/sprites/catalog'
 import { STATES } from '@domain/sprites/validateRig'
 import { SpriteBank } from '../sprites/SpriteBank'
 import { SkyLayer } from '../sky/SkyLayer'
+import { ForestLayer } from '../background/ForestLayer'
 
 const RESIZE_DEBOUNCE_MS = 100
 const PORTRAIT_RATIO = 1.2
@@ -42,6 +43,7 @@ export class VillageScene extends Phaser.Scene {
   private profiles = new Map<string, Profile>()
   private ctx!: DateContext
   private sky!: SkyLayer
+  private forest!: ForestLayer
   private blender!: SkyBlender
   private bank!: SpriteBank
   private sheetSprites: Phaser.GameObjects.Image[] = []
@@ -65,6 +67,7 @@ export class VillageScene extends Phaser.Scene {
 
     this.ctx = computeDateContext(deps.clock.now())
     this.sky = new SkyLayer(this, deps.opts.seed ?? 0)
+    this.forest = new ForestLayer(this, FOREST, TILES, deps.opts.seed ?? 0)
     this.blender = new SkyBlender(getSky(this.ctx.skyKey), deps.blendMs)
     this.residents = this.makeResidents()
     for (const sp of new Set(this.residents.map((r) => r.species)))
@@ -102,6 +105,7 @@ export class VillageScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, onResize)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       offSeason()
+      this.forest.destroy()
       this.game.events.off(Phaser.Core.Events.RESUME, onResume)
       this.scale.off(Phaser.Scale.Events.RESIZE, onResize)
       if (this.resizeTimer) clearTimeout(this.resizeTimer)
@@ -160,6 +164,7 @@ export class VillageScene extends Phaser.Scene {
     }
 
     this.sky.render(this.blender.current, this.ctx.moonPhase)
+    this.forest.render(this.ctx.season, this.blender.current)
     if (!sheet) this.placeResidents()
     this.updateDebug()
 
@@ -292,7 +297,9 @@ export class VillageScene extends Phaser.Scene {
     cam.centerOn(w / 2, cy)
     const vw = w / cam.zoom
     const vh = h / cam.zoom
-    this.sky.resize(w, h, { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh })
+    const viewRect = { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh }
+    this.sky.resize(w, h, viewRect)
+    this.forest.resize(w, h, viewRect)
   }
 
   private updateDebug(): void {

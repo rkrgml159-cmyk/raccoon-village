@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { PARTS, RIGS, SPECIES } from '../../../src/domain/sprites/catalog'
+import { FOREST, PARTS, RIGS, SPECIES, TILES } from '../../../src/domain/sprites/catalog'
 import { composeFrame } from '../../../src/domain/sprites/Compose'
 import { resolveVariant } from '../../../src/domain/sprites/Palette'
 import {
@@ -7,6 +7,7 @@ import {
   animKey,
   defaultVariant,
   loadRegistry,
+  validateScene,
 } from '../../../src/domain/sprites/SpriteRegistry'
 import type { Registry } from '../../../src/domain/sprites/SpriteRegistry'
 import { FRAME_COUNT, STATES, validateRig } from '../../../src/domain/sprites/validateRig'
@@ -397,3 +398,33 @@ function countComponents(rgba: Uint8ClampedArray, w: number, h: number): number 
   }
   return count
 }
+
+describe('validateScene', () => {
+  it('accepts the real forest scene and tiles', () => {
+    expect(() => validateScene(FOREST, TILES)).not.toThrow()
+  })
+
+  it('rejects a palette missing a used role', () => {
+    const bad = structuredClone(FOREST)
+    delete bad.palettes.winter.G
+    expect(() => validateScene(bad, TILES)).toThrow(/role 'G'/)
+  })
+
+  it('rejects unknown tiles, bad layer order and out-of-range values', () => {
+    const noTile = structuredClone(FOREST)
+    noTile.layers[0].tiles[0].id = 'nope'
+    expect(() => validateScene(noTile, TILES)).toThrow(/^scene: /)
+    const order = structuredClone(FOREST)
+    order.layers.reverse()
+    expect(() => validateScene(order, TILES)).toThrow(/^scene: /)
+    const dens = structuredClone(FOREST)
+    dens.layers[1].density = 1.5
+    expect(() => validateScene(dens, TILES)).toThrow(/density/)
+    const y = structuredClone(FOREST)
+    y.layers[1].y = 2
+    expect(() => validateScene(y, TILES)).toThrow(/ y /)
+    const g = structuredClone(FOREST)
+    g.ground.y = -1
+    expect(() => validateScene(g, TILES)).toThrow(/ground/)
+  })
+})

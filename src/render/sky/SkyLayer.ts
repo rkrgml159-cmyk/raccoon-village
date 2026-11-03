@@ -4,7 +4,6 @@ import { lerpHex, type SkyColors } from '@domain/sky/SkyPalette'
 
 const HORIZON_Y = 0.6
 const SKY_BANDS = 24
-const SKYLINE_COUNT = 10
 const STAR_COUNT = 30
 const STAR_BAND = HORIZON_Y - 0.1
 const MOON_X = 0.78
@@ -19,19 +18,12 @@ export interface View {
   height: number
 }
 
-interface Block {
-  x: number
-  w: number
-  h: number
-}
-
 const toInt = (hex: string): number => parseInt(hex.slice(1), 16)
 
 export class SkyLayer {
   private readonly sky: Phaser.GameObjects.Graphics
   private readonly stars: Phaser.GameObjects.Graphics
   private readonly moon: Phaser.GameObjects.Graphics
-  private readonly blocks: Block[] = []
   private readonly starPos: { x: number; y: number }[] = []
   private w = 0
   private h = 0
@@ -42,13 +34,6 @@ export class SkyLayer {
 
   constructor(scene: Phaser.Scene, seed: number) {
     const rng = mulberry32(seed)
-    for (let i = 0; i < SKYLINE_COUNT; i++) {
-      this.blocks.push({
-        x: (i + rng() * 0.8) / SKYLINE_COUNT,
-        w: 0.04 + rng() * 0.08,
-        h: 0.05 + rng() * 0.2,
-      })
-    }
     for (let i = 0; i < STAR_COUNT; i++) {
       this.starPos.push({ x: rng(), y: rng() * STAR_BAND })
     }
@@ -97,11 +82,6 @@ export class SkyLayer {
       g.fillStyle(toInt(lerpHex(c.top, c.bottom, i / (SKY_BANDS - 1))), 1)
       g.fillRect(x - 2, top + i * bandH, vw + 4, bandH + 1)
     }
-    const horizonY = this.h * HORIZON_Y
-    g.fillStyle(toInt(c.horizon), 1)
-    for (const b of this.blocks) g.fillRect(x + b.x * vw, horizonY - b.h * vh, b.w * vw, b.h * vh)
-    g.fillStyle(toInt(lerpHex(c.horizon, '#000000', 0.12)), 1)
-    g.fillRect(x - 2, horizonY, vw + 4, y + vh + 2 - horizonY)
   }
 
   private drawStars(): void {

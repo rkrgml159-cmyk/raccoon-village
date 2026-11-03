@@ -1,0 +1,19 @@
+{
+  "id": "rock-moss-b",
+  "size": [20, 12],
+  "ground": 11,
+  "rows": [
+    "....................",
+    ".....GGGGGG.........",
+    "...GGRGRGRGGG.......",
+    "..GRGRRRgRRRGG......",
+    "..GRgRRRRRRRgR......",
+    ".GRRRRRRRRRRRRGGG...",
+    ".RRRRRRRRRRRRrGrGGG.",
+    ".RRRRRRRRRRRRrrrgrGG",
+    ".RRRRRRRRRRRRrrrrrrr",
+    ".RRRRRRRRRRRRrrrrrrr",
+    ".RRRRRRRRRRRRrrrrrrr",
+    ".rrrrrrrrrrrrrrrrrrr"
+  ]
+}

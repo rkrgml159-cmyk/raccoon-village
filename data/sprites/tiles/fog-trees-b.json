@@ -1,0 +1,31 @@
+{
+  "id": "fog-trees-b",
+  "size": [48, 24],
+  "ground": 23,
+  "rows": [
+    "................................................",
+    "....................AA..........................",
+    "....................AA...............AA.........",
+    "....AA..............AA...............AA.........",
+    "....AA..............AAA..............AA.........",
+    "....AA.............AAAA.............AAAA........",
+    "A...AA.............AAAA......AA.....AAAA.....AA.",
+    "A..AAAA.....AA.....AAAA......AA.....AAAA.....AA.",
+    "A..AAAA.....AA.....AAAA......AA.....AAAA.....AA.",
+    "A..AAAA.....AA.....AAAA......AA.....AAAA.....AA.",
+    "AA.AAAA.....AAA....AAAAA....AAAA....AAAA....AAAA",
+    "AA.AAAA....AAAA...AAAAAA....AAAA...AAAAAA...AAAA",
+    "AA.AAAA....AAAA...AAAAAA....AAAA...AAAAAA...AAAA",
+    "AAAAAAAA...AAAA...AAAAAA....AAAA...AAAAAA...AAAA",
+    "AAAAAAAA...AAAA...AAAAAA....AAAA...AAAAAA...AAAA",
+    "AAAAAAAA...AAAA...AAAAAA....AAAA...AAAAAA...AAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+  ]
+}

@@ -1,5 +1,6 @@
 import speciesJson from '../../../data/sprites/species.json'
-import type { PartDef, RigDef, SpeciesDef } from './types'
+import forestJson from '../../../data/scenes/forest.json'
+import type { PartDef, RigDef, SceneDef, SpeciesDef, TileDef } from './types'
 
 /** Keys are file basenames without `.json`. */
 function byBasename<T>(modules: Record<string, T>): Record<string, T> {
@@ -23,3 +24,12 @@ export const PARTS: Record<string, PartDef> = byBasename(
 )
 
 export const SPECIES = speciesJson as unknown as Record<string, SpeciesDef>
+
+export const TILES: Record<string, TileDef> = byBasename(
+  import.meta.glob<TileDef>('../../../data/sprites/tiles/*.json', {
+    eager: true,
+    import: 'default',
+  }),
+)
+
+export const FOREST = forestJson as unknown as SceneDef
