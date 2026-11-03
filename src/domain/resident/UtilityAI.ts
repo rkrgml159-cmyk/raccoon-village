@@ -45,7 +45,7 @@ function sampleDuration(range: number[], rng: () => number): number {
 
 function startState(r: Resident, ctx: AIContext, rng: () => number): Resident {
   const next = chooseNext(r.state, r.history, ctx.phase, rng)
-  const history = [...(r.history.length ? r.history : [r.state]), next].slice(-HISTORY_SIZE)
+  const history = [...r.history, r.state].slice(-HISTORY_SIZE)
   if (next === 'walk') {
     let dir = rng() < 0.5 ? -1 : 1
     const dist = 0.1 + rng() * 0.3

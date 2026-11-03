@@ -50,6 +50,32 @@ describe('UtilityAI', () => {
       }
     }
   })
+  it('walk target stays within 0.4 of x with the default wide range', () => {
+    for (let i = 0; i < 200; i++) {
+      const r = tick({ ...createResident('a', 0.5), stateT: 0 }, 16, ctx, mulberry32(i))
+      if (r.state === 'walk') expect(Math.abs(r.targetX! - 0.5)).toBeLessThanOrEqual(0.4 + 1e-9)
+    }
+  })
+  it('allows a state to repeat once, and idle dominates by day', () => {
+    const rng = mulberry32(11)
+    let r = createResident('a')
+    let prev = r.state
+    let transitions = 0
+    let repeats = 0
+    let idle = 0
+    while (transitions < 500) {
+      const next = tick(r, 100, ctx, rng)
+      if (next.stateT > r.stateT) {
+        transitions++
+        if (next.state === prev) repeats++
+        if (next.state === 'idle') idle++
+        prev = next.state
+      }
+      r = next
+    }
+    expect(repeats).toBeGreaterThan(0)
+    expect(idle / transitions).toBeGreaterThan(0.5)
+  })
   it('night weights: sit ≈ 20%, walk ≈ 5% over 10k samples', () => {
     const rng = mulberry32(3)
     const n = { idle: 0, walk: 0, sit: 0 }
@@ -57,7 +83,7 @@ describe('UtilityAI', () => {
     expect(n.sit / 10000).toBeCloseTo(0.2, 1)
     expect(n.walk / 10000).toBeLessThan(0.08)
   })
-  it('no state three times in a row except walk after walk is also forbidden', () => {
+  it('never picks the same state three times in a row, and never walk right after walk', () => {
     const rng = mulberry32(9)
     for (let i = 0; i < 2000; i++) {
       const s = chooseNext('sit', ['sit', 'sit'], 'day', rng)
