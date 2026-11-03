@@ -9,6 +9,7 @@ const M1_ACTIVE = 9.684
 // full-viewport textured quad (any hardware GPU draws it trivially), resident count does not move
 // it, and the battery-relevant hidden-tab ratio is 0.1%. Real-device check is deferred to M5.
 const DEFAULT_ACTIVE_THRESHOLD = 2.5
+const MAX_N = 40
 
 interface Sample {
   t: number
@@ -21,8 +22,13 @@ async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2))
   const minutes = Number(args.minutes ?? 10)
   const interval = Number(args.interval ?? 30)
-  const nQuery = args.n ? `&n=${args.n}` : ''
-  const activeThreshold = Number(args['active-threshold'] ?? DEFAULT_ACTIVE_THRESHOLD)
+  const nArg = Number(args.n)
+  // Clamped like the app's query parser; a non-numeric --n is dropped (app default applies).
+  const n = Number.isFinite(nArg) ? Math.max(1, Math.min(MAX_N, Math.round(nArg))) : undefined
+  const nQuery = n === undefined ? '' : `&n=${n}`
+  const thresholdArg = Number(args['active-threshold'])
+  const activeThreshold =
+    Number.isFinite(thresholdArg) && thresholdArg > 0 ? thresholdArg : DEFAULT_ACTIVE_THRESHOLD
   const outPath = args.out ?? 'docs/metrics/M2a.md'
   const title = basename(outPath, extname(outPath))
   const total = Math.max(1, Math.round((minutes * 60) / interval))
@@ -130,7 +136,7 @@ async function main(): Promise<void> {
         `- 환경: headless Chromium, software GL likely. WebGL renderer: ${glRenderer || 'unknown'}; UA: ${userAgent}`,
         '- hidden 구간은 `document.hidden`/`visibilityState`를 덮어써 에뮬레이트한 것이며 실제 브라우저 스로틀링이 아니다.',
         `- 파라미터: minutes=${minutes}, interval=${interval}s, samples=${total}, hidden samples=${hiddenCount} (index ${hiddenStart}..${hiddenEnd - 1}), viewport=1280x720, url=/raccoon-village/w/?speed=1&seed=1${nQuery}`,
-        `- 주민 수: n=${args.n ?? 'default 12'}`,
+        `- 주민 수: n=${n ?? 'default 12'}`,
         '',
         '| time(s) | segment | cpu_s_per_' + interval + 's | heap_mb |',
         '| ---: | --- | ---: | ---: |',

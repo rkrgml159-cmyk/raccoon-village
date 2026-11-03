@@ -163,8 +163,9 @@ export class VillageScene extends Phaser.Scene {
       }
     }
 
-    this.sky.render(this.blender.current, this.ctx.moonPhase)
     this.forest.render(this.ctx.season, this.blender.current)
+    this.sky.setGroundY(this.forest.groundTop)
+    this.sky.render(this.blender.current, this.ctx.moonPhase)
     if (!sheet) this.placeResidents()
     this.updateDebug()
 
@@ -298,7 +299,7 @@ export class VillageScene extends Phaser.Scene {
     const vw = w / cam.zoom
     const vh = h / cam.zoom
     const viewRect = { x: w / 2 - vw / 2, y: cy - vh / 2, width: vw, height: vh }
-    this.sky.resize(w, h, viewRect, FOREST.ground.y * h)
+    this.sky.resize(w, h, viewRect)
     this.forest.resize(w, h, viewRect)
   }
 

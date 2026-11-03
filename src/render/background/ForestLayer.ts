@@ -43,6 +43,9 @@ export class ForestLayer {
   private builtSeason: Season | null = null
   private dirty = true
   private tints: number[] = [-1, -1]
+  private lastHorizon = ''
+  private lastBottom = ''
+  private groundY = Number.POSITIVE_INFINITY
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -59,10 +62,19 @@ export class ForestLayer {
     this.dirty = true
   }
 
+  /** World y of the first row of the composed ground band (as drawn, after row rounding). */
+  get groundTop(): number {
+    return this.groundY
+  }
+
   render(season: Season, sky: SkyColors): void {
     if (this.w === 0 || this.view.width === 0) return
+    const rebuild = this.dirty || season !== this.builtSeason
+    if (!rebuild && sky.horizon === this.lastHorizon && sky.bottom === this.lastBottom) return
+    this.lastHorizon = sky.horizon
+    this.lastBottom = sky.bottom
     const horizon = hexToRgb(sky.horizon)
-    if (this.dirty || season !== this.builtSeason) {
+    if (rebuild) {
       this.build(season)
       this.builtSeason = season
       this.dirty = false
@@ -72,11 +84,13 @@ export class ForestLayer {
       this.bakeBackMid(horizon)
     }
     const tint = tintFor(sky)
-    ;[this.backMid, this.front].forEach((img, i) => {
-      if (!img || this.tints[i] === tint) return
+    const imgs = [this.backMid, this.front]
+    for (let i = 0; i < imgs.length; i++) {
+      const img = imgs[i]
+      if (!img || this.tints[i] === tint) continue
       this.tints[i] = tint
       img.setTint(tint)
-    })
+    }
   }
 
   destroy(): void {
@@ -90,6 +104,7 @@ export class ForestLayer {
     this.backSrc = null
     this.midCanvas = null
     this.bakedHorizon = null
+    this.groundY = Number.POSITIVE_INFINITY
     this.keys = []
   }
 
@@ -121,6 +136,8 @@ export class ForestLayer {
       groundRow = above - Math.round((baseY - groundTop) / scale)
     }
     const heightPx = above + bottomRows
+    const top = Math.round(baseY - above * scale)
+    if (groundRow !== undefined) this.groundY = vy + top + groundRow * scale
     const buf = composeLayer({
       placements,
       tiles: this.tiles,
@@ -135,7 +152,7 @@ export class ForestLayer {
           : { G: palette.G, g: palette.g, t: palette.t, F: palette.F },
       seed: this.seed,
     })
-    return { buf, scale, top: Math.round(baseY - above * scale) }
+    return { buf, scale, top }
   }
 
   private toCanvas(buf: FrameBuffer): HTMLCanvasElement {

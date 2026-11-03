@@ -124,12 +124,12 @@ export interface ComposeLayerInput {
   groundPalette?: { G: string; g: string; t: string; F?: string }
   /** Seed for the grass dither and flecks on the ground band. */
   seed?: number
-  flipX?: boolean
   /** Buffer row of the tiles' ground line (default: heightPx). */
   layerRow?: number
 }
 
-const GROUND_LINE_ROWS = 2
+/** Rows of line colour on top of the ground band (one tile pixel, as the old render drew). */
+export const GROUND_LINE_ROWS = 1
 const EARTH_SHARE = 1 / 3
 const GROUND_SEED_OFFSET = 7000
 
@@ -205,7 +205,6 @@ export function composeLayer(input: ComposeLayerInput): FrameBuffer {
       src = paintTile(tile, palette)
       cache.set(p.tile, src)
     }
-    const flip = p.flip !== (input.flipX ?? false)
     const oy = layerRow - (tile.ground + 1)
     const ox = Math.round(p.x)
     for (let y = 0; y < src.h; y++) {
@@ -214,7 +213,7 @@ export function composeLayer(input: ComposeLayerInput): FrameBuffer {
       for (let x = 0; x < src.w; x++) {
         const px = ox + x
         if (px < 0 || px >= buf.w) continue
-        const si = (y * src.w + (flip ? src.w - 1 - x : x)) * 4
+        const si = (y * src.w + (p.flip ? src.w - 1 - x : x)) * 4
         if (src.rgba[si + 3] === 0) continue
         buf.rgba.set(src.rgba.subarray(si, si + 4), (py * buf.w + px) * 4)
       }

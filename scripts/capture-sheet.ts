@@ -44,7 +44,7 @@ async function main(): Promise<void> {
       const at = encodeURIComponent(AT)
       if (args.species === 'all') {
         await shoot(page, `${base}?species=all&at=${at}&still=1`, join(outDir, 'showcase.png'))
-      } else if (args.bg !== '1') {
+      } else if (args.bg !== '1' && args.portrait !== '1') {
         const id = args.sheet ?? 'raccoon'
         await shoot(page, `${base}?sheet=${id}&at=${at}&still=1`, join(outDir, `sheet-${id}.png`))
       }
@@ -56,6 +56,19 @@ async function main(): Promise<void> {
             await shoot(page, `${base}?at=${t}&still=1&seed=1`, file)
           }
         }
+      }
+      if (args.portrait === '1') {
+        // Tall phone (portrait, camera zoom 2): checks the sky meets the ground band with no seam.
+        const tall = await browser.newContext({
+          viewport: { width: 1080, height: 2400 },
+          deviceScaleFactor: 1,
+        })
+        await shoot(
+          await tall.newPage(),
+          `${base}?at=${at}&still=1&seed=1`,
+          join(outDir, 'portrait-tall.png'),
+        )
+        await tall.close()
       }
     } finally {
       await browser.close()

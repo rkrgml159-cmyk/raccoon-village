@@ -44,20 +44,20 @@ export class SkyLayer {
     this.moon = scene.add.graphics().setDepth(-10)
   }
 
-  /** groundY: world y of the opaque ground band; the sky is only painted above it. */
-  resize(
-    w: number,
-    h: number,
-    view: View = { x: 0, y: 0, width: w, height: h },
-    groundY: number = Number.POSITIVE_INFINITY,
-  ): void {
-    this.groundY = groundY
+  resize(w: number, h: number, view: View = { x: 0, y: 0, width: w, height: h }): void {
     this.w = w
     this.h = h
     this.view = view
     this.lastColors = null
     this.lastMoon = -1
     this.drawStars()
+  }
+
+  /** World y where the opaque ground band actually starts; the sky is only painted above it. */
+  setGroundY(groundY: number): void {
+    if (groundY === this.groundY) return
+    this.groundY = groundY
+    this.lastColors = null
   }
 
   render(c: SkyColors, moonPhase: number): void {

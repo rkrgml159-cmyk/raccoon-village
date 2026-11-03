@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  GROUND_LINE_ROWS,
   composeLayer,
   multiplyBuffer,
   paintTile,
@@ -176,9 +177,8 @@ describe('composeLayer', () => {
     })
     expect(px(buf, 5, 11)).toEqual([0x70, 0x80, 0x90, 255])
     expect(px(buf, 5, 3)).toEqual([0x40, 0x50, 0x60, 255])
-    expect(px(buf, 5, 4)).toEqual([0x40, 0x50, 0x60, 255])
+    expect(px(buf, 5, 4)).toEqual([0x10, 0x20, 0x30, 255])
     expect(px(buf, 5, 5)[3]).toBe(255)
-    expect(px(buf, 5, 2)[3] === 0 || px(buf, 5, 2)[3] === 255).toBe(true)
     expect(px(buf, 5, 8)).toEqual([0x10, 0x20, 0x30, 255])
   })
 
@@ -196,17 +196,70 @@ describe('composeLayer', () => {
     expect(px(buf, 0, 4)).toEqual([0x40, 0x50, 0x60, 255])
   })
 
-  it('is deterministic', () => {
-    const input = {
-      ...base,
-      widthPx: 60,
-      heightPx: 30,
-      placements: [{ tile: 't2', x: 5, flip: true }],
-      groundRow: 10,
-      groundPalette: { G: pal.G, g: pal.g, t: pal.t, F: pal.F },
-      seed: 3,
+  it('leaves a single-tile layer opaque only where the tile is', () => {
+    const buf = composeLayer({ ...base, placements: [{ tile: 't2', x: 3, flip: false }] })
+    let opaque = 0
+    let clear = 0
+    for (let i = 3; i < buf.rgba.length; i += 4) {
+      if (buf.rgba[i] === 255) opaque++
+      else if (buf.rgba[i] === 0) clear++
     }
-    expect(Array.from(composeLayer(input).rgba)).toEqual(Array.from(composeLayer(input).rgba))
+    expect(opaque).toBe(2)
+    expect(clear).toBe(8 * 6 - 2)
+  })
+
+  describe('ground band', () => {
+    const W = 60
+    const ROW = 10
+    const groundOf = (seed: number, F?: string) =>
+      composeLayer({
+        ...base,
+        widthPx: W,
+        heightPx: 30,
+        placements: [],
+        groundRow: ROW,
+        groundPalette: { G: pal.G, g: pal.g, t: pal.t, F },
+        seed,
+      })
+    const rowOf = (b: ReturnType<typeof groundOf>, y: number): number[][] =>
+      Array.from({ length: W }, (_, x) => px(b, x, y))
+    const G = [0x10, 0x20, 0x30, 255]
+    const g = [0x40, 0x50, 0x60, 255]
+    const F = [0xa0, 0xb0, 0xc0, 255]
+
+    it('differs between seeds', () => {
+      const a = groundOf(1, pal.F).rgba
+      const b = groundOf(2, pal.F).rgba
+      expect(a.some((v, i) => v !== b[i])).toBe(true)
+    })
+
+    it('is byte-identical for the same seed', () => {
+      expect(Array.from(groundOf(5, pal.F).rgba)).toEqual(Array.from(groundOf(5, pal.F).rgba))
+    })
+
+    it('dithers grass in the row just above the band', () => {
+      const above = rowOf(groundOf(3), ROW - 1)
+      expect(above.some((c) => c.join() === g.join())).toBe(true)
+      expect(above.some((c) => c[3] === 0)).toBe(true)
+    })
+
+    it('scatters F flecks inside the band when F is given', () => {
+      const buf = groundOf(3, pal.F)
+      let flecks = 0
+      for (let y = ROW; y < 30; y++)
+        flecks += rowOf(buf, y).filter((c) => c.join() === F.join()).length
+      expect(flecks).toBeGreaterThan(0)
+      for (let y = 0; y < ROW; y++)
+        expect(rowOf(buf, y).some((c) => c.join() === F.join())).toBe(false)
+    })
+
+    it('draws exactly GROUND_LINE_ROWS rows of line colour on top (one, as before)', () => {
+      expect(GROUND_LINE_ROWS).toBe(1)
+      const buf = groundOf(3, pal.F)
+      for (let y = ROW; y < ROW + GROUND_LINE_ROWS; y++)
+        expect(rowOf(buf, y).every((c) => c.join() === g.join())).toBe(true)
+      expect(rowOf(buf, ROW + GROUND_LINE_ROWS).every((c) => c.join() === G.join())).toBe(true)
+    })
   })
 })
 
