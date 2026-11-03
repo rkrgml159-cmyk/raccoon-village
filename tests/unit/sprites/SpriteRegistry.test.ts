@@ -18,6 +18,10 @@ import type {
   SpriteState,
 } from '../../../src/domain/sprites/types'
 
+function hexToRgbTriple(hex: string): [number, number, number] {
+  return [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)) as [number, number, number]
+}
+
 function blankFrame(): Frame {
   return {
     rows: Array.from({ length: 8 }, (_, y) => (y === 0 ? 'BbWLlDEP' : '.'.repeat(8))),
@@ -293,7 +297,35 @@ describe('real data', () => {
         parts: PARTS,
       })
       expect(buf.rgba.length).toBe(24 * 40 * 4)
+      let opaque = 0
+      for (let i = 3; i < buf.rgba.length; i += 4) if (buf.rgba[i] > 0) opaque++
+      expect(opaque, variant).toBeGreaterThan(100)
+      const hair = hexToRgbTriple(
+        SPECIES.human.palettes[variant.split('|')[0]][variant.includes('|cap|') ? 'm' : 'M'],
+      )
+      let hairPx = 0
+      for (let i = 0; i < buf.rgba.length; i += 4) {
+        if (buf.rgba[i + 3] && buf.rgba[i] === hair[0] && buf.rgba[i + 1] === hair[1]) hairPx++
+      }
+      expect(hairPx, variant).toBeGreaterThan(0)
     }
+  })
+
+  it('biped walk frames are six distinct poses and the lead leg swaps', () => {
+    const frames = RIGS['biped'].frames.walk
+    expect(new Set(frames.map((f) => f.rows.join('/'))).size).toBe(6)
+    const lead = (rows: string[]): 'L' | 'l' => {
+      const row = rows[37]
+      return row.lastIndexOf('L') > row.lastIndexOf('l') ? 'L' : 'l'
+    }
+    expect(lead(frames[0].rows)).toBe('L')
+    expect(lead(frames[3].rows)).toBe('l')
+  })
+
+  it('human trouser colours differ per palette and no palette is olive-drab', () => {
+    const pals = Object.values(SPECIES.human.palettes)
+    expect(new Set(pals.map((p) => p.L)).size).toBe(4)
+    expect(new Set(pals.map((p) => p.W)).size).toBe(4)
   })
 
   it('the six mountain birds use the bird rig', () => {
