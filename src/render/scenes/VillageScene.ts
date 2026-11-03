@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, type Resident } from '@domain/resident/Resident'
-import { tick } from '@domain/resident/UtilityAI'
+import { tick, profileFor } from '@domain/resident/UtilityAI'
 import { LANES, clampX, toScreen, walkRangeFor } from '@domain/village/Lanes'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
@@ -31,7 +31,10 @@ function spriteScale(laneScale: number, view: { width: number; height: number })
 export class VillageScene extends Phaser.Scene {
   readonly bus = new Emitter<GameEvents>()
 
-  private resident: Resident = createResident('raccoon-1', 0.5)
+  private resident: Resident = createResident('raccoon-1', 0.5, {
+    species: 'raccoon',
+    variant: defaultVariant(SPECIES.raccoon),
+  })
   private ctx!: DateContext
   private sky!: SkyLayer
   private blender!: SkyBlender
@@ -125,7 +128,11 @@ export class VillageScene extends Phaser.Scene {
       this.resident = tick(
         this.resident,
         dt,
-        { phase: this.ctx.phase, walkRange: this.walkRange },
+        {
+          phase: this.ctx.phase,
+          walkRange: this.walkRange,
+          profile: profileFor(SPECIES.raccoon),
+        },
         deps.rng,
       )
       if (this.resident.state !== prev.state) {

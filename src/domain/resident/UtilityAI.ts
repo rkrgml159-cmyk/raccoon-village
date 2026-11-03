@@ -1,29 +1,60 @@
 import type { Phase } from '../time/DateContext'
 import { clampX } from '../village/Lanes'
+import type { Weights, SpeciesDef } from '../sprites/types'
 import type { Resident, ResidentState } from './Resident'
+
+export interface Profile {
+  walkSpeed: number
+  weights: { default: Weights; night: Weights }
+  nocturnal: boolean
+}
 
 export interface AIContext {
   phase: Phase
   walkRange: readonly [number, number]
+  profile: Profile
 }
 
-export const WEIGHTS = {
-  default: { idle: 0.7, walk: 0.2, sit: 0.1 },
-  night: { idle: 0.75, walk: 0.05, sit: 0.2 },
+export const RIG_DEFAULT_PROFILE: Profile = {
+  walkSpeed: 0.06, // x per second
+  weights: {
+    default: { idle: 0.6, walk: 0.2, sit: 0.12, sleep: 0.08 },
+    night: { idle: 0.45, walk: 0.05, sit: 0.15, sleep: 0.35 },
+  },
+  nocturnal: false,
 }
-export const DURATION_MS = { idle: [4000, 12000], sit: [6000, 20000] }
-export const WALK_SPEED = 0.06 // x per second
+export const DURATION_MS = {
+  idle: [4000, 12000],
+  sit: [6000, 20000],
+  sleep: [10000, 30000],
+}
 
-const STATES: ResidentState[] = ['idle', 'walk', 'sit']
+const STATES: ResidentState[] = ['idle', 'walk', 'sit', 'sleep']
 const HISTORY_SIZE = 3
+
+export function profileFor(sp: SpeciesDef): Profile {
+  return {
+    walkSpeed: sp.walkSpeed ?? RIG_DEFAULT_PROFILE.walkSpeed,
+    weights: sp.weights ?? RIG_DEFAULT_PROFILE.weights,
+    nocturnal: sp.nocturnal ?? RIG_DEFAULT_PROFILE.nocturnal,
+  }
+}
+
+/** Nocturnal species live the day/night swap; dawn and dusk stay as they are. */
+export function effectivePhase(phase: Phase, nocturnal: boolean): Phase {
+  if (!nocturnal) return phase
+  if (phase === 'night') return 'day'
+  if (phase === 'day') return 'night'
+  return phase
+}
 
 export function chooseNext(
   prev: ResidentState,
   history: ResidentState[],
-  phase: Phase,
+  _phase: Phase,
+  weights: Weights,
   rng: () => number,
 ): ResidentState {
-  const weights = phase === 'night' ? WEIGHTS.night : WEIGHTS.default
   const last = history[history.length - 1]
   const candidates = STATES.filter((s) => {
     if (prev === s && last === s) return false
@@ -44,7 +75,9 @@ function sampleDuration(range: number[], rng: () => number): number {
 }
 
 function startState(r: Resident, ctx: AIContext, rng: () => number): Resident {
-  const next = chooseNext(r.state, r.history, ctx.phase, rng)
+  const phase = effectivePhase(ctx.phase, ctx.profile.nocturnal)
+  const weights = phase === 'night' ? ctx.profile.weights.night : ctx.profile.weights.default
+  const next = chooseNext(r.state, r.history, phase, weights, rng)
   const history = [...r.history, r.state].slice(-HISTORY_SIZE)
   if (next === 'walk') {
     let dir = rng() < 0.5 ? -1 : 1
@@ -59,7 +92,7 @@ function startState(r: Resident, ctx: AIContext, rng: () => number): Resident {
       ...r,
       state: 'walk',
       targetX,
-      stateT: (travel / WALK_SPEED) * 1000,
+      stateT: (travel / ctx.profile.walkSpeed) * 1000,
       facing: targetX < r.x ? 'left' : 'right',
       history,
     }
@@ -90,7 +123,7 @@ export function tick(r: Resident, dtMs: number, ctx: AIContext, rng: () => numbe
   if (retargeted) {
     expired = true
   } else if (cur.state === 'walk' && cur.targetX !== undefined) {
-    const step = (WALK_SPEED * dtMs) / 1000
+    const step = (ctx.profile.walkSpeed * dtMs) / 1000
     const diff = cur.targetX - cur.x
     cur.facing = diff < 0 ? 'left' : 'right'
     if (Math.abs(diff) <= step) {
