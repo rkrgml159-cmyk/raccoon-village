@@ -40,7 +40,7 @@ npm run capture:sheet -- --sheet=<종족 id>   # 시트 캡처 (--species=all, -
 - [x] 탭 숨김 CPU가 활성 대비 10% 미만 — `docs/metrics/M1.md`: 활성 평균 9.684 cpu_s/30s, 숨김 평균 0.017, 비율 0.2%, PASS (10분 측정)
 - [x] `src/domain` 커버리지 90% 이상, CI 녹색 — statements 98.84% · branches 99.03% · functions 100% (임계 90%), 단위 테스트 95 · e2e 8, CI verify 통과
 - [x] `?speed=600` 타임랩스 캡처 — `captures/timelapse-2026-10-10T05-00.webm` (857 KB, 20초 테스트 실행, `captures/`는 gitignore라 로컬 산출물. 150초 본 실행은 데브로그 산출물이라 커밋하지 않음)
-- [x] 스크린샷 베이스라인 4장 — `tests/capture/baseline/`: `play-desktop.png`, `play-mobile.png`, `wallpaper-desktop.png`, `wallpaper-mobile.png`
+- [x] 스크린샷 베이스라인 4장 (M2a에서 showcase 1장 추가, 총 5장) — `tests/capture/baseline/`: `play-desktop.png`, `play-mobile.png`, `wallpaper-desktop.png`, `wallpaper-mobile.png`
 
 ## M2a 완료 기준
 - [x] `?species=all`에서 25종이 서로 다른 실루엣·색으로 보인다 — 쇼케이스 베이스라인 `tests/capture/baseline/showcase-desktop.png`
