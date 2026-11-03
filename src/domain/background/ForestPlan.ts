@@ -60,12 +60,28 @@ export function planLayer(
 
   const count = Math.max(1, Math.round(layer.density * SLOTS_PER_VIEW))
   const slot = viewWidthPx / count
+
+  // Required copies (`min`) go into distinct, randomly chosen slots first.
+  const required: string[] = []
+  for (const e of layer.tiles) for (let k = 0; k < (e.min ?? 0); k++) required.push(e.id)
+  const slots = Array.from({ length: count }, (_, i) => i)
+  for (let i = slots.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1))
+    ;[slots[i], slots[j]] = [slots[j], slots[i]]
+  }
+  const reserved = new Map<number, string>()
+  required.slice(0, count).forEach((id, k) => {
+    reserved.set(slots[k], id)
+    counts.set(id, (counts.get(id) ?? 0) + 1)
+  })
+
   for (let i = 0; i < count; i++) {
     const jitter = rng() * slot * JITTER
-    const id = pick(layer.tiles, counts, rng)
+    const fixed = reserved.get(i)
+    const id = fixed ?? pick(layer.tiles, counts, rng)
     const flip = rng() < 0.5
     if (id === null) continue
-    counts.set(id, (counts.get(id) ?? 0) + 1)
+    if (fixed === undefined) counts.set(id, (counts.get(id) ?? 0) + 1)
     out.push({ tile: id, x: slot * i + jitter - widthOf(id) / 2, flip })
   }
   return out

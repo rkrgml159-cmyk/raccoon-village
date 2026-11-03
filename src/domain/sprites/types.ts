@@ -66,7 +66,7 @@ export interface SceneLayer {
   density: number
   tint?: 'horizon'
   alpha?: number
-  tiles: { id: string; w: number; max?: number }[]
+  tiles: { id: string; w: number; min?: number; max?: number }[]
 }
 
 export interface SceneDef {

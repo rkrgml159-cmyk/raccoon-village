@@ -68,6 +68,22 @@ describe('planLayer', () => {
     expect(planLayer(only, TILES, 1, 800, 2.5)).toHaveLength(1)
   })
 
+  it('places min copies for every seed', () => {
+    const layer: SceneLayer = {
+      ...mid,
+      tiles: [
+        { id: 'a', w: 4 },
+        { id: 'b', w: 1 },
+        { id: 'cabin', w: 1, min: 1, max: 1 },
+      ],
+    }
+    for (let seed = 0; seed < 20; seed++) {
+      const plan = planLayer(layer, TILES, seed, 800, 2.5)
+      expect(plan.filter((p) => p.tile === 'cabin')).toHaveLength(1)
+      expect(plan).toHaveLength(7)
+    }
+  })
+
   it('deterministic for seed', () => {
     expect(planLayer(mid, TILES, 42, 800, 2.5)).toEqual(planLayer(mid, TILES, 42, 800, 2.5))
   })

@@ -410,6 +410,23 @@ describe('validateScene', () => {
     expect(() => validateScene(bad, TILES)).toThrow(/role 'G'/)
   })
 
+  it('rejects min greater than max', () => {
+    const bad = structuredClone(FOREST)
+    bad.layers[1].tiles[2].min = 3
+    bad.layers[1].tiles[2].max = 1
+    expect(() => validateScene(bad, TILES)).toThrow(/min 3 greater than max 1/)
+  })
+
+  it('rejects mins that exceed the slots and ground outside rows', () => {
+    const many = structuredClone(FOREST)
+    many.layers[1].density = 0.05
+    many.layers[1].tiles.forEach((t) => (t.min = 1))
+    expect(() => validateScene(many, TILES)).toThrow(/slots/)
+    const badTiles = structuredClone(TILES)
+    badTiles['trunk-moss-a'].ground = 999
+    expect(() => validateScene(FOREST, badTiles)).toThrow(/ground/)
+  })
+
   it('rejects unknown tiles, bad layer order and out-of-range values', () => {
     const noTile = structuredClone(FOREST)
     noTile.layers[0].tiles[0].id = 'nope'

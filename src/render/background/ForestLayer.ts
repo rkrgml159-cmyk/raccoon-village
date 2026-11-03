@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { mulberry32 } from '@domain/rng'
 import { paintTile, planLayer, tintFor } from '@domain/background/ForestPlan'
 import type { SkyColors } from '@domain/sky/SkyPalette'
 import { hexToRgb } from '@domain/sprites/Palette'
@@ -11,6 +12,7 @@ const REFERENCE_SIZE = 360
 /** Ground band: top line thickness and the share of the band (from the bottom) that is earth. */
 const EARTH_SHARE = 1 / 3
 const GROUND_LINE_TILES = 1
+const GROUND_SEED_OFFSET = 7000
 
 const toInt = (hex: string): number => parseInt(hex.slice(1), 16)
 
@@ -149,5 +151,19 @@ export class ForestLayer {
     rt.fill(toInt(palette.G), 1, 0, top, width, height)
     rt.fill(toInt(palette.g), 1, 0, top, width, line)
     rt.fill(toInt(palette.t), 1, 0, earthTop, width, bottom - earthTop)
+    // Grass dither above the line and moss flecks on the band, seeded so layouts stay stable.
+    const rng = mulberry32(this.seed + GROUND_SEED_OFFSET)
+    const bits = Math.ceil(width / (line * 3))
+    for (let i = 0; i < bits; i++) {
+      const x = Math.floor(rng() * width)
+      const up = line * (1 + Math.floor(rng() * 2))
+      rt.fill(toInt(palette.g), 1, x, top - up, line * 2, up)
+    }
+    const flecks = Math.ceil(width / (line * 6))
+    for (let i = 0; i < flecks; i++) {
+      const x = Math.floor(rng() * width)
+      const y = top + line * 3 + Math.floor(rng() * Math.max(1, earthTop - top - line * 6))
+      rt.fill(toInt(rng() < 0.5 ? palette.g : palette.F), 1, x, y, line * 3, line)
+    }
   }
 }

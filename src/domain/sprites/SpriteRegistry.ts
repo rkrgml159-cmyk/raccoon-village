@@ -162,9 +162,17 @@ export function validateScene(scene: SceneDef, tiles: Record<string, TileDef>): 
     if (layer.id !== SCENE_LAYER_IDS[i]) fail(`layer ${i} must be '${SCENE_LAYER_IDS[i]}'`)
     if (!unit(layer.density)) fail(`layer ${layer.id} density ${layer.density} outside 0-1`)
     if (!unit(layer.y)) fail(`layer ${layer.id} y ${layer.y} outside 0-1`)
+    let mins = 0
     for (const entry of layer.tiles) {
       const tile = tiles[entry.id]
       if (!tile) fail(`layer ${layer.id} tile '${entry.id}' not found`)
+      if (entry.min !== undefined && entry.max !== undefined && entry.min > entry.max) {
+        fail(`layer ${layer.id} tile '${entry.id}' min ${entry.min} greater than max ${entry.max}`)
+      }
+      mins += entry.min ?? 0
+      if (tile && !(tile.ground >= 0 && tile.ground < tile.rows.length)) {
+        fail(`tile ${entry.id}: ground ${tile.ground} outside rows`)
+      }
       try {
         const map = parsePixelMap(tile.rows, tile.size, TILE_ROLES)
         for (const r of usedRoles(map)) needed.add(r)
@@ -172,6 +180,9 @@ export function validateScene(scene: SceneDef, tiles: Record<string, TileDef>): 
         fail(`tile ${entry.id}: ${(e as Error).message}`)
       }
     }
+    const slots = Math.max(1, Math.round(layer.density * 12))
+    if (layer.id !== 'back' && mins > slots)
+      fail(`layer ${layer.id} mins ${mins} exceed ${slots} slots`)
   })
   for (const season of SEASONS) {
     const palette = scene.palettes[season] ?? {}
