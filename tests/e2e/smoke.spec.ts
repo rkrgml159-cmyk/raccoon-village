@@ -26,7 +26,7 @@ test('wallpaper sound button starts audio', async ({ page }) => {
   await expect(page.getByRole('button')).toHaveCount(0)
 })
 
-test('resident changes state over time with FastClock', async ({ page }) => {
+test('resident changes state over real time', async ({ page }) => {
   await page.goto('/raccoon-village/?at=2026-04-10T12:00&seed=5')
   await page.waitForFunction(() => window.__rv?.ready)
   const s0 = await page.evaluate(() => window.__rv?.resident.state)

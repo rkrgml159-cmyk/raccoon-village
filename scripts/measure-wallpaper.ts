@@ -28,10 +28,31 @@ async function main(): Promise<void> {
     const browser = await launchBrowser()
     try {
       const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+      const loadStart = Date.now()
       await page.goto(`${base}w/?speed=1&seed=1`)
       await page.waitForFunction(
         () => (window as unknown as { __rv?: { ready?: boolean } }).__rv?.ready === true,
       )
+      const firstLoadMs = Date.now() - loadStart
+      // Plain strings: avoids tsx helper injection (__name) inside the page context.
+      const userAgent = (await page.evaluate('navigator.userAgent')) as string
+      const glRenderer = (await page.evaluate(`(() => {
+        try {
+          const gl = document.createElement('canvas').getContext('webgl');
+          const ext = gl && gl.getExtension('WEBGL_debug_renderer_info');
+          return ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : 'unknown';
+        } catch (e) { return 'unknown'; }
+      })()`)) as string
+      const fpsPromise = page.evaluate(`new Promise((resolve) => {
+        let n = 0;
+        const t0 = performance.now();
+        const loop = () => {
+          n++;
+          if (performance.now() - t0 < 10000) requestAnimationFrame(loop);
+          else resolve(n / 10);
+        };
+        requestAnimationFrame(loop);
+      })`) as Promise<number>
       const cdp = await page.context().newCDPSession(page)
       await cdp.send('Performance.enable')
       const read = async (): Promise<{ task: number; heap: number }> => {
@@ -54,7 +75,7 @@ async function main(): Promise<void> {
         await page.evaluate(hidden ? HIDE_JS : SHOW_JS)
       }
 
-      await sleep(3000)
+      const observedFps = await fpsPromise
       let prev = await read()
       const startedAt = new Date()
       const samples: Sample[] = []
@@ -83,6 +104,8 @@ async function main(): Promise<void> {
         `active mean: ${activeMean.toFixed(3)} cpu_s/${interval}s`,
         `hidden mean: ${hiddenMean.toFixed(3)} cpu_s/${interval}s`,
         `ratio hidden/active: ${(ratio * 100).toFixed(1)}%`,
+        `first load (goto to __rv.ready): ${firstLoadMs} ms`,
+        `observed fps over first 10 s (rAF callbacks / 10): ${observedFps.toFixed(1)}`,
         `threshold (hidden < 10% of active): ${pass ? 'PASS' : 'FAIL'}`,
       ]
       const md = [
@@ -90,6 +113,8 @@ async function main(): Promise<void> {
         '',
         `- 실행 시각: ${startedAt.toISOString()}`,
         `- Chromium: ${version}`,
+        `- 환경: headless Chromium, software GL likely. WebGL renderer: ${glRenderer || 'unknown'}; UA: ${userAgent}`,
+        '- hidden 구간은 `document.hidden`/`visibilityState`를 덮어써 에뮬레이트한 것이며 실제 브라우저 스로틀링이 아니다.',
         `- 파라미터: minutes=${minutes}, interval=${interval}s, samples=${total}, hidden samples=${hiddenCount} (index ${hiddenStart}..${hiddenEnd - 1}), viewport=1280x720, url=/raccoon-village/w/?speed=1&seed=1`,
         '',
         '| time(s) | segment | cpu_s_per_' + interval + 's | heap_mb |',
@@ -106,6 +131,7 @@ async function main(): Promise<void> {
       mkdirSync('docs/metrics', { recursive: true })
       writeFileSync('docs/metrics/M1.md', md)
       console.log(summary.join('\n'))
+      if (!pass) process.exitCode = 1
     } finally {
       await browser.close()
     }

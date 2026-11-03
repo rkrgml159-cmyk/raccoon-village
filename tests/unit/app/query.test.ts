@@ -28,4 +28,8 @@ describe('parseQuery', () => {
   it('ignores non-numeric seed and empty at', () => {
     expect(parseQuery('?seed=x&at=')).toEqual({ speed: 1, still: false, debug: false })
   })
+  it('drops an unparseable at', () => {
+    expect(parseQuery('?at=garbage')).not.toHaveProperty('at')
+    expect(parseQuery('?at=2026-01-15Tzz:00')).not.toHaveProperty('at')
+  })
 })
