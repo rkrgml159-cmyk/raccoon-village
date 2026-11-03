@@ -61,8 +61,8 @@ describe('createVillage', () => {
         for (let i = 1; i < xs.length; i++)
           expect(xs[i] - xs[i - 1]).toBeGreaterThanOrEqual(0.05 - 1e-9)
         for (const x of xs) {
-          expect(x).toBeGreaterThanOrEqual(0.05)
-          expect(x).toBeLessThanOrEqual(0.95)
+          expect(x).toBeGreaterThanOrEqual(0.05 - 1e-9)
+          expect(x).toBeLessThanOrEqual(0.95 + 1e-9)
         }
       }
     }
@@ -101,5 +101,28 @@ describe('createVillage', () => {
     const v = createVillage(input({ n: 5, species: { raccoon: species.raccoon } }))
     expect(v).toHaveLength(5)
     expect(v.every((r) => r.species === 'raccoon')).toBe(true)
+  })
+  it('keeps every x within [0.05, 0.95] and evenly spaced when one lane is crowded', () => {
+    const crowded = {
+      raccoon: sp({ share: 0, lanes: [0, 0, 1] }),
+      hare: sp({ share: 100, lanes: [0, 0, 1] }),
+    }
+    for (let seed = 0; seed < 10; seed++) {
+      const v = createVillage(input({ seed, n: 40, species: crowded }))
+      const xs = v.map((r) => r.x).sort((a, b) => a - b)
+      expect(v.every((r) => r.lane === 2)).toBe(true)
+      const gap = Math.min(0.05, 0.9 / (xs.length - 1))
+      for (const x of xs) {
+        expect(x).toBeGreaterThanOrEqual(0.05 - 1e-9)
+        expect(x).toBeLessThanOrEqual(0.95 + 1e-9)
+      }
+      for (let i = 1; i < xs.length; i++)
+        expect(xs[i] - xs[i - 1]).toBeGreaterThanOrEqual(gap - 1e-9)
+    }
+  })
+  it('rejects a negative or non-integer n', () => {
+    expect(() => createVillage(input({ n: -1 }))).toThrow('n must be a non-negative integer')
+    expect(() => createVillage(input({ n: 2.5 }))).toThrow('n must be a non-negative integer')
+    expect(createVillage(input({ n: 0 }))).toEqual([])
   })
 })

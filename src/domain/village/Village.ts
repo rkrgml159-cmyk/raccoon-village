@@ -40,22 +40,24 @@ function pickLane(sp: SpeciesDef, rng: () => number): 0 | 1 | 2 {
 }
 
 function spreadLane(lane: Resident[]): void {
+  const gap = Math.min(MIN_GAP, (EDGE[1] - EDGE[0]) / Math.max(1, lane.length - 1))
   lane.sort((a, b) => a.x - b.x)
   for (let i = 1; i < lane.length; i++) {
-    if (lane[i].x < lane[i - 1].x + MIN_GAP) lane[i].x = lane[i - 1].x + MIN_GAP
+    if (lane[i].x < lane[i - 1].x + gap) lane[i].x = lane[i - 1].x + gap
   }
   const over = lane.length > 0 ? lane[lane.length - 1].x - EDGE[1] : 0
   if (over > 0) {
     for (const r of lane) r.x -= over
-    // Left edge may now be below the clamp: re-push rightwards (fits as long as lane * gap <= range).
+    // Left edge may now be below the clamp: re-push rightwards (always fits: gap <= range / (count - 1)).
     for (let i = 0; i < lane.length; i++) {
-      const min = i === 0 ? EDGE[0] : lane[i - 1].x + MIN_GAP
+      const min = i === 0 ? EDGE[0] : lane[i - 1].x + gap
       if (lane[i].x < min) lane[i].x = min
     }
   }
 }
 
 export function createVillage(input: VillageInput): Resident[] {
+  if (!Number.isInteger(input.n) || input.n < 0) throw new Error('n must be a non-negative integer')
   const { n, species, variantsOf, bodyScaleOf } = input
   const rng = mulberry32(input.seed)
   const others = Object.keys(species).filter((id) => id !== 'raccoon' && species[id].share > 0)
