@@ -13,10 +13,28 @@
         background: #000;
         overflow: hidden;
       }
+      #ui {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        padding: 0 max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) 0;
+      }
+      #ui button {
+        font:
+          14px system-ui,
+          sans-serif;
+        color: #fff;
+        background: rgba(0, 0, 0, 0.35);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 999px;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body>
     <div id="game"></div>
+    <div id="ui"></div>
     <script type="module" src="/src/app/wallpaper.ts"></script>
   </body>
 </html>
