@@ -1,0 +1,46 @@
+{
+  "name": "raccoon-village",
+  "version": "0.0.0",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "vite",
+    "dev:wall": "vite --open /raccoon-village/w/",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:cov": "vitest run --coverage",
+    "lint": "eslint . && prettier -c .",
+    "e2e": "playwright test",
+    "capture": "playwright test --update-snapshots",
+    "capture:timelapse": "tsx scripts/capture-timelapse.ts",
+    "measure:wall": "tsx scripts/measure-wallpaper.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rkrgml159-cmyk/raccoon-village.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rkrgml159-cmyk/raccoon-village/issues"
+  },
+  "homepage": "https://github.com/rkrgml159-cmyk/raccoon-village#readme",
+  "dependencies": {
+    "phaser": "^4.2.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.63.0",
+    "@vitest/coverage-v8": "^5.1.0",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
+  },
+  "private": true,
+  "type": "module"
+}
