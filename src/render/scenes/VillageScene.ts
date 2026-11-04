@@ -15,6 +15,8 @@ import { scriptFor, facesLeft } from '@domain/social/DuetScript'
 import { DUET_TYPES, type DuetType } from '@domain/social/types'
 import { BubbleQueue, BUBBLE_TTL, type Bubble } from '@domain/speech/Bubbles'
 import { speak, type Mood } from '@domain/speech/Voice'
+import { pickThought } from '@domain/speech/Thoughts'
+import { bestBand, pickDreamy, pushRecent } from '@domain/speech/Recent'
 import { createVillage } from '@domain/village/Village'
 import { showcaseLayout } from '@domain/village/Showcase'
 import { LANES, clampX, remapX, toScreen, walkRangeFor } from '@domain/village/Lanes'
@@ -22,11 +24,21 @@ import { resolveVariant } from '@domain/sprites/Palette'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
 import { loadRegistry, animKey, defaultVariant, allVariants } from '@domain/sprites/SpriteRegistry'
-import { BEHAVIOR_TRAITS, FOREST, PARTS, RIGS, SPECIES, TILES, UI } from '@domain/sprites/catalog'
+import {
+  BEHAVIOR_TRAITS,
+  FOREST,
+  PARTS,
+  RIGS,
+  SPECIES,
+  THOUGHTS,
+  TILES,
+  UI,
+} from '@domain/sprites/catalog'
 import { STATES } from '@domain/sprites/validateRig'
 import { SpriteBank } from '../sprites/SpriteBank'
 import { SkyLayer } from '../sky/SkyLayer'
 import { ForestLayer } from '../background/ForestLayer'
+import { BubbleLayer } from '../ui/BubbleLayer'
 
 const RESIZE_DEBOUNCE_MS = 100
 const PORTRAIT_RATIO = 1.2
@@ -48,6 +60,10 @@ const MOOD_OF: Partial<Record<DuetType, Mood>> = {
   makeUp: 'greet',
   quarrel: 'upset',
 }
+/** Wallpaper auto-thought cadence, in real (not simulated) milliseconds. */
+const WALLPAPER_THOUGHT_MS = 10 * 60 * 1000
+/** A duet counts as "just happened" for thought selection for this long (sim ms). */
+const AFTER_DUET_MS = 120_000
 const fmt = (v: number): string => v.toFixed(1).replace(/^0/, '')
 const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
 
@@ -67,6 +83,9 @@ export class VillageScene extends Phaser.Scene {
   private sim!: VillageState
   private env!: SimEnv
   private bubbles = new BubbleQueue()
+  private bubbleLayer?: BubbleLayer
+  /** Last thought lines per resident (window of 10), so a tapped resident does not repeat itself. */
+  private recentThoughts = new Map<string, string[]>()
   private indexOf = new Map<string, number>()
   private flipLeft: boolean[] = []
   private offsets: number[] = []
@@ -111,6 +130,8 @@ export class VillageScene extends Phaser.Scene {
       this.profiles.set(sp, profileFor(SPECIES[sp]))
     this.animKeys = this.residents.map(() => '')
     this.bubbles = new BubbleQueue()
+    this.recentThoughts.clear()
+    this.bubbleLayer = new BubbleLayer(this, this.bubbles)
     this.indexOf = new Map(this.residents.map((r, i) => [r.id, i]))
     this.flipLeft = this.residents.map((r) => r.facing === 'left')
     this.offsets = this.residents.map(() => 0)
@@ -142,6 +163,20 @@ export class VillageScene extends Phaser.Scene {
         .setDepth(DEBUG_DEPTH)
     }
 
+    if (this.interactive && deps.mode === 'play') {
+      this.sprites.forEach((sprite, i) => {
+        sprite.setInteractive()
+        sprite.on('pointerup', () => this.thinkAloud(i, true))
+      })
+    }
+    if (this.interactive && deps.mode === 'wallpaper') {
+      this.time.addEvent({
+        delay: WALLPAPER_THOUGHT_MS,
+        loop: true,
+        callback: () => this.autoThought(),
+      })
+    }
+
     const offSeason = this.bus.on('seasonChanged', ({ to }) => deps.wind.setSeason(to))
     deps.wind.setSeason(this.ctx.season)
 
@@ -157,6 +192,8 @@ export class VillageScene extends Phaser.Scene {
     this.scale.on(Phaser.Scale.Events.RESIZE, onResize)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       offSeason()
+      this.bubbleLayer?.destroy()
+      this.bubbleLayer = undefined
       this.forest.destroy()
       this.game.events.off(Phaser.Core.Events.RESUME, onResume)
       this.scale.off(Phaser.Scale.Events.RESIZE, onResize)
@@ -212,6 +249,7 @@ export class VillageScene extends Phaser.Scene {
     this.sky.render(this.blender.current, this.ctx.moonPhase)
     if (!sheet) this.placeResidents()
     this.updateDebug()
+    const alive = this.syncBubbles()
 
     if (window.__rv) {
       window.__rv.ctx = this.ctx
@@ -221,12 +259,86 @@ export class VillageScene extends Phaser.Scene {
       window.__rv.duets = this.sim.duets
       if (deps.opts.debug) window.__rv.minds = this.sim.minds
       window.__rv.duetLog = this.sim.duetLog
-      window.__rv.bubbles = this.bubbles.tick(this.time.now)
+      window.__rv.bubbles = alive
       if (!this.ready) {
         this.ready = true
         window.__rv.ready = true
       }
     }
+  }
+
+  /** True when the sim runs live (no still/showcase/sheet/duet), i.e. bubbles make sense. */
+  private get interactive(): boolean {
+    const o = this.deps.opts
+    return !o.still && !this.showcase && !this.duetMode && !(o.sheet && SPECIES[o.sheet])
+  }
+
+  private syncBubbles(): Bubble[] {
+    const now = this.time.now
+    const alive = this.bubbles.tick(now)
+    this.bubbleLayer?.sync(
+      alive,
+      now,
+      (id) => {
+        const i = this.indexOf.get(id)
+        if (i === undefined) return undefined
+        const sp = this.sprites[i]
+        return { x: sp.x, y: sp.y, height: sp.displayHeight }
+      },
+      this.cameras.main.worldView,
+    )
+    return alive
+  }
+
+  /** Tap (or wallpaper timer) thought for resident `i`; `mark` appends the relation mark from ui.json. */
+  private thinkAloud(i: number, mark: boolean): void {
+    const r = this.residents[i]
+    const mind = r ? this.sim.minds[r.id] : undefined
+    if (!r || !mind) return
+    const band = bestBand(this.sim.relations.snapshot(), r.id)
+    const last = [...this.sim.duetLog]
+      .reverse()
+      .find((d) => (d.a === r.id || d.b === r.id) && this.sim.simMs - d.at <= AFTER_DUET_MS)
+    const recent = this.recentThoughts.get(r.id) ?? []
+    const line = pickThought(
+      {
+        lastDuet: last?.type,
+        needs: mind.needs,
+        band,
+        phase: this.ctx.phase,
+        season: this.ctx.season,
+        traits: mind.traits,
+        species: r.species,
+        // The sim does not track idle time per resident and no situation reads it yet.
+        idleMs: 0,
+      },
+      THOUGHTS,
+      recent,
+      this.deps.rng,
+    )
+    if (line === null) return
+    this.recentThoughts.set(r.id, pushRecent(recent, line))
+    const tail = mark && band ? UI.relationMarks[band] : ''
+    this.bubbles.push(
+      {
+        residentId: r.id,
+        kind: 'thought',
+        text: tail ? `${line} ${tail}` : line,
+        ttlMs: BUBBLE_TTL.thought,
+      },
+      this.time.now,
+    )
+  }
+
+  private autoThought(): void {
+    const pick = pickDreamy(
+      this.residents.map((r, i) => ({
+        i,
+        dreamer: this.sim.minds[r.id]?.traits.includes('dreamer') ?? false,
+      })),
+      this.deps.rng,
+    )
+    if (pick) this.thinkAloud(pick.i, false)
   }
 
   private stillCue(i: number): ReturnType<typeof scriptFor> {
