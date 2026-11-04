@@ -39,3 +39,24 @@
 - observed fps over first 10 s (rAF callbacks / 10): 56.5
 - threshold (hidden < 10% of active): PASS
 - active vs M2a 21.94 cpu_s/30s: ratio 0.94 (threshold 1.1) PASS
+
+## 듀엣 타임랩스 (n=12, speed=600, 600 s)
+
+- 명령: `npm run capture:timelapse -- --n=12 --speed=600 --seconds=600 --log=duets` (seed=1, at=2026-10-10T05:00)
+- 로그: `captures/duet-log.json` (`window.__rv.duetLog` 덤프)
+
+| 듀엣 종류 | 횟수 |
+| --- | ---: |
+| greet | 44 |
+| chat | 24 |
+| chase | 7 |
+| groom | 5 |
+| share | 4 |
+| sitTogether | 0 |
+| quarrel | 0 |
+| makeUp | 0 |
+| **합계** | **84** |
+
+- 실시간 분당 듀엣: 84 / 10 = 8.40
+- 시뮬레이션 분당 듀엣: 84 / (600 x 600 / 60 = 6000 sim min) = 0.0140
+- 8종 중 5종만 발생. 미발생: sitTogether, quarrel, makeUp (시뮬레이션 파라미터는 변경하지 않음).
