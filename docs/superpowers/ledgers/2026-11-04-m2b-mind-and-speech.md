@@ -53,3 +53,8 @@ Task 8: implemented f5b22d9 (sonnet), DONE_WITH_CONCERNS. Review (sonnet): Appro
 Task 8: minor (deferred, art polish): interact_a paw bar at belly level — raise to chest and extend 4 px; happy[1] airborne 3 px not 2; SpriteBank silent fallbacks (`?? []`, `?? 1`) for missing states; no `sheetStates` query test; shake frames differ by 2 px.
 Task 8: complete (commits 5774dd1..f5b22d9, review clean)
 Ruling: a copy of this ledger is committed to docs/superpowers/ledgers/ after every task completion so a fresh session (new container) can resume from git alone — cost if wrong: a few small commits.
+Task 9: implemented ed75d25 (sonnet), DONE_WITH_CONCERNS. Review (sonnet, all 12 species sheets viewed): Needs fixes — 1 Important: interact_a paw unreadable (2 px chip against the chin; invisible on dark species marten/otter/mole). (Reviewer's 2nd "Important" was the controller's stale 4-row sheets — a capture issue, not code; the reviewer regenerated them.)
+Task 9: minor (deferred): shake barely differs from sit (small forearm chips); badger/marten sulk tails thin fragments.
+Task 9: fix round 1/5 dispatched (resume implementer).
+Task 9: fix round 1/5 (1 Important + 2 minors addressed; commits ed75d25..6f46de6). Re-review (sonnet): addressed. Minor (deferred): mole paw tips low contrast (palette limit); otter sulk tail weak contrast; interact_a frame 2 extension ~3 px.
+Task 9: complete (commits f5b22d9..6f46de6, review clean after 1 fix round)
