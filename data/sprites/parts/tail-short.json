@@ -11,8 +11,8 @@
       "rows": ["BB.", "BB.", ".BB", ".BB"]
     },
     "sulk": {
-      "offset": [0, 7],
-      "rows": ["BBB", "BBB"]
+      "offset": [0, 6],
+      "rows": ["BBB", "BBB", "BBB"]
     }
   }
 }

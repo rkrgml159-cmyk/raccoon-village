@@ -16,7 +16,7 @@
     },
     "sulk": {
       "offset": [-5, 7],
-      "rows": ["..BBBBBB", "BBBB...."]
+      "rows": ["..BBBBBB", "BBBBBBBB"]
     }
   }
 }
