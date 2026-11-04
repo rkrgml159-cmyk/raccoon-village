@@ -58,3 +58,6 @@ Task 9: minor (deferred): shake barely differs from sit (small forearm chips); b
 Task 9: fix round 1/5 dispatched (resume implementer).
 Task 9: fix round 1/5 (1 Important + 2 minors addressed; commits ed75d25..6f46de6). Re-review (sonnet): addressed. Minor (deferred): mole paw tips low contrast (palette limit); otter sulk tail weak contrast; interact_a frame 2 extension ~3 px.
 Task 9: complete (commits f5b22d9..6f46de6, review clean after 1 fix round)
+Task 10: implemented a246a9e (sonnet). Review (sonnet, all 3 sheets + composed dump): Approved, 0 Important.
+Task 10: minor (deferred): goral interact_a gap 1 row; interact_a f1 == f3; dark forearms (palette); shake torso blocky; scenery overlaps a sheet frame in captures.
+Task 10: complete (commits b910ed9..a246a9e, review clean)
