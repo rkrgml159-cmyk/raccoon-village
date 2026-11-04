@@ -317,9 +317,8 @@ export class VillageScene extends Phaser.Scene {
       this.deps.rng,
     )
     if (line === null) return
-    this.recentThoughts.set(r.id, pushRecent(recent, line))
     const tail = mark && band ? UI.relationMarks[band] : ''
-    this.bubbles.push(
+    const accepted = this.bubbles.push(
       {
         residentId: r.id,
         kind: 'thought',
@@ -328,6 +327,7 @@ export class VillageScene extends Phaser.Scene {
       },
       this.time.now,
     )
+    if (accepted) this.recentThoughts.set(r.id, pushRecent(recent, line))
   }
 
   private autoThought(): void {

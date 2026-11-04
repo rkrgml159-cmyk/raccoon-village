@@ -36,6 +36,10 @@ export interface ViewRect {
 interface Slot {
   g: Phaser.GameObjects.Graphics
   t: Phaser.GameObjects.Text
+  /** Bubble id whose text/style is currently applied (empty when none). */
+  textId: string
+  /** Last Graphics shape key (id, size, tail offset); the shape is drawn in local coordinates. */
+  shape: string
 }
 
 /** Draws BubbleQueue output above residents' heads; pooled, never allocates per frame. */
@@ -53,6 +57,8 @@ export class BubbleLayer {
         .setOrigin(0.5, 0.5)
         .setDepth(DEPTH + 1)
         .setVisible(false),
+      textId: '',
+      shape: '',
     }))
   }
 
@@ -83,11 +89,18 @@ export class BubbleLayer {
 
   private draw(s: Slot, b: Bubble, alpha: number, a: Anchor, view: ViewRect): void {
     const icon = b.kind === 'icon'
-    s.t
-      .setStyle({ fontFamily: FONT, fontSize: `${icon ? ICON_PX : TEXT_PX}px`, color: TEXT_COLOR })
-      .setWordWrapWidth(icon ? 0 : WRAP_PX, true)
-      .setAlign('center')
-      .setText(b.text)
+    if (s.textId !== b.id) {
+      s.t
+        .setStyle({
+          fontFamily: FONT,
+          fontSize: `${icon ? ICON_PX : TEXT_PX}px`,
+          color: TEXT_COLOR,
+        })
+        .setWordWrapWidth(icon ? 0 : WRAP_PX, true)
+        .setAlign('center')
+        .setText(b.text)
+      s.textId = b.id
+    }
     const w = s.t.width + (icon ? 0 : PAD_X * 2)
     const h = s.t.height + (icon ? 0 : PAD_Y * 2)
     const room = b.kind === 'thought' ? TAIL_ROOM : 0
@@ -95,17 +108,23 @@ export class BubbleLayer {
     const cx = Phaser.Math.Clamp(a.x, view.x + w / 2 + EDGE, view.x + view.width - w / 2 - EDGE)
     const cy = Math.max(view.y + h / 2 + EDGE, bottom - h / 2)
     s.t.setPosition(cx, cy).setAlpha(alpha).setVisible(true)
-    s.g.clear().setAlpha(alpha).setVisible(!icon)
-    if (icon) return
-    s.g.fillStyle(BG_COLOR, BG_ALPHA).fillRoundedRect(cx - w / 2, cy - h / 2, w, h, RADIUS)
+    s.g.setPosition(cx, cy).setAlpha(alpha).setVisible(!icon)
+    if (icon) {
+      s.shape = ''
+      return
+    }
+    const hx = Phaser.Math.Clamp(a.x, cx - w / 2 + RADIUS, cx + w / 2 - RADIUS) - cx
+    const key = `${b.id}|${w}|${h}|${hx}`
+    if (key === s.shape) return
+    s.shape = key
+    s.g.clear()
+    s.g.fillStyle(BG_COLOR, BG_ALPHA).fillRoundedRect(-w / 2, -h / 2, w, h, RADIUS)
     if (b.kind === 'thought') {
       // two small circles trailing toward the head instead of a tail
-      const hx = Phaser.Math.Clamp(a.x, cx - w / 2 + RADIUS, cx + w / 2 - RADIUS)
-      s.g.fillCircle(hx, cy + h / 2 + TAIL_BIG + 1, TAIL_BIG)
-      s.g.fillCircle(hx, cy + h / 2 + TAIL_BIG * 2 + TAIL_SMALL + 3, TAIL_SMALL)
+      s.g.fillCircle(hx, h / 2 + TAIL_BIG + 1, TAIL_BIG)
+      s.g.fillCircle(hx, h / 2 + TAIL_BIG * 2 + TAIL_SMALL + 3, TAIL_SMALL)
     } else {
-      const hx = Phaser.Math.Clamp(a.x, cx - w / 2 + RADIUS, cx + w / 2 - RADIUS)
-      const y0 = cy + h / 2
+      const y0 = h / 2
       s.g.fillTriangle(hx - 4, y0 - 1, hx + 4, y0 - 1, hx, y0 + 5)
     }
   }
