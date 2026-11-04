@@ -11,6 +11,7 @@ function table(n: number): Record<string, SpeciesDef> {
       // distinct scales, deliberately not in id order
       scale: 0.4 + ((i * 7) % n) * 0.05,
       share: 1,
+      voice: { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 },
       palettes: {},
     }
   }

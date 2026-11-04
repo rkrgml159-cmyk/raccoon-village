@@ -59,6 +59,7 @@ function makeSpecies(over: Partial<SpeciesDef> = {}): SpeciesDef {
     rig: 'test',
     scale: 1,
     share: 1,
+    voice: { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 },
     palettes: { a: fullPalette(), b: fullPalette() },
     overlays: ['p'],
     ...over,
@@ -173,6 +174,31 @@ describe('loadRegistry', () => {
     expect(() => loadRegistry(makeReg({ share: -1 }))).toThrow(/^species s: .*share/)
   })
 
+  it('rejects species without voice', () => {
+    const reg = makeReg()
+    delete (reg.species.s as Partial<SpeciesDef>).voice
+    expect(() => loadRegistry(reg)).toThrow(/^species s: .*voice/)
+  })
+
+  it('rejects malformed voices', () => {
+    const bad = (voice: unknown) =>
+      expect(() => loadRegistry(makeReg({ voice } as Partial<SpeciesDef>))).toThrow(
+        /^species s: .*voice/,
+      )
+    const ok = { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 }
+    bad({ ...ok, syllables: ['aa'] })
+    bad({ ...ok, syllables: ['aa', ''] })
+    bad({ ...ok, syllables: 'aa' })
+    bad({ ...ok, marks: [] })
+    bad({ ...ok, marks: ['?', '…', ''] })
+    bad({ ...ok, marks: ['?', '…'] })
+    bad({ ...ok, marks: ['…', '!'] })
+    bad({ ...ok, marks: ['?', '…', '.'] })
+    bad({ ...ok, maxSyllables: 0 })
+    bad({ ...ok, maxSyllables: 5 })
+    bad({ ...ok, maxSyllables: 1.5 })
+  })
+
   it('rejects lanes that do not sum to 1', () => {
     expect(() => loadRegistry(makeReg({ lanes: [0.3, 0.3, 0.3] }))).toThrow(/^species s: .*lanes/)
     expect(() => loadRegistry(makeReg({ lanes: [0.3, 0.4, 0.3] }))).not.toThrow()
@@ -224,6 +250,14 @@ describe('real data', () => {
 
   it('loads without throwing', () => {
     expect(() => loadRegistry(registry)).not.toThrow()
+  })
+
+  it('every species has a valid voice', () => {
+    for (const [id, sp] of Object.entries(SPECIES)) {
+      expect(sp.voice, id).toBeDefined()
+      expect(sp.voice.syllables.length, id).toBeGreaterThanOrEqual(2)
+      for (const m of ['?', '…', '!']) expect(sp.voice.marks, id).toContain(m)
+    }
   })
 
   it('defines raccoon axes and 1152 variants', () => {
