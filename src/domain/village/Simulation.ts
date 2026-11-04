@@ -167,6 +167,7 @@ export function stepVillage(
   const duetEvents: SimEvent[] = []
   const stateEvents: SimEvent[] = []
   const iconEvents: SimEvent[] = []
+  // Steps: 1 needs/clock, 2 duets, 3 free residents, 4 relief + state events, 5 need icons.
   const startStates = new Map(s.residents.map((r) => [r.id, r.state]))
   const index = new Map(s.residents.map((r, i) => [r.id, i]))
   const res = (id: string): Resident => s.residents[index.get(id)!]
@@ -201,6 +202,7 @@ export function stepVillage(
   s.duets = remaining
 
   // (3) free residents
+  const ended = new Set<string>()
   const walkRangeOf = env.walkRangeOf
   for (let i = 0; i < s.residents.length; i++) {
     const before = s.residents[i]
@@ -218,6 +220,8 @@ export function stepVillage(
       targetXOf: (id) => (index.has(id) ? res(id).x : undefined),
     }
     let cur = tick(before, dtMs, ctx, rng)
+    // A state ended when the name changed or tick restarted it (stateT jumped above the countdown).
+    if (cur.state !== before.state || cur.stateT > before.stateT - dtMs) ended.add(before.id)
     if (cur.state === 'approach' && before.state !== 'approach') {
       const target = findTarget(s, cur, rng)
       cur = target === undefined ? toIdle(cur) : { ...cur, targetId: target }
@@ -242,16 +246,18 @@ export function stepVillage(
     if (x !== r.x) put({ ...r, x })
   }
 
-  // (5) relief on observed state changes, then state events
+  // (4) relief for states that ended (also when they rolled into themselves), then state events
   for (const r of s.residents) {
     const was = startStates.get(r.id)!
-    if (was === r.state) continue
+    const changed = was !== r.state
     const relief = RELIEF_ON_LEAVE[was]
-    if (relief) s.minds[r.id].needs = relieve(s.minds[r.id].needs, relief)
-    stateEvents.push({ kind: 'state', id: r.id, state: r.state })
+    if (relief && (changed || ended.has(r.id))) {
+      s.minds[r.id].needs = relieve(s.minds[r.id].needs, relief)
+    }
+    if (changed) stateEvents.push({ kind: 'state', id: r.id, state: r.state })
   }
 
-  // (4) need icons
+  // (5) need icons
   for (const r of s.residents) {
     const m = s.minds[r.id]
     const { fire, shown } = needIcons(m.needs, m.iconShown)
@@ -334,9 +340,13 @@ function stepDuet(
   if (duet.type !== 'chase') return
   const a = res(duet.a)
   const b = res(duet.b)
+  // a runs one offset in the step direction; b takes a's old spot and so trails a.
   const sign = duet.step % 2 === 0 ? -1 : 1
-  const ax = clampX(a.x + sign * CHASE_OFFSET * 2, env.walkRangeOf(a.id))
-  const bx = clampX(a.x + sign * CHASE_OFFSET, env.walkRangeOf(b.id))
+  const rangeB = env.walkRangeOf(b.id)
+  const ax = clampX(a.x + sign * CHASE_OFFSET, env.walkRangeOf(a.id))
+  let bx = clampX(a.x, rangeB)
+  // Never let b reach or pass a (a is pinned at an edge): fall back behind a.
+  if (sign * (ax - bx) <= 0) bx = clampX(ax - sign * CHASE_OFFSET, rangeB)
   put({ ...a, x: ax, facing: faceToward(a.x, ax, a.facing) })
   put({ ...b, x: bx, facing: faceToward(b.x, bx, b.facing) })
 }

@@ -6,6 +6,10 @@ import { DUET_TYPES, type DuetType } from './types'
 export { DUET_TYPES }
 export type { DuetType }
 
+/**
+ * A running duet. Its residents keep `state: 'duet'` with `stateT` fixed at `durationMs`
+ * (it is not counted down): renderers read progress from `t`, `step` and `stepT`.
+ */
 export interface Duet {
   id: string
   type: DuetType

@@ -388,11 +388,11 @@ describe('Simulation', () => {
     const rng = (): number => 0.99999
     const started = stepVillage(s, 50, env(), rng).state
     expect(started.duets[0].type).toBe('chase')
-    const b0 = get(started, 'b').x
+    const a0 = get(started, 'a').x
     const r1 = run(started, 3100, env(), rng, 100, (st) => st.duets[0]?.step === 1)
     const a1 = get(r1.state, 'a').x
     const b1 = get(r1.state, 'b').x
-    expect(Math.abs(b1 - b0)).toBeGreaterThan(0.05)
+    expect(b1).toBeCloseTo(a0, 6)
     expect(Math.abs(b1 - a1)).toBeCloseTo(CHASE_OFFSET, 5)
     const dir1 = Math.sign(b1 - a1)
     const r2 = run(r1.state, 3100, env(), rng, 100, (st) => (st.duets[0]?.step ?? 2) === 2)
@@ -499,5 +499,93 @@ describe('Simulation', () => {
     expect(r.state.minds.a.iconShown.has('bored')).toBe(true)
     const again = stepVillage(r.state, 1000, env(), () => 0.5)
     expect(again.events.filter((e) => e.kind === 'icon')).toHaveLength(0)
+  })
+
+  it('chase: b moves on every step and trails a; no swap near the edge', () => {
+    const s0 = withDuet('chase', 30_000)
+    patch(s0, 'a', { x: 0.85 })
+    patch(s0, 'b', { x: 0.7 })
+    let s = s0
+    let prevB = get(s, 'b').x
+    for (let step = 1; step <= 8; step++) {
+      s = stepVillage(s, 3000, env(), () => 0.5).state
+      const a = get(s, 'a').x
+      const b = get(s, 'b').x
+      const sign = step % 2 === 0 ? -1 : 1
+      expect(Math.abs(b - prevB)).toBeGreaterThan(0.01)
+      expect(sign * (a - b)).toBeGreaterThan(0)
+      expect(a).toBeLessThanOrEqual(0.95)
+      expect(b).toBeLessThanOrEqual(0.95)
+      prevB = b
+    }
+  })
+
+  it('chase in the open: both move CHASE_OFFSET per step', () => {
+    let s = withDuet('chase', 30_000)
+    patch(s, 'a', { x: 0.5 })
+    patch(s, 'b', { x: 0.4 })
+    const a0 = get(s, 'a').x
+    s = stepVillage(s, 3000, env(), () => 0.5).state
+    expect(get(s, 'b').x).toBeCloseTo(a0, 6)
+    expect(get(s, 'a').x).toBeCloseTo(a0 + CHASE_OFFSET, 6)
+    const a1 = get(s, 'a').x
+    s = stepVillage(s, 3000, env(), () => 0.5).state
+    expect(get(s, 'b').x).toBeCloseTo(a1, 6)
+    expect(get(s, 'a').x).toBeCloseTo(a1 - CHASE_OFFSET, 6)
+  })
+
+  const only = (w: Partial<Record<'forage' | 'sleep', number>>): Profile => ({
+    walkSpeed: 0.06,
+    weights: {
+      default: {
+        idle: 0,
+        walk: 0,
+        sit: 0,
+        sleep: w.sleep ?? 0,
+        forage: w.forage ?? 0,
+        approach: 0,
+      },
+      night: { idle: 0, walk: 0, sit: 0, sleep: w.sleep ?? 0, forage: w.forage ?? 0, approach: 0 },
+    },
+    nocturnal: false,
+  })
+
+  it('relief applies when forage rolls into forage', () => {
+    const s = mk(pair2())
+    setNeeds(s, 'a', { hunger: 0.9 })
+    patch(s, 'a', { state: 'forage', stateT: 10 })
+    const r = stepVillage(s, 100, env({ profileOf: () => only({ forage: 1 }) }), () => 0.5)
+    expect(get(r.state, 'a').state).toBe('forage')
+    expect(r.state.minds.a.needs.hunger).toBeCloseTo(0.3, 2)
+  })
+
+  it('relief applies when sleep rolls into sleep', () => {
+    const s = mk(pair2())
+    setNeeds(s, 'a', { sleepy: 0.9 })
+    patch(s, 'a', { state: 'sleep', stateT: 10 })
+    const r = stepVillage(s, 100, env({ profileOf: () => only({ sleep: 1 }) }), () => 0.5)
+    expect(get(r.state, 'a').state).toBe('sleep')
+    expect(r.state.minds.a.needs.sleepy).toBeLessThan(0.05)
+  })
+
+  it('no relief while forage is still running', () => {
+    const s = mk(pair2())
+    setNeeds(s, 'a', { hunger: 0.5 })
+    patch(s, 'a', { state: 'forage', stateT: 5000 })
+    const r = stepVillage(s, 100, env({ profileOf: () => only({ forage: 1 }) }), () => 0.5)
+    expect(r.state.minds.a.needs.hunger).toBeGreaterThan(0.49)
+  })
+
+  it('pair cooldown holds at speed 60 (timers run on sim time)', () => {
+    const s = mk(pair2())
+    for (const id of ['a', 'b']) setNeeds(s, id, { lonely: 1 })
+    const r = run(s, 60_000, socialEnv({ speed: 60 }), mulberry32(11), 100)
+    const log = r.state.duetLog
+    expect(log.length).toBeGreaterThanOrEqual(2)
+    for (let i = 1; i < log.length; i++) {
+      expect(log[i].at - log[i - 1].at).toBeGreaterThanOrEqual(PAIR_COOLDOWN_MS)
+      // ~1 s of real time is enough at speed 60, far less than 60 s real
+      expect((log[i].at - log[i - 1].at) / 60).toBeLessThan(60_000)
+    }
   })
 })
