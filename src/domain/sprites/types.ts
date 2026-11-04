@@ -31,6 +31,8 @@ export interface Weights {
   walk: number
   sit: number
   sleep: number
+  forage?: number
+  approach?: number
 }
 
 export interface SpeciesDef {

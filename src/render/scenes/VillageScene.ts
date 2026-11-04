@@ -1,7 +1,7 @@
 import Phaser from 'phaser'
 import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
-import { createResident, type Resident } from '@domain/resident/Resident'
+import { createResident, spriteStateOf, type Resident } from '@domain/resident/Resident'
 import { tick, profileFor, type Profile } from '@domain/resident/UtilityAI'
 import { createVillage } from '@domain/village/Village'
 import { showcaseLayout } from '@domain/village/Showcase'
@@ -163,7 +163,7 @@ export class VillageScene extends Phaser.Scene {
         if (next.state !== prev.state) {
           this.bus.emit('residentStateChanged', { id: next.id, state: next.state })
         }
-        const anim = animKey(next.species, next.variant, next.state)
+        const anim = animKey(next.species, next.variant, spriteStateOf(next.state))
         if (anim !== this.animKeys[i]) {
           this.sprites[i].play(anim)
           this.animKeys[i] = anim
