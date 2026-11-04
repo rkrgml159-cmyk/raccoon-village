@@ -1,6 +1,10 @@
 import speciesJson from '../../../data/sprites/species.json'
 import forestJson from '../../../data/scenes/forest.json'
 import traitsJson from '../../../data/behavior/traits.json'
+import thoughtsJson from '../../../data/dialogue/thoughts.json'
+import forbiddenJson from '../../../data/dialogue/forbidden.json'
+import uiJson from '../../../data/ui.json'
+import { validateThoughts } from '../speech/Thoughts'
 import { validateTraitTable, type TraitTable } from '../mind/Traits'
 import type { PartDef, RigDef, SceneDef, SpeciesDef, TileDef } from './types'
 
@@ -37,3 +41,13 @@ export const TILES: Record<string, TileDef> = byBasename(
 export const FOREST = forestJson as unknown as SceneDef
 
 export const BEHAVIOR_TRAITS: TraitTable = validateTraitTable(traitsJson)
+
+export const FORBIDDEN: string[] = forbiddenJson as string[]
+
+export const THOUGHTS = validateThoughts(thoughtsJson, FORBIDDEN)
+
+export const UI = uiJson as {
+  soundOn: string
+  icons: Record<string, string>
+  relationMarks: Record<string, string>
+}

@@ -1,1 +1,19 @@
-{ "soundOn": "소리 켜기" }
+{
+  "soundOn": "소리 켜기",
+  "icons": {
+    "leaf": "🍂",
+    "sleepy": "💤",
+    "bored": "🌀",
+    "lonely": "💭",
+    "heart": "❤",
+    "anger": "💢",
+    "sparkle": "✨",
+    "question": "❓"
+  },
+  "relationMarks": {
+    "awkward": "💧",
+    "neutral": "",
+    "friend": "❤",
+    "bestie": "❤❤❤"
+  }
+}
