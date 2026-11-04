@@ -64,3 +64,6 @@ Task 10: complete (commits b910ed9..a246a9e, review clean)
 Task 11: implemented c093be2 (sonnet). Review (sonnet): Approved, 0 Important.
 Task 11: minor (deferred, art polish): shake nearly static (f0==f2, f1==f3) and stiff diagonal; happy crouch weak; sulk tail droop faint; antlers dark-on-dark in shake.
 Task 11: complete (commits 19de979..c093be2, review clean)
+Task 12: implemented abf28be (sonnet). Review (sonnet, composed frames + owl sheet): Approved, 0 Important.
+Task 12: minor (deferred, art polish): happy hop 4 px not 2; interact_b is a nod not a tilt; interact_a wingtip near the rump; shake wings reach 4–6 px (brush the frame edge); woodpecker crest stays vertical in sulk; pheasant sulk beak 1 row off; crow wings dark-on-dark.
+Task 12: complete (commits b001efa..abf28be, review clean)
