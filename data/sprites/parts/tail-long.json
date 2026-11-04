@@ -6,6 +6,17 @@
   "offset": [-4, 0],
   "rows": ["DDDDDD", "bbbbbb"],
   "states": {
-    "sleep": { "offset": [-3, 0], "rows": ["DDDDDD", "bbbbbb"] }
+    "sleep": {
+      "offset": [-3, 0],
+      "rows": ["DDDDDD", "bbbbbb"]
+    },
+    "happy": {
+      "offset": [-4, -3],
+      "rows": ["DD....", ".DDD..", "..bbb."]
+    },
+    "sulk": {
+      "offset": [-3, 1],
+      "rows": ["D..", "DD.", "bb.", "b.."]
+    }
   }
 }

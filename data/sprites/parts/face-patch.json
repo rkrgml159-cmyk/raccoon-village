@@ -6,6 +6,13 @@
   "offset": [2, 3],
   "rows": ["HHHH"],
   "states": {
-    "sleep": { "offset": [0, 0], "rows": ["."] }
+    "sleep": {
+      "offset": [0, 0],
+      "rows": ["."]
+    },
+    "sulk": {
+      "offset": [0, 3],
+      "rows": ["HHHH"]
+    }
   }
 }
