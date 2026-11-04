@@ -121,4 +121,15 @@ describe('Relations', () => {
     expect(bandMultiplier('bestie', 'quarrel')).toBe(0.2)
     expect(bandMultiplier('bestie', 'chase')).toBe(1)
   })
+
+  it('clone is independent of the original', () => {
+    const t = new RelationTable()
+    t.add('a', 'b', 0.4)
+    const c = t.clone()
+    c.add('a', 'b', 0.2)
+    c.add('a', 'c', 0.1)
+    expect(t.get('a', 'b')).toBeCloseTo(0.4)
+    expect(t.has('a', 'c')).toBe(false)
+    expect(c.get('a', 'b')).toBeCloseTo(0.6)
+  })
 })

@@ -66,6 +66,12 @@ export class RelationTable {
     }
   }
 
+  clone(): RelationTable {
+    const copy = new RelationTable()
+    for (const [k, v] of this.values) copy.values.set(k, v)
+    return copy
+  }
+
   snapshot(): Record<string, number> {
     return Object.fromEntries(this.values)
   }
