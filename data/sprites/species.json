@@ -145,7 +145,7 @@
     "scale": 1.0,
     "share": 3,
     "voice": {
-      "syllables": ["너굴", "뀨", "끄응"],
+      "syllables": ["컹", "끄응", "흐응"],
       "marks": ["?", "…", "!", "."],
       "maxSyllables": 3
     },
@@ -219,7 +219,7 @@
     "scale": 0.9,
     "share": 2,
     "voice": {
-      "syllables": ["캬", "크르", "캬옹"],
+      "syllables": ["캬", "크르", "크캭"],
       "marks": ["?", "…", "!", "."],
       "maxSyllables": 2
     },
@@ -1009,7 +1009,7 @@
     "scale": 0.9,
     "share": 2,
     "voice": {
-      "syllables": ["꿩", "꿔궝", "꾸엉"],
+      "syllables": ["꿔궝", "꾸엉", "꾸욱"],
       "marks": ["?", "…", "!", "."],
       "maxSyllables": 2
     },
@@ -1067,7 +1067,7 @@
     "scale": 1.4,
     "share": 1,
     "voice": {
-      "syllables": ["ㅇ", "아", "으", "ㅁ…"],
+      "syllables": ["ㅇ", "아", "으", "ㅁ"],
       "marks": ["?", "…", "!", "."],
       "maxSyllables": 3
     },

@@ -242,7 +242,14 @@ describe('UtilityAI', () => {
     }
   })
   it('profileFor fills missing fields from the rig default', () => {
-    const base = { name: 'x', rig: 'r', scale: 1, share: 1, palettes: {} } as SpeciesDef
+    const base: SpeciesDef = {
+      name: 'x',
+      rig: 'r',
+      scale: 1,
+      share: 1,
+      voice: { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 },
+      palettes: {},
+    }
     expect(profileFor(base)).toEqual(RIG_DEFAULT_PROFILE)
     const custom = profileFor({ ...base, walkSpeed: 0.1, nocturnal: true })
     expect(custom.walkSpeed).toBe(0.1)
