@@ -1,5 +1,7 @@
 import speciesJson from '../../../data/sprites/species.json'
 import forestJson from '../../../data/scenes/forest.json'
+import traitsJson from '../../../data/behavior/traits.json'
+import { validateTraitTable, type TraitTable } from '../mind/Traits'
 import type { PartDef, RigDef, SceneDef, SpeciesDef, TileDef } from './types'
 
 /** Keys are file basenames without `.json`. */
@@ -33,3 +35,5 @@ export const TILES: Record<string, TileDef> = byBasename(
 )
 
 export const FOREST = forestJson as unknown as SceneDef
+
+export const BEHAVIOR_TRAITS: TraitTable = validateTraitTable(traitsJson)
