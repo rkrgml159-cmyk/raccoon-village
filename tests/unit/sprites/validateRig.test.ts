@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import rigJson from '../../../data/sprites/rigs/raccoon.json'
 import quadSJson from '../../../data/sprites/rigs/quad-s.json'
+import quadLJson from '../../../data/sprites/rigs/quad-l.json'
 import { usedRoles, parsePixelMap, SPRITE_ROLES } from '../../../src/domain/sprites/PixelMap'
 import {
   FRAME_COUNT,
@@ -87,6 +88,19 @@ describe('validateRig', () => {
 
   it('quad-s has the M2b states with FRAME_COUNT_M2B and anchors', () => {
     const rig = quadSJson as unknown as RigDef
+    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
+    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
+    expect(rig.frameRate).toMatchObject({
+      interact_a: 6,
+      interact_b: 6,
+      happy: 4,
+      sulk: 2,
+      shake: 8,
+    })
+  })
+
+  it('quad-l has the M2b states with FRAME_COUNT_M2B and anchors', () => {
+    const rig = quadLJson as unknown as RigDef
     const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
     expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
     expect(rig.frameRate).toMatchObject({
