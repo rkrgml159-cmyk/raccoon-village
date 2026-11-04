@@ -62,6 +62,24 @@ describe('Relations', () => {
     expect(t.get('a', 'b')).toBeCloseTo(0.48, 9)
   })
 
+  it('decays over two days', () => {
+    const t = new RelationTable()
+    t.add('a', 'b', 0.5)
+    t.decay(2 * DAY_MS)
+    expect(t.get('a', 'b')).toBeCloseTo(0.46, 9)
+  })
+
+  it('decay ignores negative dt', () => {
+    const t = new RelationTable()
+    t.add('a', 'b', 0.5)
+    t.add('a', 'c', -0.5)
+    t.decay(-DAY_MS)
+    expect(t.get('a', 'b')).toBe(0.5)
+    expect(t.get('a', 'c')).toBe(-0.5)
+    t.decay(Number.NaN)
+    expect(t.get('a', 'b')).toBe(0.5)
+  })
+
   it('decay does not cross zero', () => {
     const t = new RelationTable()
     t.add('a', 'b', -0.01)

@@ -2,7 +2,7 @@ import type { DuetType } from './types'
 
 export type Band = 'awkward' | 'neutral' | 'friend' | 'bestie'
 
-/** 띠별 듀엣 배율. 목록에 없는 종류는 1 (awkward는 0.5). */
+/** Duet multiplier per band. Unlisted types are 1 (awkward: 0.5). */
 export const BAND_MULTIPLIER: Record<Band, Partial<Record<DuetType, number>>> = {
   awkward: { greet: 1.5, quarrel: 1.5 },
   neutral: {},
@@ -58,7 +58,8 @@ export class RelationTable {
   }
 
   decay(simDtMs: number): void {
-    const step = (DECAY_PER_DAY * simDtMs) / MS_PER_DAY
+    const dt = Number.isFinite(simDtMs) ? Math.max(0, simDtMs) : 0
+    const step = (DECAY_PER_DAY * dt) / MS_PER_DAY
     for (const [key, v] of this.values) {
       if (v > 0) this.values.set(key, Math.max(0, v - step))
       else if (v < 0) this.values.set(key, Math.min(0, v + step))
