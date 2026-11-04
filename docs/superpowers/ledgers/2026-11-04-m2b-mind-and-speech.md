@@ -67,3 +67,7 @@ Task 11: complete (commits 19de979..c093be2, review clean)
 Task 12: implemented abf28be (sonnet). Review (sonnet, composed frames + owl sheet): Approved, 0 Important.
 Task 12: minor (deferred, art polish): happy hop 4 px not 2; interact_b is a nod not a tilt; interact_a wingtip near the rump; shake wings reach 4–6 px (brush the frame edge); woodpecker crest stays vertical in sulk; pheasant sulk beak 1 row off; crow wings dark-on-dark.
 Task 12: complete (commits b001efa..abf28be, review clean)
+Task 13: implemented 2a2ea84 + 09bddcd (sonnet). Review (sonnet): Approved, 0 Important. STATES = 9 for all six rigs; e2e 9+1 skipped ×2, baselines unchanged.
+Ruling: cane hidden in interact_a/interact_b too (near hand in use) — accepted; cost if wrong: elder cane pops at transitions (deferred polish).
+Task 13: minor (deferred, art polish): interact_a sleeve 1 px thin, hand touches diagonally; shake reads as "hands up" not branch-shaking (context will help); elder cane pop; sulk head 3–4 px lower; "12 frames" wording vs 16; sheet captures now always 1920×1200.
+Task 13: complete (commits 19790bc..09bddcd, review clean). All 72 new frames done (Tasks 8–13).
