@@ -4,13 +4,9 @@ import quadSJson from '../../../data/sprites/rigs/quad-s.json'
 import quadLJson from '../../../data/sprites/rigs/quad-l.json'
 import quadDeerJson from '../../../data/sprites/rigs/quad-deer.json'
 import birdJson from '../../../data/sprites/rigs/bird.json'
+import bipedJson from '../../../data/sprites/rigs/biped.json'
 import { usedRoles, parsePixelMap, SPRITE_ROLES } from '../../../src/domain/sprites/PixelMap'
-import {
-  FRAME_COUNT,
-  FRAME_COUNT_M2B,
-  STATES,
-  validateRig,
-} from '../../../src/domain/sprites/validateRig'
+import { FRAME_COUNT, STATES, validateRig } from '../../../src/domain/sprites/validateRig'
 import type { Frame, RigDef, SpriteState } from '../../../src/domain/sprites/types'
 
 function blankFrame(): Frame {
@@ -20,6 +16,18 @@ function blankFrame(): Frame {
   }
 }
 
+const FRAME_RATE: Record<SpriteState, number> = {
+  idle: 2,
+  walk: 8,
+  sit: 2,
+  sleep: 1,
+  shake: 8,
+  interact_a: 6,
+  interact_b: 6,
+  happy: 4,
+  sulk: 2,
+}
+
 function makeRig(overrides: Partial<RigDef> = {}): RigDef {
   const frames = {} as Record<SpriteState, Frame[]>
   for (const s of STATES) frames[s] = Array.from({ length: FRAME_COUNT[s] }, blankFrame)
@@ -27,7 +35,7 @@ function makeRig(overrides: Partial<RigDef> = {}): RigDef {
     id: 'test',
     size: [32, 32],
     frames,
-    frameRate: { idle: 2, walk: 8, sit: 2, sleep: 1 },
+    frameRate: FRAME_RATE,
     ...overrides,
   }
 }
@@ -62,7 +70,7 @@ describe('validateRig', () => {
   })
 
   it('rejects non-positive frame rate', () => {
-    const rig = makeRig({ frameRate: { idle: 2, walk: 0, sit: 2, sleep: 1 } })
+    const rig = makeRig({ frameRate: { ...FRAME_RATE, walk: 0 } })
     expect(() => validateRig(rig)).toThrow(/frameRate/)
   })
 
@@ -74,74 +82,26 @@ describe('validateRig', () => {
     for (const r of ['M', 'm']) expect(roles.has(r)).toBe(false)
   })
 
-  it('raccoon has the M2b states with FRAME_COUNT_M2B and anchors', () => {
-    const rig = rigJson as unknown as RigDef
-    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
-    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
-    for (const s of m2b) expect(rig.frameRate[s], s).toBeGreaterThan(0)
-    expect(rig.frameRate).toMatchObject({
-      interact_a: 6,
-      interact_b: 6,
-      happy: 4,
-      sulk: 2,
-      shake: 8,
-    })
+  it('every rig passes validateRig with the 9 STATES and has positive frame rates', () => {
+    const rigs = {
+      raccoon: rigJson,
+      'quad-s': quadSJson,
+      'quad-l': quadLJson,
+      'quad-deer': quadDeerJson,
+      bird: birdJson,
+      biped: bipedJson,
+    }
+    expect(STATES).toHaveLength(9)
+    for (const [id, json] of Object.entries(rigs)) {
+      const rig = json as unknown as RigDef
+      expect(() => validateRig(rig), id).not.toThrow()
+      for (const s of STATES) expect(rig.frameRate[s], `${id} ${s}`).toBeGreaterThan(0)
+    }
   })
 
-  it('quad-s has the M2b states with FRAME_COUNT_M2B and anchors', () => {
-    const rig = quadSJson as unknown as RigDef
-    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
-    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
-    expect(rig.frameRate).toMatchObject({
-      interact_a: 6,
-      interact_b: 6,
-      happy: 4,
-      sulk: 2,
-      shake: 8,
-    })
-  })
-
-  it('quad-l has the M2b states with FRAME_COUNT_M2B and anchors', () => {
-    const rig = quadLJson as unknown as RigDef
-    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
-    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
-    expect(rig.frameRate).toMatchObject({
-      interact_a: 6,
-      interact_b: 6,
-      happy: 4,
-      sulk: 2,
-      shake: 8,
-    })
-  })
-
-  it('quad-deer has the M2b states with FRAME_COUNT_M2B and anchors', () => {
-    const rig = quadDeerJson as unknown as RigDef
-    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
-    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
-    expect(rig.frameRate).toMatchObject({
-      interact_a: 6,
-      interact_b: 6,
-      happy: 4,
-      sulk: 2,
-      shake: 8,
-    })
-  })
-
-  it('bird has the M2b states with FRAME_COUNT_M2B and anchors', () => {
-    const rig = birdJson as unknown as RigDef
-    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
-    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
-    expect(rig.frameRate).toMatchObject({
-      interact_a: 6,
-      interact_b: 6,
-      happy: 4,
-      sulk: 2,
-      shake: 8,
-    })
-  })
-
-  it('validateRig reports a missing M2b state', () => {
+  it('validateRig reports a wrong frame count for a new state', () => {
     const rig = makeRig()
-    expect(() => validateRig(rig, ['shake'], FRAME_COUNT_M2B)).toThrow(/shake: expected 4 frames/)
+    rig.frames.shake = rig.frames.shake.slice(0, 3)
+    expect(() => validateRig(rig)).toThrow(/shake: expected 4 frames/)
   })
 })

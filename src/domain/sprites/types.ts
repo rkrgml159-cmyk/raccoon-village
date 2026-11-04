@@ -1,8 +1,7 @@
 import type { Voice } from '../speech/Voice'
 
-export type M1State = 'idle' | 'walk' | 'sit' | 'sleep'
-export type M2bState = 'shake' | 'interact_a' | 'interact_b' | 'happy' | 'sulk'
-export type SpriteState = M1State | M2bState
+export type SpriteState =
+  'idle' | 'walk' | 'sit' | 'sleep' | 'shake' | 'interact_a' | 'interact_b' | 'happy' | 'sulk'
 
 export interface Frame {
   rows: string[]
@@ -12,9 +11,8 @@ export interface Frame {
 export interface RigDef {
   id: string
   size: [number, number]
-  // The M2b states are optional until every rig carries them (Task 13 finalises).
-  frames: Record<M1State, Frame[]> & Partial<Record<M2bState, Frame[]>>
-  frameRate: Record<M1State, number> & Partial<Record<M2bState, number>>
+  frames: Record<SpriteState, Frame[]>
+  frameRate: Record<SpriteState, number>
 }
 
 export interface PartVariant {

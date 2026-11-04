@@ -38,7 +38,9 @@ async function main(): Promise<void> {
     try {
       const context = await browser.newContext({
         viewport:
-          args.states === 'all' ? { width: 1920, height: 1200 } : { width: 1280, height: 720 },
+          args.species !== 'all' && args.bg !== '1' && args.portrait !== '1'
+            ? { width: 1920, height: 1200 }
+            : { width: 1280, height: 720 },
         deviceScaleFactor: 1,
       })
       const page = await context.newPage()
@@ -47,12 +49,7 @@ async function main(): Promise<void> {
         await shoot(page, `${base}?species=all&at=${at}&still=1`, join(outDir, 'showcase.png'))
       } else if (args.bg !== '1' && args.portrait !== '1') {
         const id = args.sheet ?? 'raccoon'
-        const all = args.states === 'all' ? '&sheetStates=all' : ''
-        await shoot(
-          page,
-          `${base}?sheet=${id}&at=${at}&still=1${all}`,
-          join(outDir, `sheet-${id}.png`),
-        )
+        await shoot(page, `${base}?sheet=${id}&at=${at}&still=1`, join(outDir, `sheet-${id}.png`))
       }
       if (args.bg === '1') {
         for (let s = 0; s < SEASON_DAYS.length; s++) {

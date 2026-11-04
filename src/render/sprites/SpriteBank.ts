@@ -30,7 +30,7 @@ export class SpriteBank {
     const rig = rigs[sp.rig]
     const resolved = resolveVariant(sp, variant)
     for (const state of states) {
-      const frames = rig.frames[state] ?? []
+      const frames = rig.frames[state]
       frames.forEach((_f, index) => {
         const key = this.textureKey(species, variant, state, index)
         if (this.scene.textures.exists(key)) return
@@ -50,7 +50,7 @@ export class SpriteBank {
           frames: frames.map((_f, index) => ({
             key: this.textureKey(species, variant, state, index),
           })),
-          frameRate: rig.frameRate[state] ?? 1,
+          frameRate: rig.frameRate[state],
           repeat: -1,
         })
       }

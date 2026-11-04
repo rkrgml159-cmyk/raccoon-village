@@ -33,7 +33,8 @@ function blankFrame(): Frame {
 function makeRig(): RigDef {
   const frames = {} as Record<SpriteState, Frame[]>
   for (const s of STATES) frames[s] = Array.from({ length: FRAME_COUNT[s] }, blankFrame)
-  return { id: 'test', size: [8, 8], frames, frameRate: { idle: 2, walk: 8, sit: 2, sleep: 1 } }
+  const frameRate = Object.fromEntries(STATES.map((s) => [s, 2])) as RigDef['frameRate']
+  return { id: 'test', size: [8, 8], frames, frameRate }
 }
 
 const ROLES = 'BbWLlDEPNMmH'.split('')
@@ -282,43 +283,43 @@ describe('real data', () => {
     }
   })
 
-  it('quad-s rig has 14 frames and passes validateRig', () => {
+  it('quad-s rig has 30 frames and passes validateRig', () => {
     const rig = RIGS['quad-s']
     expect(() => validateRig(rig)).not.toThrow()
     const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
-    expect(total).toBe(14)
+    expect(total).toBe(30)
   })
 
-  it('quad-l rig is 48x40 with 14 frames and passes validateRig', () => {
+  it('quad-l rig is 48x40 with 30 frames and passes validateRig', () => {
     const rig = RIGS['quad-l']
     expect(rig.size).toEqual([48, 40])
     expect(() => validateRig(rig)).not.toThrow()
     const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
-    expect(total).toBe(14)
+    expect(total).toBe(30)
   })
 
-  it('quad-deer rig is 48x40 with 14 frames and passes validateRig', () => {
+  it('quad-deer rig is 48x40 with 30 frames and passes validateRig', () => {
     const rig = RIGS['quad-deer']
     expect(rig.size).toEqual([48, 40])
     expect(() => validateRig(rig)).not.toThrow()
     const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
-    expect(total).toBe(14)
+    expect(total).toBe(30)
   })
 
-  it('bird rig is 24x24 with 14 frames and passes validateRig', () => {
+  it('bird rig is 24x24 with 30 frames and passes validateRig', () => {
     const rig = RIGS['bird']
     expect(rig.size).toEqual([24, 24])
     expect(() => validateRig(rig)).not.toThrow()
     const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
-    expect(total).toBe(14)
+    expect(total).toBe(30)
   })
 
-  it('biped rig is 24x40 with 14 frames and passes validateRig', () => {
+  it('biped rig is 24x40 with 30 frames and passes validateRig', () => {
     const rig = RIGS['biped']
     expect(rig.size).toEqual([24, 40])
     expect(() => validateRig(rig)).not.toThrow()
     const total = STATES.reduce((n, s) => n + rig.frames[s].length, 0)
-    expect(total).toBe(14)
+    expect(total).toBe(30)
   })
 
   it('human variants = 144', () => {
@@ -402,9 +403,8 @@ describe('real data', () => {
     for (const [id, sp] of Object.entries(SPECIES)) {
       const rig = RIGS[sp.rig]
       const variant = resolveVariant(sp, defaultVariant(sp))
-      // every state the rig carries, including the M2b states that not all rigs have yet
-      for (const state of Object.keys(rig.frames) as SpriteState[]) {
-        rig.frames[state]?.forEach((_, index) => {
+      for (const state of STATES) {
+        rig.frames[state].forEach((_, index) => {
           const { w, h, rgba } = composeFrame({ rig, state, index, variant, parts: PARTS })
           expect(countComponents(rgba, w, h), `${id} ${state}[${index}]`).toBe(1)
         })
