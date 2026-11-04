@@ -16,6 +16,14 @@ export const NEED_FULL_MS: Record<NeedKey, number> = {
 export const NEED_ICON_ON = 0.8
 export const NEED_ICON_OFF = 0.5
 
+/** Need name -> key in `UI.icons`. */
+export const NEED_ICON_KEY: Record<NeedKey, string> = {
+  hunger: 'leaf',
+  sleepy: 'sleepy',
+  bored: 'bored',
+  lonely: 'lonely',
+}
+
 const KEYS: readonly NeedKey[] = ['hunger', 'sleepy', 'bored', 'lonely']
 const clamp01 = (v: number): number => Math.min(1, Math.max(0, v))
 

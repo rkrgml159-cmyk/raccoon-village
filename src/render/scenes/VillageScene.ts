@@ -1,4 +1,5 @@
 import Phaser from 'phaser'
+import { NEED_ICON_KEY, type NeedKey } from '@domain/mind/Needs'
 import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, spriteStateOf, type Resident } from '@domain/resident/Resident'
@@ -218,6 +219,7 @@ export class VillageScene extends Phaser.Scene {
       window.__rv.resident = this.residents[0]
       window.__rv.audio = deps.wind.state
       window.__rv.duets = this.sim.duets
+      if (deps.opts.debug) window.__rv.minds = this.sim.minds
       window.__rv.duetLog = this.sim.duetLog
       window.__rv.bubbles = this.bubbles.tick(this.time.now)
       if (!this.ready) {
@@ -238,7 +240,6 @@ export class VillageScene extends Phaser.Scene {
   }
 
   private stepSim(dt: number): void {
-    this.blender.update(dt)
     this.env.phase = this.ctx.phase
     const { state, events } = stepVillage(this.sim, dt, this.env, this.deps.rng)
     this.sim = state
@@ -271,7 +272,7 @@ export class VillageScene extends Phaser.Scene {
         break
       }
       case 'icon': {
-        const glyph = UI.icons[ev.icon]
+        const glyph = UI.icons[NEED_ICON_KEY[ev.icon as NeedKey] ?? ev.icon]
         if (glyph === undefined) break
         const b: Omit<Bubble, 'id' | 'bornMs'> = {
           residentId: ev.id,
@@ -358,8 +359,10 @@ export class VillageScene extends Phaser.Scene {
       const { px, py, scale } = toScreen(r.lane, r.x, view)
       const cam = this.cameras.main
       const pos = this.positions[i]
-      pos.x = (px - cam.worldView.x) * cam.zoom
-      pos.y = (py - cam.worldView.y) * cam.zoom
+      // World to screen from scroll and zoom (valid from the first frame, unlike worldView).
+      const fx = px + this.offsets[i] * view.width
+      pos.x = (fx - cam.scrollX - cam.width / 2) * cam.zoom + cam.width / 2
+      pos.y = (py - cam.scrollY - cam.height / 2) * cam.zoom + cam.height / 2
       this.sprites[i]
         .setPosition(px + this.offsets[i] * view.width, py)
         .setScale(spriteScale(scale, view) * r.scale)
