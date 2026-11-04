@@ -2,7 +2,18 @@ import Phaser from 'phaser'
 import { Emitter, type GameEvents } from '@domain/events'
 import { computeDateContext, type DateContext } from '@domain/time/DateContext'
 import { createResident, spriteStateOf, type Resident } from '@domain/resident/Resident'
-import { tick, profileFor, type Profile } from '@domain/resident/UtilityAI'
+import { profileFor, type Profile } from '@domain/resident/UtilityAI'
+import {
+  createVillageState,
+  stepVillage,
+  type SimEnv,
+  type SimEvent,
+  type VillageState,
+} from '@domain/village/Simulation'
+import { scriptFor, facesLeft } from '@domain/social/DuetScript'
+import { DUET_TYPES, type DuetType } from '@domain/social/types'
+import { BubbleQueue, BUBBLE_TTL, type Bubble } from '@domain/speech/Bubbles'
+import { speak, type Mood } from '@domain/speech/Voice'
 import { createVillage } from '@domain/village/Village'
 import { showcaseLayout } from '@domain/village/Showcase'
 import { LANES, clampX, remapX, toScreen, walkRangeFor } from '@domain/village/Lanes'
@@ -10,7 +21,7 @@ import { resolveVariant } from '@domain/sprites/Palette'
 import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
 import { loadRegistry, animKey, defaultVariant, allVariants } from '@domain/sprites/SpriteRegistry'
-import { FOREST, PARTS, RIGS, SPECIES, TILES } from '@domain/sprites/catalog'
+import { BEHAVIOR_TRAITS, FOREST, PARTS, RIGS, SPECIES, TILES, UI } from '@domain/sprites/catalog'
 import { STATES } from '@domain/sprites/validateRig'
 import { SpriteBank } from '../sprites/SpriteBank'
 import { SkyLayer } from '../sky/SkyLayer'
@@ -27,6 +38,16 @@ const SHEET_GAP_Y = 1.3
 const RESIDENT_SPECIES = 'raccoon'
 const X_FALLBACK = [0.05, 0.95] as const
 const DEBUG_DEPTH = 10000
+const DUET_PAIR_DX = 0.05
+const DUET_COLUMNS = [0.2, 0.5, 0.8]
+const MOOD_OF: Partial<Record<DuetType, Mood>> = {
+  greet: 'greet',
+  chat: 'chat',
+  groom: 'soft',
+  makeUp: 'greet',
+  quarrel: 'upset',
+}
+const fmt = (v: number): string => v.toFixed(1).replace(/^0/, '')
 const VISIBLE_X = { portrait: [0.25, 0.75], landscape: [0.05, 0.95] } as const
 
 /** Sprite scale: lane scale × the short viewport side (so portrait phones get a small raccoon). */
@@ -42,6 +63,13 @@ export class VillageScene extends Phaser.Scene {
   private animKeys: string[] = []
   private walkRanges = new Map<string, readonly [number, number]>()
   private profiles = new Map<string, Profile>()
+  private sim!: VillageState
+  private env!: SimEnv
+  private bubbles = new BubbleQueue()
+  private indexOf = new Map<string, number>()
+  private flipLeft: boolean[] = []
+  private offsets: number[] = []
+  private positions: { x: number; y: number }[] = []
   private ctx!: DateContext
   private sky!: SkyLayer
   private forest!: ForestLayer
@@ -81,6 +109,21 @@ export class VillageScene extends Phaser.Scene {
     for (const sp of new Set(this.residents.map((r) => r.species)))
       this.profiles.set(sp, profileFor(SPECIES[sp]))
     this.animKeys = this.residents.map(() => '')
+    this.bubbles = new BubbleQueue()
+    this.indexOf = new Map(this.residents.map((r, i) => [r.id, i]))
+    this.flipLeft = this.residents.map((r) => r.facing === 'left')
+    this.offsets = this.residents.map(() => 0)
+    this.positions = this.residents.map(() => ({ x: 0, y: 0 }))
+    this.sim = createVillageState(this.residents, deps.opts.seed ?? 0)
+    this.residents = this.sim.residents
+    this.env = {
+      phase: this.ctx.phase,
+      speed: deps.opts.speed,
+      walkRangeOf: (id) => this.walkRanges.get(id) ?? X_FALLBACK,
+      profileOf: (sp) => this.profiles.get(sp) as Profile,
+      nocturnalOf: (sp) => SPECIES[sp].nocturnal ?? false,
+      traitTable: BEHAVIOR_TRAITS,
+    }
     this.sprites = this.residents.map((r) => {
       this.bank.ensure(r.species, r.variant)
       return this.add
@@ -125,12 +168,17 @@ export class VillageScene extends Phaser.Scene {
       residents: this.residents,
       resident: this.residents[0],
       audio: deps.wind.state,
+      duets: this.sim.duets,
+      duetLog: this.sim.duetLog,
+      bubbles: [],
+      minds: deps.opts.debug ? this.sim.minds : undefined,
+      positions: this.positions,
     }
   }
 
   update(_t: number, dt: number): void {
     const { deps } = this
-    const still = deps.opts.still || this.showcase
+    const still = deps.opts.still || this.showcase || this.duetMode
     const sheet = this.sheetSprites.length > 0
 
     if (sheet) {
@@ -140,35 +188,22 @@ export class VillageScene extends Phaser.Scene {
       this.blender.snapTo(getSky(this.ctx.skyKey))
       if (!this.stillShown) {
         this.residents.forEach((r, i) => {
+          const cue = this.duetMode ? this.stillCue(i) : undefined
           this.sprites[i].anims.stop()
-          this.sprites[i].setTexture(this.bank.textureKey(r.species, r.variant, 'idle', 0))
+          this.sprites[i].setTexture(
+            this.bank.textureKey(r.species, r.variant, cue?.anim ?? 'idle', 0),
+          )
+          if (cue) {
+            const partner = this.residents[i ^ 1]
+            this.flipLeft[i] = facesLeft(cue.flip, r.x, partner.x, r.facing === 'left')
+            this.offsets[i] = cue.offsetX
+          }
         })
         this.stillShown = true
       }
     } else {
       this.blender.update(dt)
-      for (let i = 0; i < this.residents.length; i++) {
-        const prev = this.residents[i]
-        const next = tick(
-          prev,
-          dt,
-          {
-            phase: this.ctx.phase,
-            walkRange: this.walkRanges.get(prev.id) ?? X_FALLBACK,
-            profile: this.profiles.get(prev.species) as Profile,
-          },
-          deps.rng,
-        )
-        this.residents[i] = next
-        if (next.state !== prev.state) {
-          this.bus.emit('residentStateChanged', { id: next.id, state: next.state })
-        }
-        const anim = animKey(next.species, next.variant, spriteStateOf(next.state))
-        if (anim !== this.animKeys[i]) {
-          this.sprites[i].play(anim)
-          this.animKeys[i] = anim
-        }
-      }
+      this.stepSim(dt)
     }
 
     this.forest.render(this.ctx.season, this.blender.current)
@@ -182,10 +217,101 @@ export class VillageScene extends Phaser.Scene {
       window.__rv.residents = this.residents
       window.__rv.resident = this.residents[0]
       window.__rv.audio = deps.wind.state
+      window.__rv.duets = this.sim.duets
+      window.__rv.duetLog = this.sim.duetLog
+      window.__rv.bubbles = this.bubbles.tick(this.time.now)
       if (!this.ready) {
         this.ready = true
         window.__rv.ready = true
       }
+    }
+  }
+
+  private stillCue(i: number): ReturnType<typeof scriptFor> {
+    const type = this.duetTypeOf(i >> 1)
+    return scriptFor(type, 0, i % 2 === 0 ? 'a' : 'b')
+  }
+
+  private duetTypeOf(pair: number): DuetType {
+    const d = this.deps.opts.duet
+    return d === 'all' || d === undefined ? DUET_TYPES[pair % DUET_TYPES.length] : d
+  }
+
+  private stepSim(dt: number): void {
+    this.blender.update(dt)
+    this.env.phase = this.ctx.phase
+    const { state, events } = stepVillage(this.sim, dt, this.env, this.deps.rng)
+    this.sim = state
+    this.residents = state.residents
+    const now = this.time.now
+    for (const ev of events) this.handleEvent(ev, now)
+    for (let i = 0; i < this.residents.length; i++) this.pose(i)
+  }
+
+  private handleEvent(ev: SimEvent, now: number): void {
+    switch (ev.kind) {
+      case 'state':
+        this.bus.emit('residentStateChanged', { id: ev.id, state: ev.state })
+        break
+      case 'duetStart':
+        this.bus.emit('duetStarted', { duet: ev.duet })
+        break
+      case 'duetEnd':
+        this.bus.emit('duetEnded', { duet: ev.duet })
+        break
+      case 'speak': {
+        const mood = MOOD_OF[ev.duet.type]
+        const idx = this.indexOf.get(ev.id)
+        if (!mood || idx === undefined) break
+        const text = speak(SPECIES[this.residents[idx].species].voice, mood, this.deps.rng)
+        this.bubbles.push(
+          { residentId: ev.id, kind: 'speech', text, ttlMs: BUBBLE_TTL.speech },
+          now,
+        )
+        break
+      }
+      case 'icon': {
+        const glyph = UI.icons[ev.icon]
+        if (glyph === undefined) break
+        const b: Omit<Bubble, 'id' | 'bornMs'> = {
+          residentId: ev.id,
+          kind: 'icon',
+          text: glyph,
+          ttlMs: BUBBLE_TTL.icon,
+        }
+        this.bubbles.push(b, now)
+        break
+      }
+      default:
+        break
+    }
+  }
+
+  /** Picks the animation, facing and offset of resident `i` from its sim state. */
+  private pose(i: number): void {
+    const r = this.residents[i]
+    let key: string
+    let left = r.facing === 'left'
+    let offset = 0
+    const duet =
+      r.state === 'duet' && r.duetId !== undefined
+        ? this.sim.duets.find((d) => d.id === r.duetId)
+        : undefined
+    if (duet) {
+      const role = duet.a === r.id ? 'a' : 'b'
+      const cue = scriptFor(duet.type, duet.step, role)
+      key = animKey(r.species, r.variant, cue.anim)
+      const partner = this.residents[this.indexOf.get(role === 'a' ? duet.b : duet.a) ?? i]
+      left = facesLeft(cue.flip, r.x, partner.x, left)
+      offset = cue.offsetX
+    } else {
+      key = animKey(r.species, r.variant, spriteStateOf(r.state))
+    }
+    this.flipLeft[i] = left
+    this.offsets[i] = offset
+    if (key !== this.animKeys[i]) {
+      this.sprites[i].play(key)
+      this.animKeys[i] = key
     }
   }
 
@@ -230,12 +356,20 @@ export class VillageScene extends Phaser.Scene {
     for (let i = 0; i < this.residents.length; i++) {
       const r = this.residents[i]
       const { px, py, scale } = toScreen(r.lane, r.x, view)
+      const cam = this.cameras.main
+      const pos = this.positions[i]
+      pos.x = (px - cam.worldView.x) * cam.zoom
+      pos.y = (py - cam.worldView.y) * cam.zoom
       this.sprites[i]
-        .setPosition(px, py)
+        .setPosition(px + this.offsets[i] * view.width, py)
         .setScale(spriteScale(scale, view) * r.scale)
-        .setFlipX(r.facing === 'left')
+        .setFlipX(this.flipLeft[i])
         .setDepth(r.lane * 1000 + py)
     }
+  }
+
+  private get duetMode(): boolean {
+    return this.deps.opts.duet !== undefined
   }
 
   private get showcase(): boolean {
@@ -254,6 +388,7 @@ export class VillageScene extends Phaser.Scene {
   private makeResidents(): Resident[] {
     const { opts } = this.deps
     const bodyScaleOf = (id: string, v: string): number => resolveVariant(SPECIES[id], v).bodyScale
+    if (this.duetMode) return this.duetResidents()
     if (!this.showcase) {
       return createVillage({
         seed: opts.seed ?? 0,
@@ -278,6 +413,23 @@ export class VillageScene extends Phaser.Scene {
         scale: SPECIES[id].scale * bodyScaleOf(id, variant),
       })
     })
+  }
+
+  /** Duet still mode: pairs of default raccoons, a left of b, three lanes by three columns. */
+  private duetResidents(): Resident[] {
+    const variant = defaultVariant(SPECIES[RESIDENT_SPECIES])
+    const scale =
+      SPECIES[RESIDENT_SPECIES].scale * resolveVariant(SPECIES[RESIDENT_SPECIES], variant).bodyScale
+    const pairs = this.deps.opts.duet === 'all' ? DUET_TYPES.length : 1
+    const out: Resident[] = []
+    for (let p = 0; p < pairs; p++) {
+      const lane = (pairs === 1 ? 1 : p % 3) as 0 | 1 | 2
+      const cx = pairs === 1 ? 0.5 : DUET_COLUMNS[Math.floor(p / 3)]
+      const init = { species: RESIDENT_SPECIES, variant, lane, scale }
+      out.push(createResident(`d${p}a`, cx - DUET_PAIR_DX, init))
+      out.push({ ...createResident(`d${p}b`, cx + DUET_PAIR_DX, init), facing: 'left' })
+    }
+    return out
   }
 
   private refreshContext(snap: boolean): void {
@@ -309,11 +461,12 @@ export class VillageScene extends Phaser.Scene {
       const halfSpriteFrac = ((this.bank.frameSize(r.species)[0] / 2) * displayScale) / w
       const range = walkRangeFor(visible, halfSpriteFrac)
       this.walkRanges.set(r.id, range)
-      if (this.showcase) return r
+      if (this.showcase || this.duetMode) return r
       const x = remap ? remapX(r.x, X_FALLBACK, range) : clampX(r.x, range)
       return { ...r, x }
     })
     this.laidOut = true
+    if (this.sim) this.sim.residents = this.residents
     const cam = this.cameras.main
     // Portrait: zoom 2 centred on x 0.5 so lane x 0.25..0.75 fills the width.
     cam.setZoom(portrait ? 2 : 1)
@@ -332,8 +485,17 @@ export class VillageScene extends Phaser.Scene {
     const { skyKey, hour, minute } = this.ctx
     const hh = String(hour).padStart(2, '0')
     const mm = String(minute).padStart(2, '0')
+    const lines = [`${skyKey} ${hh}:${mm} ${this.residents[0]?.state ?? ''}`]
+    for (const r of this.residents) {
+      const m = this.sim.minds[r.id]
+      const n = m.needs
+      let line = `${r.id} H${fmt(n.hunger)} S${fmt(n.sleepy)} B${fmt(n.bored)} L${fmt(n.lonely)} ${m.traits.join('/')}`
+      const d = r.duetId === undefined ? undefined : this.sim.duets.find((x) => x.id === r.duetId)
+      if (d) line += ` [${d.type} ${((d.durationMs - d.t) / 1000).toFixed(1)}s]`
+      lines.push(line)
+    }
     this.debugText
-      .setText(`${skyKey} ${hh}:${mm} ${this.residents[0]?.state ?? ''}`)
+      .setText(lines.join('\n'))
       .setScale(1 / cam.zoom)
       .setPosition(cam.worldView.x + 4 / cam.zoom, cam.worldView.y + 4 / cam.zoom)
   }

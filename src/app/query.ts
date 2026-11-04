@@ -1,4 +1,5 @@
 import { FixedClock } from '@domain/time/Clock'
+import { DUET_TYPES, type DuetType } from '@domain/social/types'
 
 export interface BootOptions {
   at?: string
@@ -9,6 +10,7 @@ export interface BootOptions {
   debug: boolean
   sheet?: string
   species?: 'all'
+  duet?: DuetType | 'all'
 }
 
 const MAX_SPEED = 3600
@@ -45,5 +47,9 @@ export function parseQuery(search: string): BootOptions {
   const sheet = q.get('sheet')
   if (sheet) opts.sheet = sheet
   if (q.get('species') === 'all') opts.species = 'all'
+  const duet = q.get('duet')
+  if (duet === 'all') opts.duet = 'all'
+  else if (duet !== null && (DUET_TYPES as readonly string[]).includes(duet))
+    opts.duet = duet as DuetType
   return opts
 }

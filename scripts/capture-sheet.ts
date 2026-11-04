@@ -38,14 +38,21 @@ async function main(): Promise<void> {
     try {
       const context = await browser.newContext({
         viewport:
-          args.species !== 'all' && args.bg !== '1' && args.portrait !== '1'
+          !args.duet && args.species !== 'all' && args.bg !== '1' && args.portrait !== '1'
             ? { width: 1920, height: 1200 }
             : { width: 1280, height: 720 },
         deviceScaleFactor: 1,
       })
       const page = await context.newPage()
       const at = encodeURIComponent(AT)
-      if (args.species === 'all') {
+      if (args.duet) {
+        const d = args.duet
+        await shoot(
+          page,
+          `${base}?duet=${d}&at=${at}&seed=1&still=1`,
+          join(outDir, `duet-${d}.png`),
+        )
+      } else if (args.species === 'all') {
         await shoot(page, `${base}?species=all&at=${at}&still=1`, join(outDir, 'showcase.png'))
       } else if (args.bg !== '1' && args.portrait !== '1') {
         const id = args.sheet ?? 'raccoon'

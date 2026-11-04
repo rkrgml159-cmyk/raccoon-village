@@ -1,10 +1,13 @@
 import type { Phase, Season } from './time/DateContext'
 import type { ResidentState } from './resident/Resident'
+import type { Duet } from './social/Duets'
 
 export type GameEvents = {
   phaseChanged: { from: Phase; to: Phase }
   seasonChanged: { from: Season; to: Season }
   residentStateChanged: { id: string; state: ResidentState }
+  duetStarted: { duet: Duet }
+  duetEnded: { duet: Duet }
 }
 
 type Listener<P> = (p: P) => void
