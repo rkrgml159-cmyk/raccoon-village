@@ -402,8 +402,9 @@ describe('real data', () => {
     for (const [id, sp] of Object.entries(SPECIES)) {
       const rig = RIGS[sp.rig]
       const variant = resolveVariant(sp, defaultVariant(sp))
-      for (const state of STATES) {
-        rig.frames[state].forEach((_, index) => {
+      // every state the rig carries, including the M2b states that not all rigs have yet
+      for (const state of Object.keys(rig.frames) as SpriteState[]) {
+        rig.frames[state]?.forEach((_, index) => {
           const { w, h, rgba } = composeFrame({ rig, state, index, variant, parts: PARTS })
           expect(countComponents(rgba, w, h), `${id} ${state}[${index}]`).toBe(1)
         })

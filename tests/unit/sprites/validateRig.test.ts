@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import rigJson from '../../../data/sprites/rigs/raccoon.json'
 import { usedRoles, parsePixelMap, SPRITE_ROLES } from '../../../src/domain/sprites/PixelMap'
-import { FRAME_COUNT, STATES, validateRig } from '../../../src/domain/sprites/validateRig'
+import {
+  FRAME_COUNT,
+  FRAME_COUNT_M2B,
+  STATES,
+  validateRig,
+} from '../../../src/domain/sprites/validateRig'
 import type { Frame, RigDef, SpriteState } from '../../../src/domain/sprites/types'
 
 function blankFrame(): Frame {
@@ -63,5 +68,24 @@ describe('validateRig', () => {
     const roles = usedRoles(parsePixelMap(rig.frames.idle[0].rows, rig.size, SPRITE_ROLES))
     for (const r of ['B', 'D', 'W', 'E', 'P', 'N', 'L']) expect(roles.has(r)).toBe(true)
     for (const r of ['M', 'm']) expect(roles.has(r)).toBe(false)
+  })
+
+  it('raccoon has the M2b states with FRAME_COUNT_M2B and anchors', () => {
+    const rig = rigJson as unknown as RigDef
+    const m2b = Object.keys(FRAME_COUNT_M2B) as SpriteState[]
+    expect(() => validateRig(rig, m2b, FRAME_COUNT_M2B)).not.toThrow()
+    for (const s of m2b) expect(rig.frameRate[s], s).toBeGreaterThan(0)
+    expect(rig.frameRate).toMatchObject({
+      interact_a: 6,
+      interact_b: 6,
+      happy: 4,
+      sulk: 2,
+      shake: 8,
+    })
+  })
+
+  it('validateRig reports a missing M2b state', () => {
+    const rig = makeRig()
+    expect(() => validateRig(rig, ['shake'], FRAME_COUNT_M2B)).toThrow(/shake: expected 4 frames/)
   })
 })

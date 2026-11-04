@@ -14,6 +14,18 @@
     "sleep": {
       "offset": [-8, -1],
       "rows": ["X", "X", "X", "X"]
+    },
+    "happy": {
+      "offset": [0, 0],
+      "rows": ["XXXX....", "XXXX...."]
+    },
+    "sulk": {
+      "offset": [0, 7],
+      "rows": ["XX", "XX"]
+    },
+    "shake": {
+      "offset": [-6, -1],
+      "rows": ["X", "X", "X", "X"]
     }
   }
 }

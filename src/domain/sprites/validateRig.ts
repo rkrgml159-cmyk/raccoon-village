@@ -1,22 +1,34 @@
 import { parsePixelMap, SPRITE_ROLES } from './PixelMap'
-import type { RigDef, SpriteState } from './types'
+import type { M1State, M2bState, RigDef, SpriteState } from './types'
 
-export const STATES: readonly SpriteState[] = ['idle', 'walk', 'sit', 'sleep']
+export const STATES: readonly M1State[] = ['idle', 'walk', 'sit', 'sleep']
 
-export const FRAME_COUNT: Record<SpriteState, number> = { idle: 4, walk: 6, sit: 2, sleep: 2 }
+export const FRAME_COUNT: Record<M1State, number> = { idle: 4, walk: 6, sit: 2, sleep: 2 }
+
+export const FRAME_COUNT_M2B: Record<M2bState, number> = {
+  shake: 4,
+  interact_a: 4,
+  interact_b: 4,
+  happy: 2,
+  sulk: 2,
+}
 
 /** Throws `rig <id>: …` when the rig breaks frame count, pixel, anchor or frame-rate rules. */
-export function validateRig(rig: RigDef): void {
+export function validateRig(
+  rig: RigDef,
+  states: readonly SpriteState[] = STATES,
+  counts: Record<string, number> = FRAME_COUNT,
+): void {
   const fail = (msg: string): never => {
     throw new Error(`rig ${rig.id}: ${msg}`)
   }
   const [w, h] = rig.size
   let anchorNames: string[] | null = null
 
-  for (const state of STATES) {
+  for (const state of states) {
     const frames = rig.frames[state] ?? []
-    if (frames.length !== FRAME_COUNT[state]) {
-      fail(`${state}: expected ${FRAME_COUNT[state]} frames, got ${frames.length}`)
+    if (frames.length !== counts[state]) {
+      fail(`${state}: expected ${counts[state]} frames, got ${frames.length}`)
     }
     frames.forEach((frame, i) => {
       const where = `${state}[${i}]`
@@ -38,7 +50,7 @@ export function validateRig(rig: RigDef): void {
     })
   }
 
-  for (const state of STATES) {
+  for (const state of states) {
     const rate = rig.frameRate?.[state]
     if (!(typeof rate === 'number' && rate > 0)) fail(`frameRate.${state} must be positive`)
   }

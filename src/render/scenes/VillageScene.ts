@@ -11,6 +11,7 @@ import { SkyBlender, getSky } from '@domain/sky/SkyPalette'
 import type { BootDeps } from '@app/boot'
 import { loadRegistry, animKey, defaultVariant, allVariants } from '@domain/sprites/SpriteRegistry'
 import { FOREST, PARTS, RIGS, SPECIES, TILES } from '@domain/sprites/catalog'
+import type { SpriteState } from '@domain/sprites/types'
 import { STATES } from '@domain/sprites/validateRig'
 import { SpriteBank } from '../sprites/SpriteBank'
 import { SkyLayer } from '../sky/SkyLayer'
@@ -189,16 +190,22 @@ export class VillageScene extends Phaser.Scene {
     }
   }
 
+  private sheetStateList(id: string): SpriteState[] {
+    if (this.deps.opts.sheetStates !== 'all') return [...STATES]
+    return Object.keys(RIGS[SPECIES[id].rig].frames) as SpriteState[]
+  }
+
   private buildSheet(id: string): void {
     const variant = defaultVariant(SPECIES[id])
-    this.bank.ensure(id, variant)
+    const states = this.sheetStateList(id)
+    this.bank.ensure(id, variant, states)
     const rig = RIGS[SPECIES[id].rig]
-    for (const state of STATES) {
-      rig.frames[state].forEach((_f, index) => {
+    for (const state of states) {
+      rig.frames[state]?.forEach((_f, index) => {
         const img = this.add
           .image(0, 0, this.bank.textureKey(id, variant, state, index))
           .setOrigin(0.5, 1)
-          .setData('row', STATES.indexOf(state))
+          .setData('row', states.indexOf(state))
           .setData('col', index)
         this.sheetSprites.push(img)
       })
@@ -208,10 +215,14 @@ export class VillageScene extends Phaser.Scene {
   private placeSheet(): void {
     const view = { width: this.scale.width, height: this.scale.height }
     const [fw, fh] = this.bank.frameSize(this.deps.opts.sheet ?? RESIDENT_SPECIES)
-    const scale = spriteScale(1, view)
+    const rows = this.deps.opts.sheet
+      ? this.sheetStateList(this.deps.opts.sheet).length
+      : STATES.length
+    // Shrink only when the rows would overflow the view (the all-states sheet).
+    const scale = Math.min(spriteScale(1, view), view.height / (rows * fh * SHEET_GAP_Y))
     const dx = fw * scale * SHEET_GAP_X
     const dy = fh * scale * SHEET_GAP_Y
-    const top = view.height / 2 - (dy * STATES.length) / 2 + dy
+    const top = view.height / 2 - (dy * rows) / 2 + dy
     for (const img of this.sheetSprites) {
       const row = img.getData('row') as number
       const col = img.getData('col') as number

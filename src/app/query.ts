@@ -8,6 +8,7 @@ export interface BootOptions {
   still: boolean
   debug: boolean
   sheet?: string
+  sheetStates?: 'all'
   species?: 'all'
 }
 
@@ -44,6 +45,7 @@ export function parseQuery(search: string): BootOptions {
     opts.seed = Number(seedRaw)
   const sheet = q.get('sheet')
   if (sheet) opts.sheet = sheet
+  if (sheet && q.get('sheetStates') === 'all') opts.sheetStates = 'all'
   if (q.get('species') === 'all') opts.species = 'all'
   return opts
 }
