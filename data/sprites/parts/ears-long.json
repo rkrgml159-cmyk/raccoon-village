@@ -4,5 +4,11 @@
   "anchor": "ears",
   "layer": "above",
   "offset": [-3, -8],
-  "rows": ["BB.BB.", "BB.BB.", "BB.BB.", ".BB.BB", ".BB.BB", ".BB.BB", ".BB.BB", ".BB.BB"]
+  "rows": ["BB.BB.", "BB.BB.", "BB.BB.", ".BB.BB", ".BB.BB", ".BB.BB", ".BB.BB", ".BB.BB"],
+  "states": {
+    "sulk": {
+      "offset": [-9, -1],
+      "rows": ["BBBBBBB.", ".BBBBBBb"]
+    }
+  }
 }
