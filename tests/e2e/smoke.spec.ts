@@ -64,3 +64,14 @@ test('wallpaper ignores taps', async ({ page }) => {
   await page.waitForTimeout(1000)
   expect(await page.evaluate(() => window.__rv?.bubbles.length)).toBe(0)
 })
+
+test('a duet happens within 120 s at speed 60', async ({ page, isMobile }) => {
+  test.skip(isMobile || page.viewportSize()?.width === 390, 'desktop only')
+  test.setTimeout(150_000)
+  await page.goto('/raccoon-village/?speed=60&seed=7&n=12&at=2026-04-10T12:00')
+  await page.waitForFunction(
+    () => (window.__rv?.duets.length ?? 0) >= 1 || (window.__rv?.duetLog.length ?? 0) >= 1,
+    null,
+    { timeout: 120_000 },
+  )
+})
