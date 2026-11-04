@@ -61,3 +61,6 @@ Task 9: complete (commits f5b22d9..6f46de6, review clean after 1 fix round)
 Task 10: implemented a246a9e (sonnet). Review (sonnet, all 3 sheets + composed dump): Approved, 0 Important.
 Task 10: minor (deferred): goral interact_a gap 1 row; interact_a f1 == f3; dark forearms (palette); shake torso blocky; scenery overlaps a sheet frame in captures.
 Task 10: complete (commits b910ed9..a246a9e, review clean)
+Task 11: implemented c093be2 (sonnet). Review (sonnet): Approved, 0 Important.
+Task 11: minor (deferred, art polish): shake nearly static (f0==f2, f1==f3) and stiff diagonal; happy crouch weak; sulk tail droop faint; antlers dark-on-dark in shake.
+Task 11: complete (commits 19de979..c093be2, review clean)
