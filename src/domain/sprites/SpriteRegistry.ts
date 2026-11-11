@@ -1,4 +1,6 @@
+import { MAX_SYLLABLES_LIMIT, REQUIRED_MARKS } from '../speech/Voice'
 import { parsePixelMap, SPRITE_ROLES, TILE_ROLES, usedRoles } from './PixelMap'
+import type { Voice } from '../speech/Voice'
 import type { PartDef, RigDef, SceneDef, SpeciesDef, SpriteState, TileDef } from './types'
 import { STATES, validateRig } from './validateRig'
 
@@ -68,6 +70,24 @@ function usablePartIds(sp: SpeciesDef): string[] {
   return [...ids]
 }
 
+function validateVoice(voice: unknown, fail: (msg: string) => never): void {
+  const v = voice as Partial<Record<keyof Voice, unknown>> | undefined
+  if (!v || typeof v !== 'object') return fail('voice is required')
+  const strings = (x: unknown): x is string[] =>
+    Array.isArray(x) && x.every((s) => typeof s === 'string' && s.length > 0)
+  if (!strings(v.syllables) || v.syllables.length < 2) {
+    fail('voice.syllables needs at least 2 non-empty strings')
+  }
+  if (!strings(v.marks) || v.marks.length < 1) fail('voice.marks needs at least 1 non-empty string')
+  for (const m of REQUIRED_MARKS) {
+    if (!(v.marks as string[]).includes(m)) fail(`voice.marks must include '${m}'`)
+  }
+  const max = v.maxSyllables
+  if (!Number.isInteger(max) || (max as number) < 1 || (max as number) > MAX_SYLLABLES_LIMIT) {
+    fail(`voice.maxSyllables ${String(max)} outside 1-${MAX_SYLLABLES_LIMIT}`)
+  }
+}
+
 function validateSpecies(id: string, sp: SpeciesDef, reg: Registry): void {
   const fail = (msg: string): never => {
     throw new Error(`species ${id}: ${msg}`)
@@ -78,6 +98,7 @@ function validateSpecies(id: string, sp: SpeciesDef, reg: Registry): void {
     fail(`scale ${sp.scale} outside ${SCALE_MIN}-${SCALE_MAX}`)
   }
   if (!(sp.share >= 0)) fail(`share ${sp.share} must be >= 0`)
+  validateVoice(sp.voice, fail)
   if (sp.lanes) {
     const sum = sp.lanes.reduce((a, b) => a + b, 0)
     if (Math.abs(sum - 1) > LANE_TOLERANCE) fail(`lanes sum to ${sum}, expected 1`)

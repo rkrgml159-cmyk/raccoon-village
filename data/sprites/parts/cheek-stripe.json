@@ -9,6 +9,10 @@
     "sit": {
       "offset": [1, -2],
       "rows": [".LWL", "LWL.", "LWL.", "LWL.", "LWL.", "LWL."]
+    },
+    "shake": {
+      "offset": [1, -2],
+      "rows": [".LWL", "LWL.", "LWL.", "LWL.", "LWL.", "LWL."]
     }
   }
 }

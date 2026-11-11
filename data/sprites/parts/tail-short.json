@@ -4,5 +4,15 @@
   "anchor": "tail",
   "layer": "below",
   "offset": [-2, -2],
-  "rows": [".BB", "BBB", "BBB"]
+  "rows": [".BB", "BBB", "BBB"],
+  "states": {
+    "happy": {
+      "offset": [-2, -3],
+      "rows": ["BB.", "BB.", ".BB", ".BB"]
+    },
+    "sulk": {
+      "offset": [0, 6],
+      "rows": ["BBB", "BBB", "BBB"]
+    }
+  }
 }

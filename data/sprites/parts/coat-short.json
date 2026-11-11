@@ -13,6 +13,10 @@
     "sleep": {
       "offset": [-7, 3],
       "rows": ["bbbbbbbbbb"]
+    },
+    "shake": {
+      "offset": [-2, 6],
+      "rows": ["bbbbbbbb"]
     }
   }
 }

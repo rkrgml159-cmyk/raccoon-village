@@ -6,6 +6,13 @@
   "offset": [1, 1],
   "rows": ["WWWW", "W..W", "WWWW"],
   "states": {
-    "sleep": { "offset": [0, 0], "rows": ["."] }
+    "sleep": {
+      "offset": [0, 0],
+      "rows": ["."]
+    },
+    "sulk": {
+      "offset": [0, 1],
+      "rows": ["WWWW", "W..W", "WWWW"]
+    }
   }
 }

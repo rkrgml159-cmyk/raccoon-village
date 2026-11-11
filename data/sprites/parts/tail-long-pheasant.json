@@ -23,6 +23,14 @@
     "sleep": {
       "offset": [-3, 0],
       "rows": ["..MMMM", ".MMmMM", "MMmMM.", "MmMM..", "mM...."]
+    },
+    "happy": {
+      "offset": [-4, -5],
+      "rows": ["MMmM..", "MmMM..", "MMMmM.", ".MmMM.", ".MMmMM", "..MMMM"]
+    },
+    "sulk": {
+      "offset": [-3, 1],
+      "rows": ["..MMMM", ".MMmMM", ".MmMM.", "MMMmM.", "MmMM..", "MMmM..", "MmM...", "mM...."]
     }
   }
 }

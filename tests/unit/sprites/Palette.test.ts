@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { hexToRgb, parseVariant, resolveVariant } from '../../../src/domain/sprites/Palette'
 import type { SpeciesDef } from '../../../src/domain/sprites/types'
 
-const base = { name: 'x', rig: 'r', scale: 1, share: 1 }
+const base = {
+  name: 'x',
+  rig: 'r',
+  scale: 1,
+  share: 1,
+  voice: { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 },
+}
 
 const fox: SpeciesDef = {
   ...base,

@@ -1,4 +1,7 @@
-export type SpriteState = 'idle' | 'walk' | 'sit' | 'sleep'
+import type { Voice } from '../speech/Voice'
+
+export type SpriteState =
+  'idle' | 'walk' | 'sit' | 'sleep' | 'shake' | 'interact_a' | 'interact_b' | 'happy' | 'sulk'
 
 export interface Frame {
   rows: string[]
@@ -31,6 +34,8 @@ export interface Weights {
   walk: number
   sit: number
   sleep: number
+  forage?: number
+  approach?: number
 }
 
 export interface SpeciesDef {
@@ -38,6 +43,7 @@ export interface SpeciesDef {
   rig: string
   scale: number
   share: number
+  voice: Voice
   lanes?: [number, number, number]
   walkSpeed?: number
   nocturnal?: boolean

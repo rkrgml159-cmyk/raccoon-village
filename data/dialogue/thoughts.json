@@ -1,0 +1,1860 @@
+{
+  "situations": [
+    "hungry",
+    "sleepy",
+    "bored",
+    "lonely",
+    "afterGreet",
+    "afterChat",
+    "afterSit",
+    "afterChase",
+    "afterShare",
+    "afterGroom",
+    "afterQuarrel",
+    "afterMakeUp",
+    "bestie",
+    "friend",
+    "awkward",
+    "dawn",
+    "day",
+    "dusk",
+    "night",
+    "spring",
+    "summer",
+    "autumn",
+    "winter",
+    "forest",
+    "ruin",
+    "moon",
+    "rain",
+    "idleLong",
+    "walkFar",
+    "sleepWake"
+  ],
+  "entries": [
+    {
+      "situation": "hungry",
+      "trait": "any",
+      "species": "any",
+      "lines": ["배에서 작은 소리가 난다.", "열매는 언제 익을까."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "calm",
+      "species": "raccoon",
+      "lines": ["앞발로 열매를 천천히 굴려 닦는다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["배보다 코가 먼저 나선다.", "저 냄새는 어느 구멍에서 날까."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["배 소리에 나뭇잎 뒤로 숨는다.", "빈 손바닥만 자꾸 본다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["코가 먼저 열매를 찾는다.", "빈 배가 길을 앞장선다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "glutton",
+      "species": "otter",
+      "lines": ["물가 조개를 앞발로 더듬는다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["누구 지나가면 같이 먹자 해야지.", "꼬르륵, 누가 들었나 둘러봤다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "chatty",
+      "species": "otter",
+      "lines": ["조개 두드리는 박자에 수다 얹는다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 한 점 떼어 먹고 싶다.", "구름이 만두처럼 부풀었다."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["손부터 씻고 먹어야지.", "흙 묻은 열매는 개울에 한 번."]
+    },
+    {
+      "situation": "hungry",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["달 아래서 열매를 찾는다.", "낮에 거른 배가 밤에 운다."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "any",
+      "species": "any",
+      "lines": ["눈꺼풀이 자꾸 내려온다.", "따뜻한 데 눕고 싶다."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["하품이 느릿느릿 번진다.", "눈을 반쯤 감고 걷는다."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["하품 속에도 궁금한 게 남았다.", "눈 감기 전에 한 번만 더 볼래."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["눈이 감기는데 문 쪽을 본다.", "귀 한쪽만 깨워 두고 눕자."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["눈 감기 전에 한 입만 더.", "배부른 채로 눕고 싶다."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["하품하다 말고 말 걸 뻔했다.", "눈은 감기는데 입이 근질근질."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["먼 산이 눈 속에서 흐려진다.", "달 위에 눕는 꿈을 미리 꾼다."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["누울 자리를 먼저 쓸었다.", "꼬리까지 말끔히 말고 눕자."]
+    },
+    {
+      "situation": "sleepy",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["해가 뜨니 눈이 감긴다.", "이불 속은 낮에 더 깊다."]
+    },
+    {
+      "situation": "bored",
+      "trait": "any",
+      "species": "any",
+      "lines": ["발끝으로 돌을 굴려 본다.", "뭐 재밌는 거 없나."]
+    },
+    {
+      "situation": "bored",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["구름 하나 끝까지 따라가 본다.", "풀잎 흔들리는 걸 본다."]
+    },
+    {
+      "situation": "bored",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["저 돌 밑엔 뭐가 살까.", "구멍마다 코를 대 본다."]
+    },
+    {
+      "situation": "bored",
+      "trait": "curious",
+      "species": "hedgehog",
+      "lines": ["가시 끝에 달린 게 뭐지?"]
+    },
+    {
+      "situation": "bored",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["수풀 가장자리만 맴돈다.", "한 발짝만 더 가 볼까."]
+    },
+    {
+      "situation": "bored",
+      "trait": "timid",
+      "species": "otter",
+      "lines": ["물결에 앞발만 담갔다 뺐다."]
+    },
+    {
+      "situation": "bored",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["도토리 껍질만 굴려 본다.", "킁킁, 맡을 만한 게 없네."]
+    },
+    {
+      "situation": "bored",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["입이 심심해서 돌한테 말을 걸었다.", "누구 안 지나가나, 목을 뺀다."]
+    },
+    {
+      "situation": "bored",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 모양을 또 바꿔 본다.", "저 산 너머엔 뭐가 있을까."]
+    },
+    {
+      "situation": "bored",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["돌멩이를 크기대로 줄 세운다.", "삐뚤어진 막대를 바로 세웠다."]
+    },
+    {
+      "situation": "bored",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["그림자 밟기나 해 볼까."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "any",
+      "species": "any",
+      "lines": ["옆에 누가 앉으면 좋겠다.", "혼자 걷는 길이 길다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["빈자리에 햇볕만 앉아 있다.", "발소리 하나 기다려 본다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["굴 안쪽에서 메아리만 답한다.", "누가 지나간 흔적을 따라가 본다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["빈 자리 쪽으로 몸이 기운다.", "멀어지는 발소리를 오래 듣는다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["나눌 데 없는 열매가 무겁다.", "반쪽 남겨 둔 자리가 비었다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["혼잣말이 점점 길어진다.", "메아리라도 대답해 주면 좋겠다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["먼 산에 대고 작게 불러 본다.", "구름이 혼자 흘러간다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["털 골라 줄 등이 비어 있다.", "한쪽만 눌린 풀이 곁에 있다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["다들 잠든 길을 혼자 걷는다.", "불 켜진 창이 하나도 없다."]
+    },
+    {
+      "situation": "lonely",
+      "trait": "nightowl",
+      "species": "hare",
+      "lines": ["긴 귀만 쫑긋, 아무도 없네."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "any",
+      "species": "any",
+      "lines": ["안녕이라고 했다, 됐다.", "인사는 늘 기분이 좋다."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["고개 끄덕이면 충분하다.", "꼬리 끝이 느리게 흔들린다."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["저 목소리 어디서 왔더라?", "그 이웃 주머니엔 뭐가 있을까."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["목소리가 안 떨렸나 몰라.", "손을 흔들었다, 작게."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["손 흔들다 입맛을 다셨다.", "그 집에서 쑥떡 냄새가 났다."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["손 흔들었더니 꼬리가 먼저 대답했네.", "다음 이웃한테는 뭐라고 할까?"]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "chatty",
+      "species": "human",
+      "lines": ["할머니 흉내로 손을 흔들었다."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["손 흔든 자리에 바람이 남았다.", "인사가 구름처럼 떠오른다."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["인사하며 털을 슬쩍 폈다."]
+    },
+    {
+      "situation": "afterGreet",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["졸린 눈으로도 손은 흔들었다.", "밤에 만난 얼굴이 반갑다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "any",
+      "species": "any",
+      "lines": ["무슨 얘기였더라, 좋았다.", "말하고 나니 가볍다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["대답은 내일 해도 된다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["새 얘기를 하나 주웠다.", "물어볼 게 아직 한가득이다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["말이 꼬였는데 웃어 줬다.", "아직 볼이 따뜻하다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["얘기하다 배 소리 들켰나.", "말이 길어져 간식을 잊었다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["아직 할 말이 반이나 남았는데.", "목이 칼칼, 그래도 신난다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["말들이 구름처럼 흩어졌다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["말하는 새 털이 헝클어졌네.", "숨 고르고 귀 뒤를 매만진다."]
+    },
+    {
+      "situation": "afterChat",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["속삭이듯 말이 낮아졌다.", "말하다 보니 별이 옮겨 갔다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "any",
+      "species": "any",
+      "lines": ["나란히 앉으니 따뜻하다.", "아무 말 없어도 좋았다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["그늘이 우리 둘 위로 옮겨 왔다.", "같은 쪽을 보고 한참 있었다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["옆에서 나는 소리가 새롭다.", "나란히 앉아 개미 길을 본다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["어깨가 닿아도 안 비켰다.", "숨소리를 맞춰 본다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["나란히 앉아 뿌리를 씹었다.", "어깨 옆에서 따끈한 냄새."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["옆자리가 따끈하다, 할 말이 샌다.", "조용히 있었더니 입이 간질간질."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["둘이 보는 구름은 더 느리다.", "어깨 너머로 먼 산이 푸르다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["앉은 자리가 둘 다 말랐다.", "어깨 나란히, 먼지 한 톨 없다."]
+    },
+    {
+      "situation": "afterSit",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["어깨 너머로 달이 같이 떴다.", "나란히 앉아 눈만 깜빡였다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "any",
+      "species": "any",
+      "lines": ["아직도 심장이 콩콩.", "다리가 후들거린다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["숨 고르는 데 시간이 걸린다.", "풀밭에 벌러덩 누웠다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["숨찬데 풀숲이 또 궁금하다.", "잡힐 뻔한 틈새가 눈에 남았다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["잡힐까 봐 웃음이 새 나왔다.", "가슴이 쿵쿵, 근데 좋다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["달리고 나니 배가 비었다.", "잡힌 건 나, 먹을 건 없고."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["헉헉대면서도 웃음이 먼저 나왔다.", "다음엔 내가 술래 한다고 했다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["하늘이 빙글빙글 돈다.", "숨 고르며 구름을 센다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["진흙 튄 발목부터 닦아야지.", "헝클어진 털을 결대로 눕힌다."]
+    },
+    {
+      "situation": "afterChase",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["어둠 속에선 안 들켰다.", "숨은 곳이 밤엔 더 깊더라."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "any",
+      "species": "any",
+      "lines": ["나눠 먹으니 더 맛있다.", "반쪽이어도 배부르다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["한 입씩 오래 씹었다.", "남은 건 내일 먹으면 되지."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["이 열매 속은 어떤 맛일까.", "반쪽을 코끝으로 한참 맡았다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["내민 손이 덜 떨렸다.", "반으로 쪼개니 마음이 놓인다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["큰 쪽을 내밀었다, 손이 먼저.", "입가에 즙이 아직 묻었다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["먹으면서 떠든 건 반쯤 흘렸다.", "한 입 주고 얘기 한 입 받았다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["반쪽 열매에 달이 비친 듯하다.", "나눈 맛이 구름처럼 퍼진다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["부스러기는 손바닥에 모은다.", "반쪽 먹은 입가를 쓱 닦았다."]
+    },
+    {
+      "situation": "afterShare",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["한밤 간식은 반쪽이 딱 좋다.", "달빛 아래서 열매를 쪼갰다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "any",
+      "species": "any",
+      "lines": ["털이 말끔해졌다.", "등이 시원하다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["빗질 끝난 등이 노곤하다.", "엉킨 털이 하나씩 풀렸다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["털 사이에서 솔잎이 나왔다.", "등 어디에 뭐가 붙었었지?"]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["빗는 손길에 어깨가 풀린다.", "눈을 감아도 무섭지 않다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["등 긁어 주니 졸려, 배도 불러."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["털 골라 주며 소문 다 들었다.", "등을 맡기니 말이 술술 나왔다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["털 사이로 바람길이 났다.", "등이 풀리니 하늘이 넓다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["결이 한 방향으로 누웠다.", "이제야 등이 고르게 가볍다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "tidy",
+      "species": "otter",
+      "lines": ["물에 한 번 담갔더니 결이 산다."]
+    },
+    {
+      "situation": "afterGroom",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["털 사이로 밤바람이 지난다.", "눈이 스르르 감겼다 떴다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "any",
+      "species": "any",
+      "lines": ["괜히 그랬나 보다.", "마음이 조금 따끔하다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["한숨 한 번 쉬고 기다린다.", "화는 해가 지면 식겠지."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["왜 그랬는지 아직도 궁금해.", "돌 하나를 만지작거린다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["굴 속으로 들어가 앉았다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["고작 열매 하나 때문이었다니.", "삐친 배가 더 크게 운다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["할 말 많았는데 입이 닫혔다.", "말이 너무 빨랐나, 귀가 뜨겁다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 한 장이 해를 가렸다.", "먼 산도 오늘은 멀다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["털끝이 곤두서서 안 눕는다.", "발자국만 어지럽게 남았다."]
+    },
+    {
+      "situation": "afterQuarrel",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["낮은 소리로 다퉜는데 쓰리다.", "돌아선 등 위에 달이 걸렸다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "any",
+      "species": "any",
+      "lines": ["다시 나란히 걷는다.", "미안하다고 말했다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["서두를 것 없이 다가갔다.", "어깨가 다시 나란하다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["그 얼굴이 이제야 제대로 보여."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["먼저 다가간 내가 신기하다.", "꼬리 끝이 슬그머니 풀린다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["먼저 밤 한 알 내밀었다.", "같이 먹으니 풀린다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["다시 말 섞으니 숨이 트인다.", "먼저 말 걸길 잘했다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 틈으로 해가 비친다.", "나란히 걸으니 산이 가깝다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["나란한 발자국이 가지런하다."]
+    },
+    {
+      "situation": "afterMakeUp",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["해 뜨기 전에 풀어서 다행.", "슬쩍 열매 하나를 건넸다."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "any",
+      "species": "any",
+      "lines": ["저 얼굴만 봐도 웃음 나.", "같이 있으면 해가 빨리 가."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["저 걸음엔 맞춰 걷게 된다.", "말 안 해도 속도가 같다."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["그 애 주머니는 늘 신기해.", "같이 가면 구멍도 안 무서워."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["저 옆이면 그림자도 안 무서워.", "같이면 어두운 데도 간다."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["걔 몫 열매는 늘 따로 둔다.", "맛있는 덴 걔한테 먼저 알려 줘야지."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["그 애한텐 하루치 얘기가 쌓인다.", "걸음 소리만 들려도 말문이 열려."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["같이 본 구름은 이름이 있다.", "그 애랑 달에 닿는 얘길 했지."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["그 애 털은 늘 해 냄새가 나.", "빗 하나를 둘이 돌려 쓰던 날."]
+    },
+    {
+      "situation": "bestie",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["밤새 같이 깨 있던 얼굴.", "그 애랑은 새벽도 짧다."]
+    },
+    {
+      "situation": "friend",
+      "trait": "any",
+      "species": "any",
+      "lines": ["저 친구 오늘도 있네.", "익숙한 발소리가 좋다."]
+    },
+    {
+      "situation": "friend",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["저기 오네, 천천히 오렴.", "안부는 다음에 물어도 된다."]
+    },
+    {
+      "situation": "friend",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["다음엔 뭘 보여 줄까.", "그 친구 발소리를 알아듣는다."]
+    },
+    {
+      "situation": "friend",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["저 발소리는 안 놀라도 돼.", "이름을 속으로 불러 본다."]
+    },
+    {
+      "situation": "friend",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["딸기철에 또 만나겠지."]
+    },
+    {
+      "situation": "friend",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["저기 오네, 뭐부터 얘기하지?", "손 흔들 준비는 끝났다."]
+    },
+    {
+      "situation": "friend",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["저 친구도 하늘을 볼까.", "저 친구라면 구름 얘기 듣겠지."]
+    },
+    {
+      "situation": "friend",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["젖은 발로 와도 괜찮은 이.", "그 친구 자리엔 먼지가 없네."]
+    },
+    {
+      "situation": "friend",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["밤 산책길에 낯익은 발소리.", "저 친구도 눈이 말똥말똥."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "any",
+      "species": "any",
+      "lines": ["눈이 마주쳐서 딴청했다.", "어색한 공기가 지나간다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["인사는 다음 계절에 해 볼까."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["저 이웃은 뭘 좋아할까.", "곁눈질로 한 번 더 본다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["인사할까, 고개만 숙일까.", "마주칠까 봐 길을 돌았다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "timid",
+      "species": "human",
+      "lines": ["손을 주머니에 넣었다 뺐다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["빵 부스러기만 만지작거렸다.", "건넬까 말까, 열매가 미지근해진다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["인사할까 말까, 입술이 달싹.", "날씨 얘기라도 꺼내 볼까."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름만 보는 척 지나쳤다.", "먼 산 쪽으로 눈을 돌린다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["저 이웃 앞에선 털만 고른다.", "발끝 흙을 괜히 털어 냈다."]
+    },
+    {
+      "situation": "awkward",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["어두워서 못 본 척했다.", "달빛에 눈이 마주칠 뻔했다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "any",
+      "species": "any",
+      "lines": ["새벽 공기가 차갑고 맑다.", "해가 오르기 전이 좋다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["안개가 걷힐 때까지 앉아 있다.", "첫 새소리를 기다렸다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["이슬이 맺힌 거미줄을 본다.", "첫 새소리가 어디서 났지?"]
+    },
+    {
+      "situation": "dawn",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["첫 새 소리에 어깨가 움찔.", "안개 속에서 귀부터 편다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "timid",
+      "species": "mole",
+      "lines": ["흙 위가 밝아지면 코부터 내민다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["이슬 맺힌 산딸기 생각.", "새벽 풀냄새에 침이 돈다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["들어줄 이 없어 새한테 떠든다.", "이슬 맺힌 풀한테 안부를 물었다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["먼 산 끝이 분홍으로 풀린다.", "아직 밤인 구름이 지나간다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["이슬이 털끝에 맺혔다.", "첫 빛에 먼지가 떠다닌다."]
+    },
+    {
+      "situation": "dawn",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["이제야 졸음이 몰려온다.", "잠자리 가는 길이 환하다."]
+    },
+    {
+      "situation": "day",
+      "trait": "any",
+      "species": "any",
+      "lines": ["햇볕이 등에 앉았다.", "오늘은 어디로 가 볼까."]
+    },
+    {
+      "situation": "day",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["그늘 따라 한 뼘씩 옮겨 앉는다.", "오늘 할 일은 햇볕 쬐기."]
+    },
+    {
+      "situation": "day",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["그늘 쪽 틈이 자꾸 부른다.", "돌 하나만 더 뒤집어 볼까."]
+    },
+    {
+      "situation": "day",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["해가 높아서 숨을 데가 없다.", "그늘 가장자리로만 걷는다."]
+    },
+    {
+      "situation": "day",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["볕에 말린 감 냄새가 난다.", "점심 자리를 눈으로 고른다."]
+    },
+    {
+      "situation": "day",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["오가는 발소리마다 고개가 돈다.", "누구든 한 마디만 걸어 주면."]
+    },
+    {
+      "situation": "day",
+      "trait": "chatty",
+      "species": "magpie",
+      "lines": ["반짝이는 걸 물고 소문을 나른다."]
+    },
+    {
+      "situation": "day",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 배가 천천히 떠간다.", "하늘 끝까지 걸어 보고 싶다."]
+    },
+    {
+      "situation": "day",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["마른 바위 위가 딱 좋다.", "볕에 털을 탁탁 털어 말린다."]
+    },
+    {
+      "situation": "day",
+      "trait": "tidy",
+      "species": "carrion-crow",
+      "lines": ["깃을 부리로 한 올씩 편다."]
+    },
+    {
+      "situation": "day",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["눈꺼풀 커튼을 내린다.", "해가 높으면 귀가 접힌다."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "any",
+      "species": "any",
+      "lines": ["하늘이 천천히 식는다.", "그림자가 길어졌다."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["노을이 다 지나갈 때까지 본다.", "하루가 느리게 접힌다."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["굴 입구가 보랏빛이 됐다.", "어둑해지니 소리가 더 크다."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["그림자가 늘어나 발이 빨라진다.", "해가 지기 전에 굴로 가야지."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["저녁 연기 냄새에 코가 간다.", "하늘이 군고구마 색이다."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["노을 얘기를 누구한테 할까.", "집에 가기 전에 한 명만 더."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 끝이 주황으로 번진다.", "산이 하늘로 녹아든다."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["저녁 물가에서 발을 헹군다.", "해 지기 전에 자리를 쓸자."]
+    },
+    {
+      "situation": "dusk",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["이제 막 눈이 떠졌다.", "하늘이 어두울수록 몸이 가볍다."]
+    },
+    {
+      "situation": "night",
+      "trait": "any",
+      "species": "any",
+      "lines": ["별이 많은 날은 조용하다.", "밤바람에 귀가 쫑긋."]
+    },
+    {
+      "situation": "night",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["어둠에 눈이 익어 간다.", "풀벌레 소리에 박자를 맞춘다."]
+    },
+    {
+      "situation": "night",
+      "trait": "calm",
+      "species": "eagle-owl",
+      "lines": ["나뭇가지 위에서 눈만 깜빡."]
+    },
+    {
+      "situation": "night",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["저 바스락은 누구 발소리지?", "어둠 속에서 귀가 먼저 간다."]
+    },
+    {
+      "situation": "night",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["나뭇가지 소리마다 숨을 멈춘다.", "눈을 뜬 채로 눕는다."]
+    },
+    {
+      "situation": "night",
+      "trait": "timid",
+      "species": "hedgehog",
+      "lines": ["가시를 세웠다 눕혔다 한다."]
+    },
+    {
+      "situation": "night",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["자기 전에 밤 한 톨만."]
+    },
+    {
+      "situation": "night",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["다들 잠든 밤엔 속삭임만 늘어.", "별한테라도 오늘 일을 들려줬다."]
+    },
+    {
+      "situation": "night",
+      "trait": "chatty",
+      "species": "eagle-owl",
+      "lines": ["밤눈 밝아 지나가는 이마다 부른다."]
+    },
+    {
+      "situation": "night",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["별을 이어 길을 그려 본다.", "달 뒤편엔 누가 살까."]
+    },
+    {
+      "situation": "night",
+      "trait": "dreamer",
+      "species": "eagle-owl",
+      "lines": ["둥근 눈에 달이 두 개 뜬다."]
+    },
+    {
+      "situation": "night",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["바닥에 잎을 곱게 깔았다.", "이불 속 모래알이 신경 쓰여."]
+    },
+    {
+      "situation": "night",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["내 시간이 이제 시작이다.", "어둠이 담요처럼 덮인다."]
+    },
+    {
+      "situation": "night",
+      "trait": "nightowl",
+      "species": "eagle-owl",
+      "lines": ["고개를 돌려도 밤이 다 보인다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "any",
+      "species": "any",
+      "lines": ["새순이 올라왔다.", "흙냄새가 달라졌다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["싹이 얼마나 컸나 들여다본다.", "봄볕에 몸이 천천히 풀린다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["언 땅 밑에서 뭔가 꿈틀한다.", "싹 하나가 돌을 밀어냈다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["싹 트는 소리에도 귀가 선다.", "얼음 풀린 물가에 한 발만."]
+    },
+    {
+      "situation": "spring",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["달래 냄새에 발이 멈춘다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["새순 났다고 온 동네에 알리고 싶다.", "꽃 핀 얘기부터 해야겠다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름이 꽃잎처럼 가볍다.", "먼 산에 초록이 번진다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["녹은 땅이 질척하다, 발 어쩌지.", "꽃가루가 코끝에 내려앉았다."]
+    },
+    {
+      "situation": "spring",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["밤에도 꽃냄새가 따라온다.", "짧아진 밤이 아쉽다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "any",
+      "species": "any",
+      "lines": ["풀 그늘이 시원하다.", "매미 소리가 한창이다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["더우면 쉬고 또 쉰다.", "뜨거운 돌은 해 질 때 식는다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "calm",
+      "species": "otter",
+      "lines": ["물살에 배를 맡기고 떠 있다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["개울 바닥 돌이 반짝인다.", "풀숲에서 처음 듣는 소리."]
+    },
+    {
+      "situation": "summer",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["천둥 같은 매미 소리에 움찔.", "풀 그늘 깊숙이 들어앉았다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["수박 껍질 속이 서늘하다.", "딸기 물든 손이 끈적하다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["매미 소리 사이로 수다를 끼워 넣는다.", "그늘 아래 말동무가 늘었다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["뭉게구름 위에 앉아 본다.", "더운 하늘 끝이 일렁인다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["땀난 털이 등에 붙는다.", "개울에서 발가락 사이를 씻었다."]
+    },
+    {
+      "situation": "summer",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["밤이 되니 땅이 식는다.", "열기 빠진 밤이 제일 좋다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "any",
+      "species": "any",
+      "lines": ["낙엽 밟는 소리가 좋다.", "도토리가 툭 떨어졌다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["잎이 떨어지는 길을 지켜본다.", "열매는 알아서 떨어지겠지."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "calm",
+      "species": "red-squirrel",
+      "lines": ["도토리 하나 묻고 한참 본다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["도토리 구멍 속을 들여다본다.", "낙엽 아래서 뭐가 바스락."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["낙엽 밟는 소리에 내가 놀랐다.", "도토리를 주머니에 숨겼다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["밤송이가 벌어졌다, 신난다.", "감 익는 냄새에 어질어질."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "glutton",
+      "species": "black-bear",
+      "lines": ["돌담 옆 벌집 냄새가 달다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["도토리 모은 자랑을 하고 싶다.", "낙엽 밟으며 노래처럼 중얼중얼."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름이 높이 올라갔다.", "먼 산이 불붙은 듯 곱다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "dreamer",
+      "species": "red-squirrel",
+      "lines": ["꼬리 끝에 구름이 걸렸다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["젖은 낙엽은 밟기 싫다.", "털에 붙은 풀씨를 하나씩 뗀다."]
+    },
+    {
+      "situation": "autumn",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["길어진 밤이 반갑다.", "밤이슬 맞은 낙엽이 촉촉하다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "any",
+      "species": "any",
+      "lines": ["숨이 하얗게 나온다.", "눈 위에 발자국 하나."]
+    },
+    {
+      "situation": "winter",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["눈 쌓이는 소리가 들릴 듯.", "서두르지 않아도 봄은 온다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "calm",
+      "species": "black-bear",
+      "lines": ["굴 안 숨소리가 길고 느리다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["눈 위의 작은 발자국을 쫓는다.", "얼음 아래에 뭔가 움직인다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["눈 밟는 소리가 너무 크다.", "털을 부풀려 몸을 감싼다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "timid",
+      "species": "black-bear",
+      "lines": ["돌담 틈에 큰 몸을 구겨 넣는다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["쟁여 둔 열매를 세어 본다.", "언 땅 밑 뿌리를 떠올린다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["하얀 입김이 말풍선처럼 떠오른다.", "추워도 말은 따뜻하게 나온다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["먼 산 위에 하얀 모자가 얹혔다.", "구름이 눈이 될 차례를 기다린다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["눈 묻은 발은 문 앞에서 턴다.", "얼어도 털은 결대로 눕힌다."]
+    },
+    {
+      "situation": "winter",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["긴 밤이 온전히 내 몫이다.", "별이 얼어붙은 듯 또렷하다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "any",
+      "species": "any",
+      "lines": ["나무 사이로 빛이 샌다.", "이끼가 푹신하다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["이끼 위에 앞발을 얹어 본다.", "초록이 숨 쉬는 걸 듣는다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["이끼 밑에 숨은 길이 있나.", "뿌리 사이 구멍이 깊다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "curious",
+      "species": "mole",
+      "lines": ["흙 속 길이 어디로 이어질까."]
+    },
+    {
+      "situation": "forest",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["이끼가 소리를 다 먹어 준다.", "나무 뒤에서 빛을 구경한다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["이끼 밑에 버섯이 숨었나.", "축축한 데서 열매 냄새가 난다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "glutton",
+      "species": "hedgehog",
+      "lines": ["낙엽 밑 벌레를 코로 파 본다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["이끼한테도 아는 척을 해 줬다.", "나뭇잎 사이로 내 말이 퍼진다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["가지 사이로 구름이 흘러간다.", "이끼 숲도 어딘가 바다일 거야."]
+    },
+    {
+      "situation": "forest",
+      "trait": "dreamer",
+      "species": "woodpecker",
+      "lines": ["부리로 톡톡, 하늘도 두드려 볼까."]
+    },
+    {
+      "situation": "forest",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["이끼 낀 돌은 젖어 있겠지.", "이끼가 발바닥에 묻어난다."]
+    },
+    {
+      "situation": "forest",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["어둑한 이끼가 더 푹신하다.", "나무 틈 어둠이 편안하다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "any",
+      "species": "any",
+      "lines": ["저 집은 누가 살았을까.", "저 큰 돌은 왜 안 움직일까."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "any",
+      "species": "black-bear",
+      "lines": ["담이 있던 자리엔 바람이 분다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "any",
+      "species": "human",
+      "lines": ["할머니는 여기 못 들어오는 데였대."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["시계탑 바늘은 쉬는 중이다.", "녹슨 표지판 아래 앉아 본다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "calm",
+      "species": "human",
+      "lines": ["멈춘 시계탑 밑에서 손을 쉬었다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["멈춘 시계는 몇 시를 보고 있을까.", "녹슨 표지판 글자가 반쯤 남았다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "curious",
+      "species": "human",
+      "lines": ["손끝으로 녹슨 글자를 더듬는다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["멈춘 시계탑 아래는 빨리 지나간다.", "녹슨 표지판이 삐걱했다, 숨 참기."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["시계탑 밑에 산딸기가 붉다.", "녹슨 표지판에 도토리 한 알."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["멈춘 시계탑이 내 얘기 듣는 척한다.", "녹슨 표지판에 인사하고 지나갔다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["멈춘 시계탑이 구름을 가리킨다.", "녹슨 표지판이 먼 산을 가리킨다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["멈춘 시계탑에 먼지가 소복.", "녹슨 표지판을 앞발로 닦아 본다."]
+    },
+    {
+      "situation": "ruin",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["멈춘 시계탑은 밤에도 그대로.", "녹슨 표지판에 달이 비친다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "any",
+      "species": "any",
+      "lines": ["달이 오늘따라 크다.", "달빛에 털이 은색이다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["달이 지나가길 기다린다.", "구름이 달을 천천히 비켜 간다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["달 속 얼룩이 자꾸 보인다.", "달빛 따라 한 걸음 더."]
+    },
+    {
+      "situation": "moon",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["달이 밝으면 내 그림자가 보인다.", "달빛 아래선 조금 용감해진다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["달이 큰 전병 같다.", "둥근 달에 입이 벌어진다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["달아, 오늘 본 것 좀 들어 봐.", "달빛 아래서 얘기가 길어진다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["달까지 사다리를 놓아 본다.", "달이 나를 보는 것 같다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["달빛이 젖은 돌을 닦아 준다.", "은빛 털에 티끌이 하나 있다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["달이 뜨면 눈이 먼저 안다.", "저 불빛 아래선 졸리지 않다."]
+    },
+    {
+      "situation": "moon",
+      "trait": "nightowl",
+      "species": "human",
+      "lines": ["손등에 달빛이 내려앉았다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "any",
+      "species": "any",
+      "lines": ["빗소리가 지붕을 두드린다.", "젖은 풀냄새가 난다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "any",
+      "species": "otter",
+      "lines": ["물은 늘 아래로 흘러간다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["처마 밑에서 그치길 기다린다.", "빗방울 떨어지는 간격이 좋다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["빗방울이 어디로 스미나 본다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["빗소리 덕에 발소리가 묻힌다.", "처마 밑에서 한 발 더 나가 본다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["비 온 뒤엔 버섯이 올라오지.", "빗물에 뿌리 냄새가 깨어난다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["빗소리 위로 내 목소리를 얹는다.", "처마 밑에 누가 들어오면 좋겠다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름이 쏟아져 내려온다.", "빗방울 하나에 하늘이 담겼다."]
+    },
+    {
+      "situation": "rain",
+      "trait": "dreamer",
+      "species": "otter",
+      "lines": ["빗물 따라 구름 속까지 헤엄칠래."]
+    },
+    {
+      "situation": "rain",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["처마 밑 마른 자리를 찾는다.", "진흙 튀기 전에 걸음을 줄여."]
+    },
+    {
+      "situation": "rain",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["빗소리 덕에 밤이 더 길다.", "젖은 밤이 포근하다."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "any",
+      "species": "any",
+      "lines": ["가만히 있는 것도 일이다.", "오늘은 그냥 이대로."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["해가 어디쯤인지 모르겠다.", "멍하니 있었더니 풀이 자랐네."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["멍하니 있다가 개미를 만났다.", "한참 쳐다본 돌이 안 움직인다."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["한참 숨죽이고 있었네.", "아무도 날 못 봤겠지."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["멍하니 있다 배가 울었다.", "허공에 열매를 그려 본다."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["멍해도 입술은 혼자 오물오물.", "생각을 한참 하다 말로 새 버렸다."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["구름 세 개가 지나갔다.", "생각이 먼 산을 넘어갔다 왔다."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["그새 먼지가 어깨에 앉았다.", "멍하니 앞발만 핥고 있었네."]
+    },
+    {
+      "situation": "idleLong",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["밤새 눈만 깜빡였다.", "낮잠 끝에 멍하니 앉았다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "any",
+      "species": "any",
+      "lines": ["멀리까지 와 버렸네.", "발바닥이 뜨끈하다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["올 때처럼 쉬엄쉬엄 가자.", "쉬엄쉬엄 오니 여기까지다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["처음 보는 길목에 코를 댄다.", "저 모퉁이 너머가 궁금해."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["처음 보는 길인데 한 발 더.", "돌아보니 굴이 작아 보인다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["멀리 와서 처음 맡는 냄새.", "낯선 덤불에 열매가 빨갛다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["만나는 이마다 한마디씩 걸었다.", "멀리 와서 할 얘기가 늘었다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["산이 아직도 저만치 있다.", "걸을수록 하늘이 커진다."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["발바닥에 흙이 두껍게 붙었다.", "집에 가면 맨 먼저 씻어야지."]
+    },
+    {
+      "situation": "walkFar",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["별자리가 바뀌도록 걸었다.", "어두운 길이 끝없이 이어진다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "any",
+      "species": "any",
+      "lines": ["아, 잘 잤다.", "꿈이 금방 흩어진다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "calm",
+      "species": "any",
+      "lines": ["눈을 뜨고도 한참 누워 있다.", "기지개는 끝까지 켠다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "curious",
+      "species": "any",
+      "lines": ["꿈속 그 문은 어디로 갔지?", "일어나자마자 창틈부터 본다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "timid",
+      "species": "any",
+      "lines": ["눈 뜨자마자 주위부터 살폈다.", "꿈속에서도 귀를 세웠다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "timid",
+      "species": "hare",
+      "lines": ["귀부터 번쩍, 발은 아직 꿈."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "glutton",
+      "species": "any",
+      "lines": ["꿈에서 한 입 남기고 깼다.", "일어나자마자 코부터 킁킁."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "chatty",
+      "species": "any",
+      "lines": ["깨자마자 꿈 얘기부터 하고 싶다.", "잠꼬대를 누가 들었으려나."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "dreamer",
+      "species": "any",
+      "lines": ["꿈속 구름이 아직 손에 남았다.", "어디까지 날았더라."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "tidy",
+      "species": "any",
+      "lines": ["깔아 둔 잎이 다 흐트러졌다.", "눈곱부터 떼고 일어났다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "tidy",
+      "species": "hedgehog",
+      "lines": ["가시 사이 마른 잎을 하나씩 뗀다."]
+    },
+    {
+      "situation": "sleepWake",
+      "trait": "nightowl",
+      "species": "any",
+      "lines": ["깨어 보니 달이 떠 있다.", "일어나니 이제 하루 시작."]
+    }
+  ]
+}

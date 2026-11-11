@@ -32,6 +32,22 @@
     "sleep": {
       "offset": [0, 0],
       "rows": ["."]
+    },
+    "interact_a": {
+      "offset": [0, 0],
+      "rows": ["."]
+    },
+    "interact_b": {
+      "offset": [0, 0],
+      "rows": ["."]
+    },
+    "happy": {
+      "offset": [0, 0],
+      "rows": ["."]
+    },
+    "shake": {
+      "offset": [0, 0],
+      "rows": ["."]
     }
   }
 }

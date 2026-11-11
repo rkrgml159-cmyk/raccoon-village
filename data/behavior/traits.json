@@ -1,0 +1,10 @@
+{
+  "calm": { "idle": 1.3, "approach": 0.8, "quarrel": 0.5 },
+  "curious": { "walk": 1.4, "approach": 1.2, "forage": 1.2 },
+  "timid": { "approach": 0.6, "quarrel": 0.3, "chase": 0.5, "lonelyOnQuarrel": 0.2 },
+  "glutton": { "forage": 1.6, "shareGive": 0.4, "hungerRate": 1.3 },
+  "chatty": { "approach": 1.6, "chat": 1.5, "greet": 1.2 },
+  "dreamer": { "idle": 1.2, "thoughtAuto": 2, "sit": 1.2 },
+  "tidy": { "groom": 1.8, "forage": 0.8 },
+  "nightowl": { "nocturnalFlip": 1 }
+}

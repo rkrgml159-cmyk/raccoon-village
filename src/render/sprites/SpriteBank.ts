@@ -22,14 +22,14 @@ export class SpriteBank {
     return this.registry.rigs[this.registry.species[species].rig].size
   }
 
-  ensure(species: string, variant: string): void {
-    const id = `${species}|${variant}`
+  ensure(species: string, variant: string, states: readonly SpriteState[] = STATES): void {
+    const id = `${species}|${variant}|${states.join(',')}`
     if (this.done.has(id)) return
     const { rigs, parts, species: all } = this.registry
     const sp = all[species]
     const rig = rigs[sp.rig]
     const resolved = resolveVariant(sp, variant)
-    for (const state of STATES) {
+    for (const state of states) {
       const frames = rig.frames[state]
       frames.forEach((_f, index) => {
         const key = this.textureKey(species, variant, state, index)

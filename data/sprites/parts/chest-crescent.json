@@ -14,6 +14,14 @@
     "sleep": {
       "offset": [-3, 3],
       "rows": ["X...X", ".X.X.", "..X.."]
+    },
+    "shake": {
+      "offset": [-1, 15],
+      "rows": ["XX...XX", ".XX.XX.", "..XXX..", "...X..."]
+    },
+    "sulk": {
+      "offset": [-3, 8],
+      "rows": ["X...X", ".X.X.", "..X.."]
     }
   }
 }

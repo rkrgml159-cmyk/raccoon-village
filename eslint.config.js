@@ -6,6 +6,7 @@ export default tseslint.config(
   {
     ignores: [
       '.superpowers',
+      '.claude',
       'dist',
       'node_modules',
       'coverage',

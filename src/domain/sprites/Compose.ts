@@ -55,7 +55,8 @@ function paint(
 /** Layers below-parts, the body, then above-parts into an RGBA buffer. */
 export function composeFrame(input: ComposeInput): FrameBuffer {
   const { rig, state, index, variant, parts } = input
-  const frame = rig.frames[state][index]
+  const frame = rig.frames[state]?.[index]
+  if (!frame) throw new Error(`rig ${rig.id}: no frame ${state}[${index}]`)
   const [w, h] = rig.size
   const buf: FrameBuffer = { w, h, rgba: new Uint8ClampedArray(w * h * 4) }
   const body = parsePixelMap(frame.rows, rig.size, SPRITE_ROLES)

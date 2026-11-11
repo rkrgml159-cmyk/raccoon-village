@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { mulberry32 } from '@domain/rng'
 import type { Phase } from '@domain/time/DateContext'
-import { createResident } from '@domain/resident/Resident'
+import { createResident, spriteStateOf, type Resident } from '@domain/resident/Resident'
 import {
   RIG_DEFAULT_PROFILE,
   chooseNext,
   effectivePhase,
   profileFor,
   tick,
+  REACH,
+  DURATION_MS,
 } from '@domain/resident/UtilityAI'
 import type { SpeciesDef } from '@domain/sprites/types'
 
@@ -103,8 +105,8 @@ describe('UtilityAI', () => {
   })
   it('night weights: sit ≈ 20%, walk ≈ 5% over 10k samples', () => {
     const rng = mulberry32(3)
-    const n = { idle: 0, walk: 0, sit: 0, sleep: 0 }
-    for (let i = 0; i < 10000; i++) n[chooseNext('idle', [], W.night, rng)]++
+    const n = { idle: 0, walk: 0, sit: 0, sleep: 0 } as Record<string, number>
+    for (let i = 0; i < 10000; i++) n[chooseNext('idle', [], W.night, rng, false)]++
     expect(Math.abs(n.sit / 10000 - 0.15)).toBeLessThanOrEqual(0.03)
     expect(Math.abs(n.walk / 10000 - 0.05)).toBeLessThanOrEqual(0.03)
   })
@@ -240,11 +242,111 @@ describe('UtilityAI', () => {
     }
   })
   it('profileFor fills missing fields from the rig default', () => {
-    const base = { name: 'x', rig: 'r', scale: 1, share: 1, palettes: {} } as SpeciesDef
+    const base: SpeciesDef = {
+      name: 'x',
+      rig: 'r',
+      scale: 1,
+      share: 1,
+      voice: { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 },
+      palettes: {},
+    }
     expect(profileFor(base)).toEqual(RIG_DEFAULT_PROFILE)
     const custom = profileFor({ ...base, walkSpeed: 0.1, nocturnal: true })
     expect(custom.walkSpeed).toBe(0.1)
     expect(custom.nocturnal).toBe(true)
     expect(custom.weights).toEqual(RIG_DEFAULT_PROFILE.weights)
+  })
+
+  describe('forage / approach / duet', () => {
+    const base = createResident('a', 0.2)
+    const aCtx = { ...ctx, targetXOf: (id: string) => (id === 'b' ? 0.5 : undefined) }
+    const prof = { ...RIG_DEFAULT_PROFILE, walkSpeed: 0.1 }
+
+    it('approach moves toward target and stops within REACH', () => {
+      let r: Resident = { ...base, state: 'approach', targetId: 'b', stateT: 20000 }
+      const c = { ...aCtx, profile: prof }
+      for (let i = 0; i < 31; i++) r = tick(r, 100, c, () => 0.5)
+      expect(r.state).toBe('approach')
+      expect(r.stateT).toBeLessThanOrEqual(0)
+      expect(Math.abs(r.x - 0.5)).toBeLessThanOrEqual(REACH)
+      expect(r.facing).toBe('right')
+    })
+    it('approach faces left when target is behind', () => {
+      const r0 = { ...base, x: 0.9, state: 'approach' as const, targetId: 'b', stateT: 20000 }
+      expect(tick(r0, 100, { ...aCtx, profile: prof }, () => 0.5).facing).toBe('left')
+    })
+    it('approach expires after 20 s if target unreachable', () => {
+      const slow = { ...aCtx, profile: { ...prof, walkSpeed: 0.001 } }
+      let r: Resident = { ...base, state: 'approach', targetId: 'b', stateT: 20000 }
+      for (let i = 0; i < 20; i++) r = tick(r, 1000, slow, () => 0.5)
+      expect(r.state).not.toBe('approach')
+    })
+    it('approach without targetXOf falls back to idle', () => {
+      const r0 = { ...base, state: 'approach' as const, targetId: 'b', stateT: 20000 }
+      expect(tick(r0, 100, ctx, () => 0.5).state).toBe('idle')
+    })
+    it('approach with vanished target falls back to idle', () => {
+      const r0 = { ...base, state: 'approach' as const, targetId: 'zz', stateT: 20000 }
+      const r1 = tick(r0, 100, aCtx, () => 0.5)
+      expect(r1.state).toBe('idle')
+      expect(r1.stateT).toBe(4000)
+    })
+    it('forage lasts 6-12 s', () => {
+      expect(DURATION_MS.forage).toEqual([6000, 12000])
+      const fCtx = {
+        ...ctx,
+        weights: { ...W.default, forage: 1, idle: 0, walk: 0, sit: 0, sleep: 0, approach: 0 },
+      }
+      const r = tick({ ...base, state: 'idle' as const, stateT: 1 }, 10, fCtx, () => 0.5)
+      expect(r.state).toBe('forage')
+      expect(r.stateT).toBeGreaterThanOrEqual(6000)
+      expect(r.stateT).toBeLessThanOrEqual(12000)
+    })
+    it('forage expiry moves on', () => {
+      const r = tick({ ...base, state: 'forage' as const, stateT: 5 }, 10, ctx, () => 0.5)
+      expect(r.stateT).toBeGreaterThan(0)
+    })
+    it('duet state is untouched by tick', () => {
+      const r0 = { ...base, state: 'duet' as const, stateT: 100, duetId: 'b' }
+      expect(tick(r0, 5000, aCtx, () => 0.5)).toBe(r0)
+    })
+    it('history never contains duet or approach', () => {
+      for (const st of ['approach', 'duet'] as const) {
+        const r0 = { ...base, state: st, targetId: 'b', stateT: 1, history: [] }
+        const out = st === 'duet' ? r0 : tick(r0, 10, ctx, () => 0.5)
+        expect(out.history).not.toContain('duet')
+        expect(out.history).not.toContain('approach')
+      }
+    })
+    it('chooseNext never yields duet; approach only when allowed', () => {
+      const full = { ...W.default, forage: 0.1, approach: 5 }
+      for (let i = 0; i < 100; i++) {
+        const rng = mulberry32(i)
+        const n = chooseNext('idle', [], full, rng, false)
+        expect(['duet', 'approach']).not.toContain(n)
+      }
+      let sawApproach = false
+      for (let i = 0; i < 100; i++)
+        if (chooseNext('idle', [], full, mulberry32(i)) === 'approach') sawApproach = true
+      expect(sawApproach).toBe(true)
+    })
+    it('ctx.weights overrides profile weights', () => {
+      const w = { idle: 0, walk: 0, sit: 1, sleep: 0, forage: 0, approach: 0 }
+      const r = tick({ ...base, stateT: 1 }, 10, { ...ctx, weights: w }, () => 0.5)
+      expect(r.state).toBe('sit')
+    })
+    it('approach chosen via startState sets 20 s timer', () => {
+      const w = { idle: 0, walk: 0, sit: 0, sleep: 0, forage: 0, approach: 1 }
+      const r = tick({ ...base, stateT: 1 }, 10, { ...aCtx, weights: w }, () => 0.5)
+      expect(r.state).toBe('approach')
+      expect(r.stateT).toBe(20000)
+    })
+  })
+
+  it('spriteStateOf maps new states to existing poses', () => {
+    expect(spriteStateOf('approach')).toBe('walk')
+    expect(spriteStateOf('forage')).toBe('idle')
+    expect(spriteStateOf('duet')).toBe('idle')
+    expect(spriteStateOf('sit')).toBe('sit')
   })
 })

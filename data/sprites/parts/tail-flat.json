@@ -9,6 +9,14 @@
     "sleep": {
       "offset": [-5, 1],
       "rows": [".BBBBB", "bbbbbb"]
+    },
+    "happy": {
+      "offset": [-5, -2],
+      "rows": ["BB....", "bBBB..", ".bBBBB"]
+    },
+    "sulk": {
+      "offset": [-5, 7],
+      "rows": ["BBBBBBBB", "bbbbbbbb"]
     }
   }
 }

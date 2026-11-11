@@ -52,4 +52,12 @@ describe('parseQuery', () => {
   })
   it('species=all parsed', () => expect(parseQuery('?species=all').species).toBe('all'))
   it('species=foo ignored', () => expect(parseQuery('?species=foo')).not.toHaveProperty('species'))
+  it('parses duet types and all, ignores others', () => {
+    expect(parseQuery('?duet=greet').duet).toBe('greet')
+    expect(parseQuery('?duet=sitTogether').duet).toBe('sitTogether')
+    expect(parseQuery('?duet=makeUp').duet).toBe('makeUp')
+    expect(parseQuery('?duet=all').duet).toBe('all')
+    expect(parseQuery('?duet=dance')).not.toHaveProperty('duet')
+    expect(parseQuery('?duet=')).not.toHaveProperty('duet')
+  })
 })

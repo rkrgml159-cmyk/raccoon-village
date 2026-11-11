@@ -9,6 +9,7 @@ const M1_ACTIVE = 9.684
 // full-viewport textured quad (any hardware GPU draws it trivially), resident count does not move
 // it, and the battery-relevant hidden-tab ratio is 0.1%. Real-device check is deferred to M5.
 const DEFAULT_ACTIVE_THRESHOLD = 2.5
+const DEFAULT_BASE_LABEL = 'M1'
 const MAX_N = 40
 
 interface Sample {
@@ -29,6 +30,9 @@ async function main(): Promise<void> {
   const thresholdArg = Number(args['active-threshold'])
   const activeThreshold =
     Number.isFinite(thresholdArg) && thresholdArg > 0 ? thresholdArg : DEFAULT_ACTIVE_THRESHOLD
+  const baseArg = Number(args['base-active'])
+  const baseActive = Number.isFinite(baseArg) && baseArg > 0 ? baseArg : M1_ACTIVE
+  const baseLabel = args['base-label'] ?? DEFAULT_BASE_LABEL
   const outPath = args.out ?? 'docs/metrics/M2a.md'
   const title = basename(outPath, extname(outPath))
   const total = Math.max(1, Math.round((minutes * 60) / interval))
@@ -116,7 +120,7 @@ async function main(): Promise<void> {
       const hiddenMean = mean(samples.filter((s) => s.segment === 'hidden').map((s) => s.cpu))
       const ratio = activeMean > 0 ? hiddenMean / activeMean : NaN
       const hiddenPass = ratio < 0.1
-      const activeRatio = activeMean / M1_ACTIVE
+      const activeRatio = activeMean / baseActive
       const activePass = activeRatio <= activeThreshold
       const pass = hiddenPass && activePass
       const summary = [
@@ -126,7 +130,7 @@ async function main(): Promise<void> {
         `first load (goto to __rv.ready): ${firstLoadMs} ms`,
         `observed fps over first 10 s (rAF callbacks / 10): ${observedFps.toFixed(1)}`,
         `threshold (hidden < 10% of active): ${hiddenPass ? 'PASS' : 'FAIL'}`,
-        `active vs M1 ${M1_ACTIVE} cpu_s/30s: ratio ${activeRatio.toFixed(2)} (threshold ${activeThreshold.toFixed(1)}) ${activePass ? 'PASS' : 'FAIL'}`,
+        `active vs ${baseLabel} ${baseActive} cpu_s/30s: ratio ${activeRatio.toFixed(2)} (threshold ${activeThreshold}) ${activePass ? 'PASS' : 'FAIL'}`,
       ]
       const md = [
         `# ${title} 월페이퍼 전력 측정`,

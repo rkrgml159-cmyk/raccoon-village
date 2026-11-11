@@ -1,4 +1,6 @@
-export type ResidentState = 'idle' | 'walk' | 'sit' | 'sleep'
+import type { SpriteState } from '../sprites/types'
+
+export type ResidentState = 'idle' | 'walk' | 'sit' | 'sleep' | 'forage' | 'approach' | 'duet'
 
 export interface Resident {
   id: string
@@ -11,6 +13,8 @@ export interface Resident {
   state: ResidentState
   stateT: number
   targetX?: number
+  targetId?: string
+  duetId?: string
   /** Most recent states, at most 3. */
   history: ResidentState[]
 }
@@ -33,4 +37,11 @@ export function createResident(
     stateT: 6000,
     history: [],
   }
+}
+
+/** Sprite pose for a state; the new M2b states reuse existing poses until they get their own. */
+export function spriteStateOf(state: ResidentState): SpriteState {
+  if (state === 'approach') return 'walk'
+  if (state === 'forage' || state === 'duet') return 'idle'
+  return state
 }

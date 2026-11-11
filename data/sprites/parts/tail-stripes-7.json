@@ -13,6 +13,39 @@
     "sleep": {
       "offset": [-8, -1],
       "rows": ["mm.mmm.mm", "mm.mmm.mm", "mm.mmm.mm", "mm.mmm.mm"]
+    },
+    "happy": {
+      "offset": [0, 0],
+      "rows": [
+        "........",
+        "mmmm....",
+        "........",
+        ".mmmm...",
+        "........",
+        "..mmmm..",
+        "..mmmm..",
+        "........",
+        "...mmmmm",
+        "....mmmm"
+      ]
+    },
+    "sulk": {
+      "offset": [0, 0],
+      "rows": [
+        "......mmm",
+        ".........",
+        "......mmm",
+        ".........",
+        "......mmm",
+        ".........",
+        ".....mmmm",
+        "m.m.m.m..",
+        "........."
+      ]
+    },
+    "shake": {
+      "offset": [-6, -1],
+      "rows": ["mmm.mmm", "mmm.mmm", "mmm.mmm", "mmm.mmm"]
     }
   }
 }

@@ -4,12 +4,22 @@ import type { ResolvedVariant } from '../../../src/domain/sprites/Palette'
 import type { Frame, PartDef, RigDef, SpriteState } from '../../../src/domain/sprites/types'
 
 const frame: Frame = { rows: ['....', '.BB.', '.BB.', '.L..'], anchors: { head: [1, 1] } }
-const states: SpriteState[] = ['idle', 'walk', 'sit', 'sleep']
+const states: SpriteState[] = [
+  'idle',
+  'walk',
+  'sit',
+  'sleep',
+  'shake',
+  'interact_a',
+  'interact_b',
+  'happy',
+  'sulk',
+]
 const rig: RigDef = {
   id: 'r',
   size: [4, 4],
   frames: Object.fromEntries(states.map((s) => [s, [frame]])) as RigDef['frames'],
-  frameRate: { idle: 1, walk: 1, sit: 1, sleep: 1 },
+  frameRate: Object.fromEntries(states.map((s) => [s, 1])) as RigDef['frameRate'],
 }
 const variant = (extra: Record<string, [number, number, number]> = {}): ResolvedVariant => ({
   palette: { B: [255, 0, 0], L: [0, 255, 0], M: [0, 0, 255], m: [9, 9, 9], ...extra },

@@ -1,4 +1,4 @@
-import { mkdirSync, renameSync, rmSync, statSync } from 'node:fs'
+import { mkdirSync, renameSync, writeFileSync, rmSync, statSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 import type { ChildProcess } from 'node:child_process'
 import { launchBrowser, parseArgs, sleep, startPreview, stopPreview, waitForUrl } from './lib'
@@ -10,6 +10,8 @@ async function main(): Promise<void> {
   const at = args.at ?? '2026-10-10T05:00'
   const nQuery = args.n ? `&n=${args.n}` : ''
   const seconds = Number(args.seconds ?? 150)
+  const speed = Number(args.speed) > 0 ? Number(args.speed) : 600
+  const dumpDuets = args.log === 'duets'
   const outDir = resolve(args.out ?? 'captures')
   mkdirSync(outDir, { recursive: true })
   const tmpDir = join(outDir, '.rec-tmp')
@@ -28,11 +30,15 @@ async function main(): Promise<void> {
       })
       const page = await context.newPage()
       const video = page.video()
-      await page.goto(`${base}w/?at=${encodeURIComponent(at)}&speed=600&seed=1${nQuery}`)
+      await page.goto(`${base}w/?at=${encodeURIComponent(at)}&speed=${speed}&seed=1${nQuery}`)
       await page.waitForFunction(
         () => (window as unknown as { __rv?: { ready?: boolean } }).__rv?.ready === true,
       )
       await sleep(seconds * 1000)
+      if (dumpDuets) {
+        const log = await page.evaluate('JSON.stringify(window.__rv.duetLog)')
+        writeFileSync(join(outDir, 'duet-log.json'), log as string)
+      }
       await context.close()
       if (!video) throw new Error('no video recorded')
       const target = join(outDir, `timelapse-${at.replace(/[^0-9A-Za-z]+/g, '-')}.webm`)

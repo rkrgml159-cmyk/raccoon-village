@@ -7,6 +7,7 @@ const sp = (over: Partial<SpeciesDef> = {}): SpeciesDef => ({
   rig: 'r',
   scale: 1,
   share: 1,
+  voice: { syllables: ['aa', 'bb'], marks: ['?', '…', '!'], maxSyllables: 2 },
   palettes: {},
   ...over,
 })

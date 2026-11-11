@@ -1,5 +1,7 @@
-import { spawn, type ChildProcess } from 'node:child_process'
+import { spawn, spawnSync, type ChildProcess } from 'node:child_process'
 import { chromium, type Browser } from '@playwright/test'
+
+const WIN = process.platform === 'win32'
 
 export function parseArgs(argv: string[]): Record<string, string> {
   const out: Record<string, string> = {}
@@ -11,14 +13,19 @@ export function parseArgs(argv: string[]): Record<string, string> {
 }
 
 export function startPreview(port: number): ChildProcess {
-  return spawn('npx', ['vite', 'preview', '--port', String(port), '--strictPort'], {
-    stdio: 'ignore',
-    detached: true,
-  })
+  const args = ['vite', 'preview', '--port', String(port), '--strictPort']
+  // Windows: npx is npx.cmd, which needs a shell (one command string avoids DEP0190).
+  if (WIN) return spawn(`npx ${args.join(' ')}`, { stdio: 'ignore', shell: true })
+  return spawn('npx', args, { stdio: 'ignore', detached: true })
 }
 
 export function stopPreview(proc: ChildProcess | undefined): void {
   if (!proc?.pid) return
+  if (WIN) {
+    // No process groups: kill the shell's tree (cmd -> npx -> vite).
+    spawnSync('taskkill', ['/pid', String(proc.pid), '/T', '/F'], { stdio: 'ignore' })
+    return
+  }
   try {
     process.kill(-proc.pid, 'SIGTERM')
   } catch {

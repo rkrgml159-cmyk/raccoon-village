@@ -4,6 +4,11 @@
     "rig": "raccoon",
     "scale": 1.0,
     "share": 0,
+    "voice": {
+      "syllables": ["너굴", "뀨", "뀨르"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.3, 0.4, 0.3],
     "walkSpeed": 0.06,
     "nocturnal": true,
@@ -139,6 +144,11 @@
     "rig": "quad-s",
     "scale": 1.0,
     "share": 3,
+    "voice": {
+      "syllables": ["컹", "끄응", "흐응"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "palettes": {
@@ -164,6 +174,11 @@
     "rig": "quad-s",
     "scale": 0.95,
     "share": 3,
+    "voice": {
+      "syllables": ["캥", "컹", "캬앙"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "palettes": {
@@ -203,6 +218,11 @@
     "rig": "quad-s",
     "scale": 0.9,
     "share": 2,
+    "voice": {
+      "syllables": ["캬", "크르", "크캭"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "nocturnal": true,
@@ -229,6 +249,11 @@
     "rig": "quad-s",
     "scale": 0.8,
     "share": 2,
+    "voice": {
+      "syllables": ["캬르", "캭", "크릭"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "nocturnal": true,
@@ -255,6 +280,11 @@
     "rig": "quad-s",
     "scale": 1.0,
     "share": 2,
+    "voice": {
+      "syllables": ["크흥", "흥", "크르"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "nocturnal": true,
@@ -281,6 +311,11 @@
     "rig": "quad-s",
     "scale": 0.55,
     "share": 3,
+    "voice": {
+      "syllables": ["찍", "찍찍", "찌익"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.1,
     "nocturnal": true,
@@ -321,6 +356,11 @@
     "rig": "quad-s",
     "scale": 0.9,
     "share": 2,
+    "voice": {
+      "syllables": ["꾸잉", "꾸", "휘익"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "palettes": {
@@ -346,6 +386,11 @@
     "rig": "quad-s",
     "scale": 0.75,
     "share": 3,
+    "voice": {
+      "syllables": ["찍", "푸", "콩"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.07,
     "palettes": {
@@ -371,6 +416,11 @@
     "rig": "quad-s",
     "scale": 0.45,
     "share": 4,
+    "voice": {
+      "syllables": ["칙", "칙칙", "츳"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.1,
     "palettes": {
@@ -396,6 +446,11 @@
     "rig": "quad-s",
     "scale": 0.5,
     "share": 4,
+    "voice": {
+      "syllables": ["찌르", "찌", "찍"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.1,
     "palettes": {
@@ -421,6 +476,11 @@
     "rig": "quad-s",
     "scale": 0.5,
     "share": 2,
+    "voice": {
+      "syllables": ["킁", "킁킁", "푸"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.04,
     "nocturnal": true,
@@ -447,6 +507,11 @@
     "rig": "quad-s",
     "scale": 0.45,
     "share": 1,
+    "voice": {
+      "syllables": ["흠", "킁", "쿠"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.2, 0.3, 0.5],
     "walkSpeed": 0.04,
     "nocturnal": true,
@@ -473,6 +538,11 @@
     "rig": "quad-l",
     "scale": 1.7,
     "share": 1,
+    "voice": {
+      "syllables": ["크릉", "흠", "으르"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.5, 0.4, 0.1],
     "walkSpeed": 0.045,
     "weights": {
@@ -526,6 +596,11 @@
     "rig": "quad-l",
     "scale": 1.5,
     "share": 1,
+    "voice": {
+      "syllables": ["꿀", "꿀꿀", "푸흐"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.5, 0.4, 0.1],
     "walkSpeed": 0.045,
     "nocturnal": true,
@@ -566,6 +641,11 @@
     "rig": "quad-deer",
     "scale": 1.3,
     "share": 2,
+    "voice": {
+      "syllables": ["삐익", "컹", "삑"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.5, 0.4, 0.1],
     "walkSpeed": 0.045,
     "weights": {
@@ -605,6 +685,11 @@
     "rig": "quad-deer",
     "scale": 1.35,
     "share": 2,
+    "voice": {
+      "syllables": ["왁", "뺙", "삐"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.5, 0.4, 0.1],
     "walkSpeed": 0.045,
     "weights": {
@@ -658,6 +743,11 @@
     "rig": "quad-l",
     "scale": 1.3,
     "share": 1,
+    "voice": {
+      "syllables": ["메", "쉭", "컥"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.5, 0.4, 0.1],
     "walkSpeed": 0.045,
     "weights": {
@@ -697,6 +787,11 @@
     "rig": "bird",
     "scale": 0.7,
     "share": 3,
+    "voice": {
+      "syllables": ["까악", "깍", "까"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.4, 0.4, 0.2],
     "walkSpeed": 0.1,
     "weights": {
@@ -736,6 +831,11 @@
     "rig": "bird",
     "scale": 0.7,
     "share": 3,
+    "voice": {
+      "syllables": ["깍깍", "깍", "짹"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.4, 0.4, 0.2],
     "walkSpeed": 0.1,
     "weights": {
@@ -775,6 +875,11 @@
     "rig": "bird",
     "scale": 0.9,
     "share": 1,
+    "voice": {
+      "syllables": ["부엉", "부", "후우"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.4, 0.4, 0.2],
     "walkSpeed": 0.1,
     "nocturnal": true,
@@ -815,6 +920,11 @@
     "rig": "bird",
     "scale": 0.5,
     "share": 2,
+    "voice": {
+      "syllables": ["딱", "따르륵", "딱딱"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.4, 0.4, 0.2],
     "walkSpeed": 0.1,
     "weights": {
@@ -854,6 +964,11 @@
     "rig": "bird",
     "scale": 0.6,
     "share": 2,
+    "voice": {
+      "syllables": ["꺅", "깩", "끼익"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.4, 0.4, 0.2],
     "walkSpeed": 0.1,
     "weights": {
@@ -893,6 +1008,11 @@
     "rig": "bird",
     "scale": 0.9,
     "share": 2,
+    "voice": {
+      "syllables": ["꿔궝", "꾸엉", "꾸욱"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 2
+    },
     "lanes": [0.4, 0.4, 0.2],
     "walkSpeed": 0.1,
     "weights": {
@@ -946,6 +1066,11 @@
     "rig": "biped",
     "scale": 1.4,
     "share": 1,
+    "voice": {
+      "syllables": ["ㅇ", "아", "으", "ㅁ"],
+      "marks": ["?", "…", "!", "."],
+      "maxSyllables": 3
+    },
     "lanes": [0.3, 0.5, 0.2],
     "walkSpeed": 0.06,
     "nocturnal": false,

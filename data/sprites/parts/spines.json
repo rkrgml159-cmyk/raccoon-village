@@ -30,6 +30,23 @@
         "LlLlLlL.....",
         ".LlLlL......"
       ]
+    },
+    "shake": {
+      "offset": [-6, -4],
+      "rows": [
+        ".........L.L",
+        ".......LlLl.",
+        "......LlLl..",
+        ".....LlLl...",
+        "....LlLlL...",
+        "....lLlLl...",
+        "....LlLlL...",
+        "...LlLlLl...",
+        ".lLlLlLlL...",
+        "lLlLlLlLl...",
+        "LlLlLlL.....",
+        ".LlLlL......"
+      ]
     }
   }
 }

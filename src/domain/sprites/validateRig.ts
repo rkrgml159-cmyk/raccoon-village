@@ -1,9 +1,29 @@
 import { parsePixelMap, SPRITE_ROLES } from './PixelMap'
 import type { RigDef, SpriteState } from './types'
 
-export const STATES: readonly SpriteState[] = ['idle', 'walk', 'sit', 'sleep']
+export const STATES: readonly SpriteState[] = [
+  'idle',
+  'walk',
+  'sit',
+  'sleep',
+  'shake',
+  'interact_a',
+  'interact_b',
+  'happy',
+  'sulk',
+]
 
-export const FRAME_COUNT: Record<SpriteState, number> = { idle: 4, walk: 6, sit: 2, sleep: 2 }
+export const FRAME_COUNT: Record<SpriteState, number> = {
+  idle: 4,
+  walk: 6,
+  sit: 2,
+  sleep: 2,
+  shake: 4,
+  interact_a: 4,
+  interact_b: 4,
+  happy: 2,
+  sulk: 2,
+}
 
 /** Throws `rig <id>: …` when the rig breaks frame count, pixel, anchor or frame-rate rules. */
 export function validateRig(rig: RigDef): void {
