@@ -87,6 +87,22 @@ describe('Duets', () => {
     expect(e(bored, mind([], { bored: 0.69 }), ctx('neutral'))).toBe(false)
   })
 
+  it('quarrel stays rare but reachable for bored neutral pairs (base tuned 0.08 -> 0.25)', () => {
+    const bored = { bored: 0.9, hunger: 0.2 }
+    const rng = seeded(3)
+    const n = 4000
+    let q = 0
+    for (let i = 0; i < n; i++) {
+      if (
+        chooseDuetType(mind(['curious'], bored), mind(['dreamer'], bored), ctx(), rng) === 'quarrel'
+      )
+        q++
+    }
+    // greet 1.0 + chat 0.8 + chase 0.4 + quarrel 0.25 -> ~10 %
+    expect(q / n).toBeGreaterThan(0.07)
+    expect(q / n).toBeLessThan(0.14)
+  })
+
   it('makeUp eligibility', () => {
     const e = DUET_RULES.makeUp.eligible
     expect(e(mind(), mind(), ctx('neutral', { quarrelWindow: true }))).toBe(true)

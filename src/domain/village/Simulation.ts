@@ -37,12 +37,21 @@ export interface VillageState {
   minds: Record<string, Mind>
   relations: RelationTable
   duets: Duet[]
-  /** pairKey -> sim ms the last duet of the pair ended. */
+  /** pairKey -> simMs the last duet of the pair ended (pacing follows the village clock). */
   lastDuetAt: Record<string, number>
+  /** pairKey -> realMs until which the pair avoids each other. */
   avoidUntil: Record<string, number>
+  /** pairKey -> realMs of the last unresolved quarrel. */
   quarrelAt: Record<string, number>
   met: Set<string>
+  /** Sim clock (dtMs * speed): needs, relation decay, duetLog.at. */
   simMs: number
+  /**
+   * Behaviour clock (sum of dtMs): movement, duets, quarrel avoidance and the makeUp window run
+   * on it, so a 1-5 min window stays reachable by walking residents at any speed (in sim time,
+   * speed 600 shrank it to 0.1-0.5 s real).
+   */
+  realMs: number
   nextDuetId: number
   duetLog: { type: DuetType; a: string; b: string; at: number }[]
 }
@@ -98,6 +107,7 @@ export function createVillageState(residents: Resident[], seed: number): Village
     quarrelAt: {},
     met: new Set(),
     simMs: 0,
+    realMs: 0,
     nextDuetId: 0,
     duetLog: [],
   }
@@ -118,6 +128,7 @@ function cloneState(s: VillageState): VillageState {
     quarrelAt: { ...s.quarrelAt },
     met: new Set(s.met),
     simMs: s.simMs,
+    realMs: s.realMs,
     nextDuetId: s.nextDuetId,
     duetLog: [...s.duetLog],
   }
@@ -155,7 +166,7 @@ const faceToward = (from: number, to: number, keep: 'left' | 'right'): 'left' | 
 
 /**
  * One pure simulation step. `dtMs` is real elapsed time: movement and duets run on it,
- * needs and relation decay run on dtMs * speed. Never mutates `input`.
+ * needs and relation decay run on dtMs * speed (see VillageState.realMs). Never mutates `input`.
  */
 export function stepVillage(
   input: VillageState,
@@ -183,6 +194,7 @@ export function stepVillage(
   }
   s.relations.decay(simDt)
   s.simMs += simDt
+  s.realMs += dtMs
 
   // (2) duets
   const released = new Set<string>()
@@ -278,7 +290,9 @@ function findTarget(s: VillageState, self: Resident, rng: () => number): string 
   const others = s.residents.filter((r) => r.id !== self.id).map(asCandidate)
   const blocked = (id: string): boolean => {
     const key = pairKey(self.id, id)
-    if ((s.avoidUntil[key] ?? -Infinity) > s.simMs) return true
+    if ((s.avoidUntil[key] ?? -Infinity) > s.realMs) return true
+    // Fast speeds shrink the sim-time cooldown: keep a quarrelled pair apart until makeUp can open.
+    if (s.realMs - (s.quarrelAt[key] ?? -Infinity) < MAKEUP_WINDOW[0]) return true
     const last = s.lastDuetAt[key]
     return last !== undefined && last + PAIR_COOLDOWN_MS > s.simMs
   }
@@ -295,7 +309,7 @@ function beginDuet(
   put: (r: Resident) => void,
 ): void {
   const key = pairKey(approacher.id, target.id)
-  const quarrelAgo = s.quarrelAt[key] === undefined ? undefined : s.simMs - s.quarrelAt[key]
+  const quarrelAgo = s.quarrelAt[key] === undefined ? undefined : s.realMs - s.quarrelAt[key]
   const ctx: DuetCtx = {
     band: s.relations.band(approacher.id, target.id),
     firstMeeting: !s.met.has(key),
@@ -401,8 +415,8 @@ function endDuet(
   }
   s.lastDuetAt[key] = s.simMs
   if (duet.type === 'quarrel') {
-    s.avoidUntil[key] = s.simMs + AVOID_MS
-    s.quarrelAt[key] = s.simMs
+    s.avoidUntil[key] = s.realMs + AVOID_MS
+    s.quarrelAt[key] = s.realMs
   } else if (duet.type === 'makeUp') {
     delete s.quarrelAt[key]
   }

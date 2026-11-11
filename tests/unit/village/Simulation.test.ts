@@ -367,7 +367,7 @@ describe('Simulation', () => {
     const first = run(s, 30_000, e, rng, 100, (st) => st.duetLog.length > 0)
     expect(first.state.duetLog[0].type).toBe('quarrel')
     const key = pairKey('a', 'b')
-    const endAt = first.state.simMs
+    const endAt = first.state.realMs
     expect(first.state.avoidUntil[key]).toBe(endAt + AVOID_MS)
     expect(first.state.quarrelAt[key]).toBe(endAt)
     expect(first.state.relations.get('a', 'b')).toBeLessThan(0)
@@ -576,7 +576,7 @@ describe('Simulation', () => {
     expect(r.state.minds.a.needs.hunger).toBeGreaterThan(0.49)
   })
 
-  it('pair cooldown holds at speed 60 (timers run on sim time)', () => {
+  it('pair cooldown holds at speed 60 (cooldown runs on sim time)', () => {
     const s = mk(pair2())
     for (const id of ['a', 'b']) setNeeds(s, id, { lonely: 1 })
     const r = run(s, 60_000, socialEnv({ speed: 60 }), mulberry32(11), 100)
@@ -587,5 +587,36 @@ describe('Simulation', () => {
       // ~1 s of real time is enough at speed 60, far less than 60 s real
       expect((log[i].at - log[i - 1].at) / 60).toBeLessThan(60_000)
     }
+  })
+
+  it('quarrel avoidance runs on behaviour time at speed 600', () => {
+    const s = mk(pair2(), 1, ['calm', 'tidy'])
+    s.met.add(pairKey('a', 'b'))
+    patch(s, 'b', { x: 0.31 })
+    for (const id of ['a', 'b']) setNeeds(s, id, { bored: 0.95, hunger: 0.1, lonely: 0.5 })
+    approaching(s)
+    const r = run(
+      s,
+      30_000,
+      socialEnv({ speed: 600 }),
+      () => 0.99999,
+      100,
+      (st) => st.duetLog.length > 0,
+    )
+    const key = pairKey('a', 'b')
+    expect(r.state.duetLog[0].type).toBe('quarrel')
+    expect(r.state.avoidUntil[key]).toBe(r.state.realMs + AVOID_MS)
+  })
+
+  it('makeUp still follows a quarrel at speed 600', () => {
+    const s = mk(pair2(), 1, ['calm', 'tidy'])
+    s.met.add(pairKey('a', 'b'))
+    patch(s, 'b', { x: 0.31 })
+    for (const id of ['a', 'b']) setNeeds(s, id, { bored: 0.95, hunger: 0.1, lonely: 0.5 })
+    approaching(s)
+    const rng = (): number => 0.99999
+    const e = socialEnv({ speed: 600 })
+    const r = run(s, 400_000, e, rng, 100, (st) => st.duetLog.length > 1)
+    expect(r.state.duetLog.map((d) => d.type)).toEqual(['quarrel', 'makeUp'])
   })
 })

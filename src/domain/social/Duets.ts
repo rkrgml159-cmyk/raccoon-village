@@ -97,7 +97,7 @@ export const DUET_RULES: Record<DuetType, DuetRule> = {
     outcome: () => ({ relation: 0.1, a: { lonely: 0.4 }, b: { lonely: 0.4 } }),
   },
   quarrel: {
-    base: 0.08,
+    base: 0.25,
     duration: [5000, 5000],
     stepMs: 5000,
     eligible: (a, b, c) =>
