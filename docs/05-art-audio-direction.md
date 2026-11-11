@@ -10,7 +10,7 @@
 ## 캐릭터: 리그 · 조각 · 팔레트 (M2a 확정)
 모든 아트는 **텍스트 픽셀맵 JSON**이다(이미지 파일 없음). 한 글자가 한 픽셀이고, 글자는 색이 아니라 **역할**이다. 색은 종족 팔레트가 정한다.
 - 역할 글자(스프라이트): `. B b W L l D E P N M m H X` (`.` 투명).
-- **리그** 6종 × 프레임 14(idle 4 · walk 6 · sit 2 · sleep 2): `raccoon` 32×32 · `quad-s` 32×32 · `quad-l` 48×40 · `quad-deer` 48×40 · `bird` 24×24 · `biped` 24×40. 데이터는 `data/sprites/rigs/*.json`.
+- **리그** 6종 × 프레임 14(idle 4 · walk 6 · sit 2 · sleep 2, M2b에서 26으로 확장 — 아래): `raccoon` 32×32 · `quad-s` 32×32 · `quad-l` 48×40 · `quad-deer` 48×40 · `bird` 24×24 · `biped` 24×40. 데이터는 `data/sprites/rigs/*.json`.
 - **조각**(오버레이: 귀·꼬리·마스크·부리·뿔·머리 등)은 `data/sprites/parts/*.json`. 리그의 앵커(머리·귀·꼬리·등·앞)에 붙는다.
 - **팔레트**는 종족마다 `data/sprites/species.json`에 1~3개(현실 털색만).
 - **변형**은 축 조합: 너구리 6 팔레트 × 종 3 × 마스크 4 × 꼬리 4 × 체형 4 = 1152, 사람 피부 4 × 나이 3 × 머리 4 × 체형 3 = 144.
@@ -18,7 +18,12 @@
 - 확인: `npm run capture:sheet -- --sheet=<종족 id>`(14프레임 시트), `--species=all`(25종 쇼케이스). 스크린샷으로만 판단한다.
 - 공유 리그를 쓰는 종족끼리도 실루엣이 달라야 한다. 곰과 사슴류가 비슷해 보여 `quad-l`에서 `quad-deer`를 분리했다.
 
-아직 없는 프레임(shake · interact · happy · sulk)은 M2b에서 더한다. 스킨은 슬롯별 오버레이 + 앵커로 M2c.
+**M2b 추가 프레임(72장)**: 리그마다 shake 4 · interact_a 4 · interact_b 4 · happy 2 · sulk 2 = 12장을 더해 **리그당 26프레임, 상태 9개**가 됐다. 앵커 5개는 그대로이고, 조각 연결성 테스트가 전 상태·전 프레임을 검사한다.
+- 프레임레이트(fps): idle 2 · walk 8 · sit 2 · sleep 1 · interact_a/b 6 · happy 4 · sulk 2 · shake 8.
+- interact_a = 상대 쪽으로 기울여 앞발/손 내밀기, interact_b = 받는 쪽 끄덕임, happy = 1~2 px 작은 점프, sulk = 머리 숙이고 낮추기(등 돌리기는 렌더 flip), shake = M2c 나무 흔들기용(그려만 두고 아직 안 씀).
+- 확인: `npm run capture:sheet -- --duet=all`(8종 듀엣 정지 컷), `--duet=<type>`.
+
+스킨은 슬롯별 오버레이 + 앵커로 M2c.
 
 ## 배경 타일 (M2a)
 역할 글자(타일): `. T t G g F f R r K k V S D A`. 데이터는 `data/sprites/tiles/*.json`, 배치는 `data/scenes/forest.json`. `src/domain/background/ForestPlan.ts`가 레이어마다 한 장의 정적 이미지로 합성하고(계절·뷰 변경 때만 재생성), `src/render/background/ForestLayer.ts`가 그린다.
