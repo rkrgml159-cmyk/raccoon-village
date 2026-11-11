@@ -7,7 +7,7 @@
 - 확정 결정 로그: [docs/decisions.md](docs/decisions.md)
 - 스택: Phaser 4 · TypeScript · Vite · Capacitor · Supabase (예정)
 
-현재 단계: **M2b 마음과 말 구현 완료**(2026-11-11, `feat/m2b-mind-and-speech`, main 병합·배포 전). 주민이 욕구와 성격으로 움직이고, 둘씩 만나 인사·수다·같이 앉기 등 8종 듀엣을 하며 관계가 쌓인다. 말은 종족어·속마음·아이콘 풍선으로만 보인다. 다음: M2c 살림.
+현재 단계: **M2b 배포 완료**(2026-11-11, GitHub Pages, main 2b09d2d). 주민이 욕구와 성격으로 움직이고, 둘씩 만나 인사·수다·같이 앉기 등 8종 듀엣을 하며 관계가 쌓인다. 말은 종족어·속마음·아이콘 풍선으로만 보인다. 다음: M2c 살림.
 
 ## 로컬 실행
 ```
@@ -61,5 +61,5 @@ npm run capture:sheet -- --sheet=<종족 id>   # 시트 캡처 (--species=all, -
 - [x] 플레이 모드 탭 → 속마음 1줄, 월페이퍼 10분마다 1회 자동, 화면에 숫자 없음 — e2e `tap shows a thought bubble in play mode`, `wallpaper ignores taps`
 - [ ] `thoughts.json` ≥ 240줄(560줄), 금지어 0 — 테스트 통과. **사람 검수 표시는 `docs/dialogue-review.md`에서 대기 중**
 - [x] 도메인 커버리지 90%+, 실제 데이터 테스트, e2e 녹색, 72프레임 연결성 — statements 98.56% · branches 96.81% · functions 100% · lines 99.26%, vitest 423(34파일), e2e 14 통과 + 2 건너뜀
-- [ ] 전력 PASS + 문서 갱신 + Pages 배포 — 전력 PASS(활성 20.646 cpu_s/30s, M2a 대비 0.94배, 숨김 0.1%), 문서 갱신 완료. 배포는 main 병합 후
+- [x] 전력 PASS + 문서 갱신 + Pages 배포 — 전력 PASS(활성 20.646 cpu_s/30s, M2a 대비 0.94배, 숨김 0.1%), 문서 갱신 완료, main 2b09d2d(PR #5), run 42973747356 verify+deploy 녹색, deployment 7703610121 success
 
