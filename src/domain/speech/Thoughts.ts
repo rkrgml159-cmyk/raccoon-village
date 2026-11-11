@@ -81,7 +81,14 @@ export function situationFor(c: ThoughtCtx): string[] {
   if (c.lastDuet) out.push(AFTER[c.lastDuet])
   for (const [k, s] of NEED_SITUATIONS) if (c.needs[k] >= NEED_THRESHOLD) out.push(s)
   if (c.band === 'bestie' || c.band === 'friend' || c.band === 'awkward') out.push(c.band)
-  out.push(c.phase, c.season, 'idleLong')
+  out.push(...ambientFor(c), 'idleLong')
+  return out
+}
+
+/** Time, season and place: drawn as one pool so no single situation hides the rest. */
+function ambientFor(c: ThoughtCtx): string[] {
+  const out = [c.phase, c.season, 'forest', 'ruin']
+  if (c.phase === 'night') out.push('moon')
   return out
 }
 
@@ -95,9 +102,16 @@ export function pickThought(
   recent: string[],
   rng: () => number,
 ): string | null {
+  const ambient = new Set(ambientFor(c))
+  const tiers: string[][] = []
   for (const sit of situationFor(c)) {
+    if (!ambient.has(sit)) tiers.push([sit])
+    else if (tiers.at(-1)?.every((t) => ambient.has(t))) tiers.at(-1)!.push(sit)
+    else tiers.push([sit])
+  }
+  for (const tier of tiers) {
     const entries = data.entries.filter(
-      (e) => e.situation === sit && (e.species === 'any' || e.species === c.species),
+      (e) => tier.includes(e.situation) && (e.species === 'any' || e.species === c.species),
     )
     const fresh = (es: ThoughtEntry[]): string[] =>
       es.flatMap((e) => e.lines).filter((l) => !recent.includes(l))

@@ -550,6 +550,25 @@ describe('Simulation', () => {
     nocturnal: false,
   })
 
+  it('starting forage shows a leaf icon', () => {
+    const s = mk(pair2())
+    patch(s, 'a', { state: 'idle', stateT: 10 })
+    const r = stepVillage(s, 100, env({ profileOf: () => only({ forage: 1 }) }), () => 0.5)
+    expect(get(r.state, 'a').state).toBe('forage')
+    expect(r.events).toContainEqual({ kind: 'icon', id: 'a', icon: 'leaf' })
+  })
+
+  it('a sleeping target is not pulled into a duet', () => {
+    const s = mk(pair2())
+    s.met.add(pairKey('a', 'b'))
+    patch(s, 'b', { x: 0.31, state: 'sleep', stateT: 1e9 })
+    approaching(s)
+    const r = stepVillage(s, 50, env(), mulberry32(1))
+    expect(r.state.duets).toHaveLength(0)
+    expect(get(r.state, 'b').state).toBe('sleep')
+    expect(get(r.state, 'a').state).toBe('idle')
+  })
+
   it('relief applies when forage rolls into forage', () => {
     const s = mk(pair2())
     setNeeds(s, 'a', { hunger: 0.9 })

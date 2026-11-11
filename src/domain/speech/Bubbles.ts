@@ -34,6 +34,12 @@ export class BubbleQueue {
       if (PRIORITY[victim.kind] >= p) return false
       this.alive = this.alive.filter((x) => x !== victim)
     }
+    if (b.kind === 'thought') {
+      // One thought on screen: any other thought fades out now.
+      this.alive = this.alive.map((x) =>
+        x.kind === 'thought' ? { ...x, ttlMs: Math.min(x.ttlMs, nowMs - x.bornMs + FADE_MS) } : x,
+      )
+    }
     this.alive.push({ ...b, id: `b${this.seq++}`, bornMs: nowMs })
     return true
   }

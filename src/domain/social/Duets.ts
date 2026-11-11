@@ -85,7 +85,7 @@ export const DUET_RULES: Record<DuetType, DuetRule> = {
   share: {
     base: 0.4,
     duration: [4000, 4000],
-    stepMs: 4000,
+    stepMs: 2000,
     eligible: (a, b) => !a.traits.includes('glutton') && b.needs.hunger >= 0.5,
     outcome: () => ({ relation: 0.15, a: {}, b: { hunger: 0.5 } }),
   },
@@ -111,7 +111,7 @@ export const DUET_RULES: Record<DuetType, DuetRule> = {
   makeUp: {
     base: 1.0,
     duration: [5000, 5000],
-    stepMs: 5000,
+    stepMs: 2500,
     eligible: (_a, _b, c) => c.quarrelWindow && c.band !== 'awkward',
     outcome: () => ({ relation: 0.2, a: {}, b: {} }),
   },

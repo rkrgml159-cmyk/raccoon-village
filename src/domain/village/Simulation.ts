@@ -242,7 +242,7 @@ export function stepVillage(
     if (cur.state === 'approach' && cur.stateT <= 0 && cur.targetId !== undefined) {
       const b = res(cur.targetId)
       if (inReach(cur.x, b.x)) {
-        if (s.duets.length < MAX_DUETS && b.state !== 'duet') {
+        if (s.duets.length < MAX_DUETS && b.state !== 'duet' && b.state !== 'sleep') {
           beginDuet(s, cur, b, env, rng, duetEvents, put)
         } else {
           s.residents[i] = toIdle(cur)
@@ -267,6 +267,7 @@ export function stepVillage(
       s.minds[r.id].needs = relieve(s.minds[r.id].needs, relief)
     }
     if (changed) stateEvents.push({ kind: 'state', id: r.id, state: r.state })
+    if (changed && r.state === 'forage') iconEvents.push({ kind: 'icon', id: r.id, icon: 'leaf' })
   }
 
   // (5) need icons

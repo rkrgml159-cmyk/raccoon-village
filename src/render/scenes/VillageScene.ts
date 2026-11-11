@@ -11,7 +11,7 @@ import {
   type SimEvent,
   type VillageState,
 } from '@domain/village/Simulation'
-import { scriptFor, facesLeft } from '@domain/social/DuetScript'
+import { scriptFor, facesLeft, sitOffset } from '@domain/social/DuetScript'
 import { DUET_TYPES, type DuetType } from '@domain/social/types'
 import { BubbleQueue, BUBBLE_TTL, type Bubble } from '@domain/speech/Bubbles'
 import { speak, type Mood } from '@domain/speech/Voice'
@@ -165,7 +165,7 @@ export class VillageScene extends Phaser.Scene {
 
     if (this.interactive && deps.mode === 'play') {
       this.sprites.forEach((sprite, i) => {
-        sprite.setInteractive()
+        sprite.setInteractive({ useHandCursor: true })
         sprite.on('pointerup', () => this.thinkAloud(i, true))
       })
     }
@@ -234,7 +234,10 @@ export class VillageScene extends Phaser.Scene {
           if (cue) {
             const partner = this.residents[i ^ 1]
             this.flipLeft[i] = facesLeft(cue.flip, r.x, partner.x, r.facing === 'left')
-            this.offsets[i] = cue.offsetX
+            this.offsets[i] =
+              this.duetTypeOf(i >> 1) === 'sitTogether'
+                ? sitOffset(r.x, partner.x, i % 2 === 0 ? 'a' : 'b')
+                : cue.offsetX
           }
         })
         this.stillShown = true
@@ -416,7 +419,7 @@ export class VillageScene extends Phaser.Scene {
       key = animKey(r.species, r.variant, cue.anim)
       const partner = this.residents[this.indexOf.get(role === 'a' ? duet.b : duet.a) ?? i]
       left = facesLeft(cue.flip, r.x, partner.x, left)
-      offset = cue.offsetX
+      offset = duet.type === 'sitTogether' ? sitOffset(r.x, partner.x, role) : cue.offsetX
     } else {
       key = animKey(r.species, r.variant, spriteStateOf(r.state))
     }

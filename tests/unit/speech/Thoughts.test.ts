@@ -29,8 +29,9 @@ describe('situationFor', () => {
     expect(new Set(SITUATIONS).size).toBe(30)
   })
 
-  it('base order: phase, season, idleLong', () => {
-    expect(situationFor(base)).toEqual(['day', 'spring', 'idleLong'])
+  it('base order: phase, season, forest, ruin, idleLong (moon only at night)', () => {
+    expect(situationFor(base)).toEqual(['day', 'spring', 'forest', 'ruin', 'idleLong'])
+    expect(situationFor({ ...base, phase: 'night' })).toContain('moon')
   })
 
   it('duet first, then needs, band, phase, season, idleLong', () => {
@@ -50,6 +51,9 @@ describe('situationFor', () => {
       'friend',
       'night',
       'winter',
+      'forest',
+      'ruin',
+      'moon',
       'idleLong',
     ])
   })
@@ -114,6 +118,15 @@ describe('pickThought', () => {
     const d = data([{ situation: 'idleLong', trait: 'any', species: 'any', lines: ['i'] }])
     expect(pickThought(base, d, [], rng)).toBe('i')
     expect(pickThought(base, d, ['i'], rng)).toBeNull()
+  })
+
+  it('pools the ambient situations (phase, season, forest, ruin, moon) into one draw', () => {
+    const d = data([
+      { situation: 'day', trait: 'any', species: 'any', lines: ['a'] },
+      { situation: 'forest', trait: 'any', species: 'any', lines: ['f'] },
+    ])
+    expect(pickThought(base, d, [], () => 0.99)).toBe('f')
+    expect(pickThought(base, d, [], () => 0)).toBe('a')
   })
 
   it('uses rng to draw', () => {

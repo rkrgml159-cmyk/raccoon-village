@@ -38,6 +38,15 @@ describe('BubbleQueue', () => {
     expect(alive[0].kind).toBe('thought')
   })
 
+  it('a new thought fades out any other thought (one thought on screen)', () => {
+    const q = new BubbleQueue()
+    q.push(mk('a', 'thought'), 0)
+    expect(q.push(mk('b', 'thought'), 1000)).toBe(true)
+    const fading = q.tick(1100).find((b) => b.residentId === 'a')!
+    expect(q.alphaOf(fading, 1100)).toBeLessThan(1)
+    expect(q.tick(1000 + FADE_MS).map((b) => b.residentId)).toEqual(['b'])
+  })
+
   it('lower priority refused for same resident', () => {
     const q = new BubbleQueue()
     q.push(mk('a', 'thought'), 0)

@@ -25,9 +25,10 @@ export function scriptFor(type: DuetType, step: number, role: Role): Cue {
     case 'groom':
       return toward(interact(role, step % 2 === 1))
     case 'sitTogether':
-      return { anim: 'sit', flip: 'same', offsetX: role === 'a' ? -SIT_OFFSET : SIT_OFFSET }
+      return { anim: 'sit', flip: 'same', offsetX: 0 }
     case 'chase':
-      return toward('walk')
+      // a runs away from b, b chases toward a
+      return { anim: 'walk', flip: role === 'a' ? 'away' : 'toward', offsetX: 0 }
     case 'share':
       if (step === 0) return toward(role === 'a' ? 'interact_a' : 'idle')
       return toward(role === 'b' ? 'happy' : 'interact_a')
@@ -36,6 +37,16 @@ export function scriptFor(type: DuetType, step: number, role: Role): Cue {
     case 'makeUp':
       return step === 0 ? toward(interact(role, false)) : toward('happy')
   }
+}
+
+/**
+ * sitTogether seat: the pair sits SIT_OFFSET either side of its midpoint, the left one on the
+ * left (by position, not role; equal x puts a on the left). Returns the offset to add to selfX.
+ */
+export function sitOffset(selfX: number, otherX: number, role: Role): number {
+  const mid = (selfX + otherX) / 2
+  const left = selfX < otherX || (selfX === otherX && role === 'a')
+  return (left ? mid - SIT_OFFSET : mid + SIT_OFFSET) - selfX
 }
 
 /** Whether a resident faces left for a cue, given own and partner x. Equal x keeps the current facing. */

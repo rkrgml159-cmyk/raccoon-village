@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { facesLeft, scriptFor } from '@domain/social/DuetScript'
+import { facesLeft, scriptFor, sitOffset } from '@domain/social/DuetScript'
 import { DUET_TYPES } from '@domain/social/types'
 
 describe('scriptFor', () => {
@@ -25,24 +25,36 @@ describe('scriptFor', () => {
       expect(scriptFor(t, 2, 'a').anim).toBe('interact_a')
     }
   })
-  it('sitTogether: both sit, same facing, offset apart', () => {
+  it('sitTogether: both sit, same facing, placed by sitOffset', () => {
     for (const step of [0, 1, 2]) {
-      expect(scriptFor('sitTogether', step, 'a')).toEqual({
-        anim: 'sit',
-        flip: 'same',
-        offsetX: -0.015,
-      })
-      expect(scriptFor('sitTogether', step, 'b')).toEqual({
-        anim: 'sit',
-        flip: 'same',
-        offsetX: 0.015,
-      })
+      for (const role of ['a', 'b'] as const) {
+        expect(scriptFor('sitTogether', step, role)).toEqual({
+          anim: 'sit',
+          flip: 'same',
+          offsetX: 0,
+        })
+      }
     }
   })
-  it('chase: both walk toward', () => {
-    expect(scriptFor('chase', 1, 'a').anim).toBe('walk')
+
+  it('sitOffset seats the pair 0.03 apart around their midpoint, by side not role', () => {
+    // a on the right of b (approached from the right)
+    const ax = 0.56
+    const bx = 0.5
+    const fa = ax + sitOffset(ax, bx, 'a')
+    const fb = bx + sitOffset(bx, ax, 'b')
+    expect(fb).toBeCloseTo(0.515, 9)
+    expect(fa).toBeCloseTo(0.545, 9)
+    // same x: role a goes left
+    expect(0.5 + sitOffset(0.5, 0.5, 'a')).toBeCloseTo(0.485, 9)
+    expect(0.5 + sitOffset(0.5, 0.5, 'b')).toBeCloseTo(0.515, 9)
+  })
+
+  it('chase: the runner (a) faces away from the chaser, b chases toward', () => {
+    expect(scriptFor('chase', 1, 'a')).toMatchObject({ anim: 'walk', flip: 'away' })
     expect(scriptFor('chase', 1, 'b')).toMatchObject({ anim: 'walk', flip: 'toward' })
   })
+
   it('share: giver then receiver happy', () => {
     expect(scriptFor('share', 0, 'a').anim).toBe('interact_a')
     expect(scriptFor('share', 0, 'b').anim).toBe('idle')

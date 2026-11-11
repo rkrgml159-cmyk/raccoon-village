@@ -103,6 +103,13 @@ describe('Duets', () => {
     expect(q / n).toBeLessThan(0.14)
   })
 
+  it('share and makeUp reach step 1 (happy) before they finish', () => {
+    for (const type of ['share', 'makeUp'] as const) {
+      const rule = DUET_RULES[type]
+      expect(rule.stepMs).toBeLessThan(rule.duration[0])
+    }
+  })
+
   it('makeUp eligibility', () => {
     const e = DUET_RULES.makeUp.eligible
     expect(e(mind(), mind(), ctx('neutral', { quarrelWindow: true }))).toBe(true)
